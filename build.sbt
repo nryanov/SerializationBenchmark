@@ -15,6 +15,7 @@ val scroogeVersion = "19.4.0"
 val scalameterVersion = "0.17"
 val finagleThriftVersion = "19.4.0"
 val libthriftVersion = "0.12.0"
+val orcVersion = "1.5.5"
 
 libraryDependencies ++= Seq(
   "com.nrinaudo" %% "kantan.csv" % kantanVersion,
@@ -26,5 +27,6 @@ libraryDependencies ++= Seq(
   "org.apache.thrift" % "libthrift" % libthriftVersion,
   "com.twitter" %% "scrooge-core" % scroogeVersion exclude("com.twitter", "libthrift"),
   "com.twitter" %% "finagle-thrift" % finagleThriftVersion exclude("com.twitter", "libthrift"),
+  "org.apache.orc" % "orc-core" % orcVersion,
   "com.storm-enroute" %% "scalameter" % scalameterVersion % Test
 )
