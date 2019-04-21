@@ -11,9 +11,10 @@ val avro4sVersion = "3.6.5"
 val json4sVersion = "2.0.4"
 val confluent = "5.2.1"
 val kafkaVersion = "2.2.0"
-val scroogeVersion = "4.13.0"
-val finagleVersion = "6.34.0"
+val scroogeVersion = "19.4.0"
 val scalameterVersion = "0.17"
+val finagleThriftVersion = "19.4.0"
+val libthriftVersion = "0.12.0"
 
 libraryDependencies ++= Seq(
   "com.nrinaudo" %% "kantan.csv" % kantanVersion,
@@ -22,7 +23,8 @@ libraryDependencies ++= Seq(
   "com.sksamuel.avro4s" %% "avro4s-core" % json4sVersion,
   "io.confluent" % "kafka-avro-serializer" % confluent,
   "org.apache.kafka" %% "kafka" % kafkaVersion,
+  "org.apache.thrift" % "libthrift" % libthriftVersion,
   "com.twitter" %% "scrooge-core" % scroogeVersion exclude("com.twitter", "libthrift"),
-  "com.twitter" %% "finagle-thrift" % finagleVersion exclude("com.twitter", "libthrift"),
-"com.storm-enroute" %% "scalameter" % scalameterVersion % Test
+  "com.twitter" %% "finagle-thrift" % finagleThriftVersion exclude("com.twitter", "libthrift"),
+  "com.storm-enroute" %% "scalameter" % scalameterVersion % Test
 )
