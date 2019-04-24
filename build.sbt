@@ -5,6 +5,8 @@ version := "0.1"
 scalaVersion := "2.12.8"
 
 resolvers += "Confluent" at "http://packages.confluent.io/maven/"
+// to fix problem with hadoop codec dependency import
+resolvers += "Twitter Maven Repo" at "https://maven.twttr.com"
 
 val kantanVersion = "0.5.0"
 val avro4sVersion = "3.6.5"
@@ -16,6 +18,7 @@ val scalameterVersion = "0.17"
 val finagleThriftVersion = "19.4.0"
 val libthriftVersion = "0.12.0"
 val orcVersion = "1.5.5"
+val parquetVersion = "1.10.1"
 
 libraryDependencies ++= Seq(
   "com.nrinaudo" %% "kantan.csv" % kantanVersion,
@@ -28,5 +31,17 @@ libraryDependencies ++= Seq(
   "com.twitter" %% "scrooge-core" % scroogeVersion exclude("com.twitter", "libthrift"),
   "com.twitter" %% "finagle-thrift" % finagleThriftVersion exclude("com.twitter", "libthrift"),
   "org.apache.orc" % "orc-core" % orcVersion,
+  "org.apache.parquet" % "parquet-avro" % parquetVersion,
+  "org.apache.parquet" % "parquet-thrift" % parquetVersion,
+  "org.apache.parquet" % "parquet-protobuf" % parquetVersion,
+  "org.apache.parquet" % "parquet-hadoop" % parquetVersion,
   "com.storm-enroute" %% "scalameter" % scalameterVersion % Test
+)
+
+// to generate java and scala versions
+scroogeLanguages in Compile := Seq("java", "scala")
+
+// for protobuf
+PB.targets in Compile := Seq(
+  scalapb.gen() -> (sourceManaged in Compile).value
 )

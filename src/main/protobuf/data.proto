@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package protoBenchmark;
+
+option java_package = "protobufBenchmark";
+option java_outer_classname = "data";
+
+message Data {
+    string f1 = 1;
+    double f2 = 2;
+    uint64 f3 = 3;
+    uint32 f4 = 4;
+    string f5 = 5;
+    double f6 = 6;
+    uint64 f7 = 7;
+    uint32 f8 = 8;
+    uint32 f9 = 9;
+    uint64 f10 = 10;
+    double f11 = 11;
+    double f12 = 12;
+    string f13 = 13;
+    string f14 = 14;
+    uint64 f15 = 15;
+    uint32 f16 = 16;
+    uint32 f17 = 17;
+    string f18 = 18;
+    string f19 = 19;
+    string f20 = 20;
+}

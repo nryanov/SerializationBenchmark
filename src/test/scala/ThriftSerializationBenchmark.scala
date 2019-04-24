@@ -1,20 +1,14 @@
 import java.io.{BufferedOutputStream, File, FileInputStream, FileOutputStream}
 
 import org.apache.thrift.protocol.{TBinaryProtocol, TCompactProtocol}
-import org.apache.thrift.transport.{TFileTransport, TIOStreamTransport, TMemoryBuffer, TMemoryInputTransport}
+import org.apache.thrift.transport.{TIOStreamTransport, TMemoryBuffer}
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-import project.{Data, DataUtils}
-import thriftBenchmark.DataThrift
+import project.DataUtils
+import thriftBenchmark.scala.DataThrift
 
 object ThriftSerializationBenchmark extends Bench.LocalTime {
   val gen = Gen.single("input file")("50000.csv")
-
-  def dataToThrift(data: Data): DataThrift = DataThrift(
-    data.f1, data.f2, data.f3, data.f4, data.f5, data.f6, data.f7,
-    data.f8, data.f9, data.f10, data.f11.map(_.toDouble), data.f12, data.f13,
-    data.f14, data.f15, data.f16, data.f17, data.f18, data.f19, data.f20
-  )
 
   performance of "thrift serialization" in {
     measure method "serialize using binary protocol" in {
@@ -33,7 +27,7 @@ object ThriftSerializationBenchmark extends Bench.LocalTime {
           rs.foreach(data => {
             val buffer = new TMemoryBuffer(64)
             val protocol = protocolFactory.getProtocol(buffer)
-            DataThrift.encode(dataToThrift(data), protocol)
+            DataThrift.encode(DataUtils.dataToScalaThrift(data), protocol)
 
             out.write(buffer.getArray)
             buffer.close()
@@ -69,7 +63,7 @@ object ThriftSerializationBenchmark extends Bench.LocalTime {
           rs.foreach(data => {
             val buffer = new TMemoryBuffer(64)
             val protocol = protocolFactory.getProtocol(buffer)
-            DataThrift.encode(dataToThrift(data), protocol)
+            DataThrift.encode(DataUtils.dataToScalaThrift(data), protocol)
 
             out.write(buffer.getArray)
             buffer.close()
@@ -90,3 +84,38 @@ object ThriftSerializationBenchmark extends Bench.LocalTime {
     }
   }
 
+  val binary = Gen.single("input file")("binaryThriftSerialization.out")
+  val compact = Gen.single("input file")("compactThriftSerialization.out")
+
+  performance of "thrift deserialization" in {
+    measure method "binary deserialization" in {
+      using(binary) config(
+        exec.benchRuns -> 1,
+        exec.minWarmupRuns -> 1,
+        exec.maxWarmupRuns -> 1
+      ) in { file =>
+        val in = new FileInputStream(file)
+        val protocolFactory: TBinaryProtocol.Factory = new TBinaryProtocol.Factory()
+        val transport: TIOStreamTransport = new TIOStreamTransport(in)
+        val protocol = protocolFactory.getProtocol(transport)
+
+        DataThrift.decode(protocol)
+      }
+    }
+
+    measure method "compact deserialization" in {
+      using(compact) config(
+        exec.benchRuns -> 1,
+        exec.minWarmupRuns -> 1,
+        exec.maxWarmupRuns -> 1
+      ) in { file =>
+        val in = new FileInputStream(file)
+        val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory()
+        val transport: TIOStreamTransport = new TIOStreamTransport(in)
+        val protocol = protocolFactory.getProtocol(transport)
+
+        DataThrift.decode(protocol)
+      }
+    }
+  }
+}
