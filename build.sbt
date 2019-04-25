@@ -19,6 +19,7 @@ val finagleThriftVersion = "19.4.0"
 val libthriftVersion = "0.12.0"
 val orcVersion = "1.5.5"
 val parquetVersion = "1.10.1"
+val snappyVersion = "1.1.7.3"
 
 libraryDependencies ++= Seq(
   "com.nrinaudo" %% "kantan.csv" % kantanVersion,
@@ -35,6 +36,9 @@ libraryDependencies ++= Seq(
   "org.apache.parquet" % "parquet-thrift" % parquetVersion,
   "org.apache.parquet" % "parquet-protobuf" % parquetVersion,
   "org.apache.parquet" % "parquet-hadoop" % parquetVersion,
+
+  "org.xerial.snappy" % "snappy-java" % snappyVersion,
+
   "com.storm-enroute" %% "scalameter" % scalameterVersion % Test
 )
 

@@ -2,6 +2,7 @@ import java.io.{BufferedOutputStream, File, FileOutputStream}
 
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
+import org.xerial.snappy.SnappyFramedOutputStream
 import project.DataUtils
 
 object ProtobufSerializationBenchmark extends Bench.LocalTime {
@@ -15,6 +16,31 @@ object ProtobufSerializationBenchmark extends Bench.LocalTime {
         exec.maxWarmupRuns -> 1
       ) in { file =>
         val out = new BufferedOutputStream(new FileOutputStream(new File("protobufSerialization.out")))
+        var i = 0
+
+        val in = DataUtils.readCsv(file)
+        in.foreach(rs => {
+          rs.foreach(data => {
+            out.write(DataUtils.dataToScalaProtobuf(data).toByteArray)
+            i += 1
+
+            if (i == 1000) {out.flush(); i = 0}
+          })
+        })
+
+        out.flush()
+        out.close()
+        in.close()
+      }
+    }
+
+    measure method "serialize - snappy compression" in {
+      using(gen) config (
+        exec.benchRuns -> 1,
+        exec.minWarmupRuns -> 1,
+        exec.maxWarmupRuns -> 1
+      ) in { file =>
+        val out = new SnappyFramedOutputStream(new FileOutputStream(new File("protobufSerializationSnappy.out")))
         var i = 0
 
         val in = DataUtils.readCsv(file)
