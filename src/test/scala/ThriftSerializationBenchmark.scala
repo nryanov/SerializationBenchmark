@@ -1,15 +1,19 @@
-import java.io.{BufferedOutputStream, File, FileInputStream, FileOutputStream}
+import java.io._
+import java.nio.ByteBuffer
 
 import org.apache.thrift.protocol.{TBinaryProtocol, TCompactProtocol}
 import org.apache.thrift.transport.{TIOStreamTransport, TMemoryBuffer}
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-import org.xerial.snappy.SnappyFramedOutputStream
+import org.xerial.snappy.{SnappyFramedInputStream, SnappyFramedOutputStream}
 import project.DataUtils
 import thriftBenchmark.scala.DataThrift
+import InitialDataGenerator.recordsCount
+
+import scala.util.Try
 
 object ThriftSerializationBenchmark extends Bench.LocalTime {
-  val gen = Gen.single("input file")("50000.csv")
+  val gen = Gen.single("input file")("input.csv")
 
   performance of "thrift serialization" in {
     measure method "serialize using binary protocol" in {
@@ -30,6 +34,7 @@ object ThriftSerializationBenchmark extends Bench.LocalTime {
             val protocol = protocolFactory.getProtocol(buffer)
             DataThrift.encode(DataUtils.dataToScalaThrift(data), protocol)
 
+            out.write(ByteBuffer.allocate(4).putInt(buffer.getArray.length).array())
             out.write(buffer.getArray)
             buffer.close()
 
@@ -66,6 +71,7 @@ object ThriftSerializationBenchmark extends Bench.LocalTime {
             val protocol = protocolFactory.getProtocol(buffer)
             DataThrift.encode(DataUtils.dataToScalaThrift(data), protocol)
 
+            out.write(ByteBuffer.allocate(4).putInt(buffer.getArray.length).array())
             out.write(buffer.getArray)
             buffer.close()
 
@@ -102,6 +108,7 @@ object ThriftSerializationBenchmark extends Bench.LocalTime {
             val protocol = protocolFactory.getProtocol(buffer)
             DataThrift.encode(DataUtils.dataToScalaThrift(data), protocol)
 
+            out.write(ByteBuffer.allocate(4).putInt(buffer.getArray.length).array())
             out.write(buffer.getArray)
             buffer.close()
 
@@ -138,6 +145,7 @@ object ThriftSerializationBenchmark extends Bench.LocalTime {
             val protocol = protocolFactory.getProtocol(buffer)
             DataThrift.encode(DataUtils.dataToScalaThrift(data), protocol)
 
+            out.write(ByteBuffer.allocate(4).putInt(buffer.getArray.length).array())
             out.write(buffer.getArray)
             buffer.close()
 
@@ -167,12 +175,28 @@ object ThriftSerializationBenchmark extends Bench.LocalTime {
         exec.minWarmupRuns -> 1,
         exec.maxWarmupRuns -> 1
       ) in { file =>
-        val in = new FileInputStream(file)
+        val in = new BufferedInputStream(new FileInputStream(new File(file)))
         val protocolFactory: TBinaryProtocol.Factory = new TBinaryProtocol.Factory()
-        val transport: TIOStreamTransport = new TIOStreamTransport(in)
-        val protocol = protocolFactory.getProtocol(transport)
+        var i = 0
 
-        DataThrift.decode(protocol)
+        Try {
+          while(true) {
+            val lengthBytes = new Array[Byte](4)
+            in.read(lengthBytes)
+            val length = ByteBuffer.wrap(lengthBytes).getInt
+            val buffer = new TMemoryBuffer(length)
+            val data = new Array[Byte](length)
+            in.read(data)
+            buffer.write(data)
+            val protocol = protocolFactory.getProtocol(buffer)
+            val obj = DataThrift.decode(protocol)
+            i += 1
+            buffer.close()
+          }
+        }
+
+        in.close()
+        assert(i == recordsCount)
       }
     }
 
@@ -182,12 +206,30 @@ object ThriftSerializationBenchmark extends Bench.LocalTime {
         exec.minWarmupRuns -> 1,
         exec.maxWarmupRuns -> 1
       ) in { file =>
-        val in = new FileInputStream(file)
+        val in = new BufferedInputStream(new FileInputStream(new File(file)))
         val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory()
         val transport: TIOStreamTransport = new TIOStreamTransport(in)
-        val protocol = protocolFactory.getProtocol(transport)
 
-        DataThrift.decode(protocol)
+        var i = 0
+
+        Try {
+          while(true) {
+            val lengthBytes = new Array[Byte](4)
+            in.read(lengthBytes)
+            val length = ByteBuffer.wrap(lengthBytes).getInt
+            val buffer = new TMemoryBuffer(length)
+            val data = new Array[Byte](length)
+            in.read(data)
+            buffer.write(data)
+            val protocol = protocolFactory.getProtocol(buffer)
+            val obj = DataThrift.decode(protocol)
+            i += 1
+            buffer.close()
+          }
+        }
+
+        in.close()
+        assert(i == recordsCount)
       }
     }
   }
