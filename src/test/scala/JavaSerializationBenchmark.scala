@@ -3,11 +3,14 @@ import java.io._
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import project.{Data, DataUtils}
-import org.xerial.snappy.{Snappy, SnappyFramedOutputStream, SnappyOutputStream}
+import org.xerial.snappy.{Snappy, SnappyFramedInputStream, SnappyFramedOutputStream, SnappyOutputStream}
+import InitialDataGenerator.recordsCount
+
+import scala.util.Try
 
 
 object JavaSerializationBenchmark extends Bench.LocalTime {
-  val gen = Gen.single("input file")("50000.csv")
+  val gen = Gen.single("input file")("input.csv")
 
   performance of "java serialization" in {
     measure method "serialize" in {
@@ -147,6 +150,7 @@ object JavaSerializationBenchmark extends Bench.LocalTime {
   }
 
   val javaFile = Gen.single("input file")("javaSerialization.out")
+  val javaFileSnappy = Gen.single("input file")("javaSerializationSnappyFramedCompression.out")
 
   performance of "java deserialization" in {
     measure method "deserialize" in {
@@ -160,12 +164,36 @@ object JavaSerializationBenchmark extends Bench.LocalTime {
 
         var next = in.readObject()
         while (next != null) {
+          i += 1
           val data = next.asInstanceOf[Data]
           next = in.readObject()
-          i += 1
         }
 
-        println(i)
+        assert(i == recordsCount)
+        in.close()
+      }
+    }
+
+    measure method "deserialize - snappy" in {
+      using(javaFileSnappy) config(
+        exec.benchRuns -> 1,
+        exec.minWarmupRuns -> 1,
+        exec.maxWarmupRuns -> 1
+      ) in { file =>
+        val in = new ObjectInputStream(new SnappyFramedInputStream(new FileInputStream(new File(file))))
+        var i = 0
+
+        // EOF exception
+        Try {
+          var next = in.readObject()
+          while (next != null) {
+            i += 1
+            val data = next.asInstanceOf[Data]
+            next = in.readObject()
+          }
+        }
+
+        assert(i == recordsCount)
         in.close()
       }
     }

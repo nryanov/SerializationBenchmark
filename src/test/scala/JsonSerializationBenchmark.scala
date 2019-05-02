@@ -1,16 +1,21 @@
 import java.io._
+import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 
 import org.json4s._
 import org.json4s.jackson.Serialization
+import org.json4s.jackson.JsonMethods.mapper
 import org.json4s.jackson.Serialization._
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-import org.xerial.snappy.{Snappy, SnappyFramedOutputStream, SnappyOutputStream}
+import org.xerial.snappy.{Snappy, SnappyFramedInputStream, SnappyFramedOutputStream, SnappyOutputStream}
 import project.{Data, DataUtils}
+import InitialDataGenerator.recordsCount
+
+import scala.util.Try
 
 object JsonSerializationBenchmark extends Bench.LocalTime {
-  val gen = Gen.single("input file")("50000.csv")
+  val gen = Gen.single("input file")("input.csv")
   implicit val noTypeHintsFormat = Serialization.formats(NoTypeHints)
 
   performance of "json serialization" in {
@@ -26,7 +31,12 @@ object JsonSerializationBenchmark extends Bench.LocalTime {
         val in = DataUtils.readCsv(file)
         in.foreach(rs => {
           rs.foreach(data => {
-            out.write(write[Data](data).getBytes(StandardCharsets.UTF_8))
+            val bytes = mapper.writeValueAsBytes(write[Data](data))
+            val length = bytes.length
+
+            out.write(ByteBuffer.allocate(4).putInt(length).array())
+            out.write(bytes)
+
             i += 1
 
             if (i == 1000) {
@@ -54,7 +64,11 @@ object JsonSerializationBenchmark extends Bench.LocalTime {
         val in = DataUtils.readCsv(file)
         in.foreach(rs => {
           rs.foreach(data => {
-            out.write(write[Data](data).getBytes(StandardCharsets.UTF_8))
+            val bytes = mapper.writeValueAsBytes(write[Data](data))
+            val length = bytes.length
+
+            out.write(ByteBuffer.allocate(4).putInt(length).array())
+            out.write(bytes)
 
             i += 1
 
@@ -83,7 +97,11 @@ object JsonSerializationBenchmark extends Bench.LocalTime {
         val in = DataUtils.readCsv(file)
         in.foreach(rs => {
           rs.foreach(data => {
-            out.write(write[Data](data).getBytes(StandardCharsets.UTF_8))
+            val bytes = mapper.writeValueAsBytes(write[Data](data))
+            val length = bytes.length
+
+            out.write(ByteBuffer.allocate(4).putInt(length).array())
+            out.write(bytes)
             i += 1
 
             if (i == 1000) {
@@ -111,7 +129,12 @@ object JsonSerializationBenchmark extends Bench.LocalTime {
         val in = DataUtils.readCsv(file)
         in.foreach(rs => {
           rs.foreach(data => {
-            out.write(Snappy.compress(write[Data](data).getBytes(StandardCharsets.UTF_8)))
+            val bytes = Snappy.compress(mapper.writeValueAsBytes(write[Data](data)))
+            val length = bytes.length
+
+            out.write(ByteBuffer.allocate(4).putInt(length).array())
+            out.write(bytes)
+
             i += 1
 
             if (i == 1000) {
@@ -120,6 +143,68 @@ object JsonSerializationBenchmark extends Bench.LocalTime {
             }
           })
         })
+
+        out.flush()
+        out.close()
+        in.close()
+      }
+    }
+  }
+
+  val jsonInput = Gen.single("input")("jsonSerialization.out")
+  val jsonInputSnappy = Gen.single("input")("jsonSerializationSnappyFramedCompression.out")
+
+  performance of "json deserialization" in {
+    measure method "deserialize" in {
+      using(jsonInput) config(
+        exec.benchRuns -> 1,
+        exec.minWarmupRuns -> 1,
+        exec.maxWarmupRuns -> 1
+      ) in { file =>
+        val in = new BufferedInputStream(new FileInputStream(new File(file)))
+        var i = 0
+
+        Try {
+          while(true) {
+            val lengthBytes = new Array[Byte](4)
+            in.read(lengthBytes)
+            val length = ByteBuffer.wrap(lengthBytes).getInt
+            val data = new Array[Byte](length)
+            in.read(data)
+            val obj = read[Data](mapper.readTree(data).asText())
+            i += 1
+          }
+        }
+
+        in.close()
+        assert(i == recordsCount)
+      }
+    }
+
+    measure method "deserialize - snappy" in {
+      using(jsonInputSnappy) config(
+        exec.benchRuns -> 1,
+        exec.minWarmupRuns -> 1,
+        exec.maxWarmupRuns -> 1
+      ) in { file =>
+        val in = new SnappyFramedInputStream(new FileInputStream(new File(file)))
+        var i = 0
+
+        Try {
+          while(true) {
+            val lengthBytes = new Array[Byte](4)
+            in.read(lengthBytes)
+            val length = ByteBuffer.wrap(lengthBytes).getInt
+            val data = new Array[Byte](length)
+            in.read(data)
+            val obj = read[Data](mapper.readTree(data).asText())
+
+            i += 1
+          }
+        }
+
+        in.close()
+        assert(i == recordsCount)
       }
     }
   }
