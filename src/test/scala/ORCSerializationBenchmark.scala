@@ -7,9 +7,10 @@ import org.apache.orc.{CompressionKind, OrcFile, Reader, TypeDescription}
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import project.{Data, DataUtils}
+import InitialDataGenerator.recordsCount
 
 object ORCSerializationBenchmark extends Bench.LocalTime {
-  val gen = Gen.single("input file")("50000.csv")
+  val gen = Gen.single("input file")("input.csv")
   val compression = Gen.enumeration("compression")(CompressionKind.NONE, CompressionKind.SNAPPY, CompressionKind.ZLIB, CompressionKind.LZO, CompressionKind.LZ4)
 
   val conf: Configuration = new Configuration()
@@ -115,7 +116,13 @@ object ORCSerializationBenchmark extends Bench.LocalTime {
     }
   }
 
-  val orcFile = Gen.single("input file")("orcSerialization.orc")
+  val orcFile = Gen.enumeration("input file")(
+    "orcSerializationNONE.orc",
+    "orcSerializationLZ4.orc",
+    "orcSerializationLZO.orc",
+    "orcSerializationSNAPPY.orc",
+    "orcSerializationZLIB.orc"
+  )
 
   performance of "orc deserialization" in {
     measure method "deserialize" in {
@@ -125,6 +132,7 @@ object ORCSerializationBenchmark extends Bench.LocalTime {
 
         val rows = reader.rows()
         val batch = reader.getSchema.createRowBatch
+        var count = 0
 
         while (rows.nextBatch(batch)) {
           val f1ColumnVector = batch.cols(0).asInstanceOf[BytesColumnVector]
@@ -172,10 +180,11 @@ object ORCSerializationBenchmark extends Bench.LocalTime {
               Option(new String(f20ColumnVector.vector(i), f20ColumnVector.start(i), f20ColumnVector.length(i), StandardCharsets.UTF_8)),
             )
 
-            println(data)
+            count += 1
           })
         }
 
+        assert(count == recordsCount)
         rows.close()
       }
     }

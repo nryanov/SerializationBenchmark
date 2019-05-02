@@ -3,6 +3,7 @@ package project
 import java.io.File
 import java.util.UUID
 
+import com.sksamuel.avro4s.AvroSchema
 import kantan.csv._
 import kantan.csv.ops._
 import org.apache.avro.Schema
@@ -12,6 +13,8 @@ import scala.util.Random
 
 
 object DataUtils {
+  val schema = AvroSchema[Data]
+
   def toCsvFile(path: String, count: Int): Unit = {
     implicit val dataEncoder: RowEncoder[Data] = RowEncoder.ordered((d: Data) => (d.f1, d.f2, d.f3, d.f4, d.f5, d.f6, d.f7, d.f8, d.f9,
     d.f10, d.f11, d.f12, d.f13, d.f14, d.f15, d.f16, d.f17, d.f18, d.f19, d.f20))
@@ -143,4 +146,31 @@ object DataUtils {
     data.f19.getOrElse(""),
     data.f20.getOrElse(""),
   )
+
+  def dataToGenericRecord(data: Data): GenericData.Record = {
+    val record = new GenericData.Record(schema)
+
+    record.put("f1", if (data.f1.isEmpty) {null} else {data.f1.get})
+    record.put("f2", if (data.f2.isEmpty) {null} else {data.f2.get})
+    record.put("f3", if (data.f3.isEmpty) {null} else {data.f3.get})
+    record.put("f4", if (data.f4.isEmpty) {null} else {data.f4.get})
+    record.put("f5", if (data.f5.isEmpty) {null} else {data.f5.get})
+    record.put("f6", if (data.f6.isEmpty) {null} else {data.f6.get})
+    record.put("f7", if (data.f7.isEmpty) {null} else {data.f7.get})
+    record.put("f8", if (data.f8.isEmpty) {null} else {data.f8.get})
+    record.put("f9", if (data.f9.isEmpty) {null} else {data.f9.get})
+    record.put("f10", if (data.f10.isEmpty) {null} else {data.f10.get})
+    record.put("f11", if (data.f11.isEmpty) {null} else {data.f11.get})
+    record.put("f12", if (data.f12.isEmpty) {null} else {data.f12.get})
+    record.put("f13", if (data.f13.isEmpty) {null} else {data.f13.get})
+    record.put("f14", if (data.f14.isEmpty) {null} else {data.f14.get})
+    record.put("f15", if (data.f15.isEmpty) {null} else {data.f15.get})
+    record.put("f16", if (data.f16.isEmpty) {null} else {data.f16.get})
+    record.put("f17", if (data.f17.isEmpty) {null} else {data.f17.get})
+    record.put("f18", if (data.f18.isEmpty) {null} else {data.f18.get})
+    record.put("f19", if (data.f19.isEmpty) {null} else {data.f19.get})
+    record.put("f20", if (data.f20.isEmpty) {null} else {data.f20.get})
+
+    record
+  }
 }

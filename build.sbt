@@ -8,6 +8,7 @@ resolvers += "Confluent" at "http://packages.confluent.io/maven/"
 // to fix problem with hadoop codec dependency import
 resolvers += "Twitter Maven Repo" at "https://maven.twttr.com"
 
+val hdfsVersion = "2.7.3"
 val kantanVersion = "0.5.0"
 val avro4sVersion = "3.6.5"
 val json4sVersion = "2.0.4"
@@ -22,6 +23,7 @@ val parquetVersion = "1.10.1"
 val snappyVersion = "1.1.7.3"
 
 libraryDependencies ++= Seq(
+  "org.apache.hadoop" % "hadoop-client" % hdfsVersion,
   "com.nrinaudo" %% "kantan.csv" % kantanVersion,
   "com.nrinaudo" %% "kantan.csv-generic" % kantanVersion,
   "org.json4s" %% "json4s-jackson" % avro4sVersion,
