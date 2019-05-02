@@ -38,6 +38,56 @@ object AvroSerializationBenchmark extends Bench.LocalTime {
       }
     }
 
+    measure method "serialize with schema - snappy" in {
+      using(gen) config (
+        exec.benchRuns -> 1,
+        exec.minWarmupRuns -> 1,
+        exec.maxWarmupRuns -> 1
+      ) in { file =>
+        val out = AvroDataOutputStream[Data](new FileOutputStream(new File("avroDataSerializationSnappy.out")), schema, CodecFactory.snappyCodec())
+        var i = 0
+
+        val in = DataUtils.readCsv(file)
+        in.foreach(rs => {
+          rs.foreach(data => {
+            out.write(data)
+            i += 1
+
+            if (i == 1000) {out.flush(); i = 0}
+          })
+        })
+
+        out.flush()
+        out.close()
+        in.close()
+      }
+    }
+
+    measure method "serialize with schema - deflate (gzip)" in {
+      using(gen) config (
+        exec.benchRuns -> 1,
+        exec.minWarmupRuns -> 1,
+        exec.maxWarmupRuns -> 1
+      ) in { file =>
+        val out = AvroDataOutputStream[Data](new FileOutputStream(new File("avroDataSerializationGzip.out")), schema, CodecFactory.deflateCodec(CodecFactory.DEFAULT_DEFLATE_LEVEL))
+        var i = 0
+
+        val in = DataUtils.readCsv(file)
+        in.foreach(rs => {
+          rs.foreach(data => {
+            out.write(data)
+            i += 1
+
+            if (i == 1000) {out.flush(); i = 0}
+          })
+        })
+
+        out.flush()
+        out.close()
+        in.close()
+      }
+    }
+
     measure method "binary serialization without schema" in {
       using(gen) config (
         exec.benchRuns -> 1,
@@ -63,6 +113,56 @@ object AvroSerializationBenchmark extends Bench.LocalTime {
       }
     }
 
+    measure method "binary serialization without schema - snappy" in {
+      using(gen) config (
+        exec.benchRuns -> 1,
+        exec.minWarmupRuns -> 1,
+        exec.maxWarmupRuns -> 1
+      ) in { file =>
+        val out = AvroOutputStream.binary[Data].to(new FileOutputStream(new File("avroBinarySerializationSnappy.out"))).withCodec(CodecFactory.snappyCodec()).build(schema)
+        var i = 0
+
+        val in = DataUtils.readCsv(file)
+        in.foreach(rs => {
+          rs.foreach(data => {
+            out.write(data)
+            i += 1
+
+            if (i == 1000) {out.flush(); i = 0}
+          })
+        })
+
+        out.flush()
+        out.close()
+        in.close()
+      }
+    }
+
+    measure method "binary serialization without schema - deflate (gzip)" in {
+      using(gen) config (
+        exec.benchRuns -> 1,
+        exec.minWarmupRuns -> 1,
+        exec.maxWarmupRuns -> 1
+      ) in { file =>
+        val out = AvroOutputStream.binary[Data].to(new FileOutputStream(new File("avroBinarySerializationGzip.out"))).withCodec(CodecFactory.deflateCodec(CodecFactory.DEFAULT_DEFLATE_LEVEL)).build(schema)
+        var i = 0
+
+        val in = DataUtils.readCsv(file)
+        in.foreach(rs => {
+          rs.foreach(data => {
+            out.write(data)
+            i += 1
+
+            if (i == 1000) {out.flush(); i = 0}
+          })
+        })
+
+        out.flush()
+        out.close()
+        in.close()
+      }
+    }
+
     measure method "low-level API avro serialization" in {
       using(gen) config (
         exec.benchRuns -> 1,
@@ -70,6 +170,56 @@ object AvroSerializationBenchmark extends Bench.LocalTime {
         exec.maxWarmupRuns -> 1
       ) in { file =>
         val out = new DataFileWriter[GenericRecord](new GenericDatumWriter[GenericRecord](schema)).create(schema, new File("lowLevelAvroSerialization.out"))
+        var i = 0
+
+        val in = DataUtils.readCsv(file)
+        in.foreach(rs => {
+          rs.foreach(data => {
+            out.append(DataUtils.dataToGenericRecord(data, schema))
+            i += 1
+
+            if (i == 1000) {out.flush(); i = 0}
+          })
+        })
+
+        out.flush()
+        out.close()
+        in.close()
+      }
+    }
+
+    measure method "low-level API avro serialization - snappy" in {
+      using(gen) config (
+        exec.benchRuns -> 1,
+        exec.minWarmupRuns -> 1,
+        exec.maxWarmupRuns -> 1
+      ) in { file =>
+        val out = new DataFileWriter[GenericRecord](new GenericDatumWriter[GenericRecord](schema)).setCodec(CodecFactory.snappyCodec()).create(schema, new File("lowLevelAvroSerializationSnappy.out"))
+        var i = 0
+
+        val in = DataUtils.readCsv(file)
+        in.foreach(rs => {
+          rs.foreach(data => {
+            out.append(DataUtils.dataToGenericRecord(data, schema))
+            i += 1
+
+            if (i == 1000) {out.flush(); i = 0}
+          })
+        })
+
+        out.flush()
+        out.close()
+        in.close()
+      }
+    }
+
+    measure method "low-level API avro serialization - deflate (gzip)" in {
+      using(gen) config (
+        exec.benchRuns -> 1,
+        exec.minWarmupRuns -> 1,
+        exec.maxWarmupRuns -> 1
+      ) in { file =>
+        val out = new DataFileWriter[GenericRecord](new GenericDatumWriter[GenericRecord](schema)).setCodec(CodecFactory.deflateCodec(CodecFactory.DEFAULT_DEFLATE_LEVEL)).create(schema, new File("lowLevelAvroSerializationGzip.out"))
         var i = 0
 
         val in = DataUtils.readCsv(file)
