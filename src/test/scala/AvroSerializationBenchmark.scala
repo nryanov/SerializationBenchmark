@@ -1,15 +1,16 @@
 import java.io.{BufferedOutputStream, File, FileOutputStream}
 
-import com.sksamuel.avro4s.{AvroDataOutputStream, AvroOutputStream, AvroSchema, RecordFormat}
+import com.sksamuel.avro4s._
 import io.confluent.kafka.serializers.{AbstractKafkaAvroSerDeConfig, KafkaAvroSerializer}
 import org.apache.avro.file.{CodecFactory, DataFileWriter}
 import org.apache.avro.generic.{GenericDatumWriter, GenericRecord}
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import project.{Data, DataUtils}
+import InitialDataGenerator.recordsCount
 
 object AvroSerializationBenchmark extends Bench.LocalTime {
-  val gen = Gen.single("input file")("50000.csv")
+  val gen = Gen.single("input file")("input.csv")
   val schema = AvroSchema[Data]
 
   performance of "avro serialization" in {
@@ -280,6 +281,34 @@ object AvroSerializationBenchmark extends Bench.LocalTime {
         out.flush()
         out.close()
         in.close()
+      }
+    }
+  }
+
+  val avroInput = Gen.enumeration("input")(
+    "avroDataSerialization.out",
+    "avroDataSerializationSnappy.out",
+    "avroDataSerializationGzip.out"
+  )
+
+  performance of "deserialization avro" in {
+    measure method "deserialize" in {
+      using(avroInput) config (
+        exec.benchRuns -> 1,
+        exec.minWarmupRuns -> 1,
+        exec.maxWarmupRuns -> 1
+      ) in { file =>
+        val in = AvroInputStream.data[Data].from(new File(file)).build(schema)
+        var i = 0
+        val iter = in.iterator
+
+        while(iter.nonEmpty) {
+          val next = iter.next()
+          i += 1
+        }
+
+        in.close()
+        assert(i == recordsCount)
       }
     }
   }

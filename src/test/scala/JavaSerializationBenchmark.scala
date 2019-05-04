@@ -3,7 +3,7 @@ import java.io._
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import project.{Data, DataUtils}
-import org.xerial.snappy.{Snappy, SnappyFramedInputStream, SnappyFramedOutputStream, SnappyOutputStream}
+import org.xerial.snappy._
 import InitialDataGenerator.recordsCount
 
 import scala.util.Try
@@ -150,7 +150,7 @@ object JavaSerializationBenchmark extends Bench.LocalTime {
   }
 
   val javaFile = Gen.single("input file")("javaSerialization.out")
-  val javaFileSnappy = Gen.single("input file")("javaSerializationSnappyFramedCompression.out")
+  val javaFileSnappy = Gen.single("input file")("javaSerializationSnappyCompression.out")
 
   performance of "java deserialization" in {
     measure method "deserialize" in {
@@ -180,7 +180,7 @@ object JavaSerializationBenchmark extends Bench.LocalTime {
         exec.minWarmupRuns -> 1,
         exec.maxWarmupRuns -> 1
       ) in { file =>
-        val in = new ObjectInputStream(new SnappyFramedInputStream(new FileInputStream(new File(file))))
+        val in = new ObjectInputStream(new SnappyInputStream(new FileInputStream(new File(file))))
         var i = 0
 
         // EOF exception

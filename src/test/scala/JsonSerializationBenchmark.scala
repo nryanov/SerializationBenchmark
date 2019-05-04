@@ -1,6 +1,5 @@
 import java.io._
 import java.nio.ByteBuffer
-import java.nio.charset.StandardCharsets
 
 import org.json4s._
 import org.json4s.jackson.Serialization
@@ -8,7 +7,7 @@ import org.json4s.jackson.JsonMethods.mapper
 import org.json4s.jackson.Serialization._
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-import org.xerial.snappy.{Snappy, SnappyFramedInputStream, SnappyFramedOutputStream, SnappyOutputStream}
+import org.xerial.snappy._
 import project.{Data, DataUtils}
 import InitialDataGenerator.recordsCount
 
@@ -152,7 +151,7 @@ object JsonSerializationBenchmark extends Bench.LocalTime {
   }
 
   val jsonInput = Gen.single("input")("jsonSerialization.out")
-  val jsonInputSnappy = Gen.single("input")("jsonSerializationSnappyFramedCompression.out")
+  val jsonInputSnappy = Gen.single("input")("jsonSerializationSnappyCompression.out")
 
   performance of "json deserialization" in {
     measure method "deserialize" in {
@@ -187,7 +186,7 @@ object JsonSerializationBenchmark extends Bench.LocalTime {
         exec.minWarmupRuns -> 1,
         exec.maxWarmupRuns -> 1
       ) in { file =>
-        val in = new SnappyFramedInputStream(new FileInputStream(new File(file)))
+        val in = new SnappyInputStream(new FileInputStream(new File(file)))
         var i = 0
 
         Try {
