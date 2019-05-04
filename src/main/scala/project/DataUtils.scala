@@ -8,6 +8,7 @@ import kantan.csv._
 import kantan.csv.ops._
 import org.apache.avro.Schema
 import org.apache.avro.generic.{GenericData, GenericRecord}
+import org.msgpack.core.{MessageBufferPacker, MessagePack, MessageUnpacker}
 
 import scala.util.Random
 
@@ -21,7 +22,7 @@ object DataUtils {
     implicit val headerEncoder: HeaderEncoder[Data] = HeaderEncoder.defaultHeaderEncoder[Data]
     val writer: CsvWriter[Data] = new File(path).asCsvWriter[Data](rfc.withoutHeader)
 
-    (0 to count).foreach(_ => {
+    (0 until count).foreach(_ => {
       writer.write(generate())
     })
 
@@ -173,4 +174,50 @@ object DataUtils {
 
     record
   }
+
+  def msgpackData(data: Data, buffer: MessageBufferPacker): Unit = {
+    buffer.packString(data.f1.getOrElse(""))
+    buffer.packDouble(data.f2.getOrElse(0.0))
+    buffer.packLong(data.f3.getOrElse(0))
+    buffer.packInt(data.f4.getOrElse(0))
+    buffer.packString(data.f5.getOrElse(""))
+    buffer.packDouble(data.f6.getOrElse(0.0))
+    buffer.packLong(data.f7.getOrElse(0))
+    buffer.packInt(data.f8.getOrElse(0))
+    buffer.packInt(data.f9.getOrElse(0))
+    buffer.packLong(data.f10.getOrElse(0))
+    buffer.packFloat(data.f11.getOrElse(0.0f))
+    buffer.packDouble(data.f12.getOrElse(0.0))
+    buffer.packString(data.f13.getOrElse(""))
+    buffer.packString(data.f14.getOrElse(""))
+    buffer.packLong(data.f15.getOrElse(0))
+    buffer.packInt(data.f16.getOrElse(0))
+    buffer.packInt(data.f17.getOrElse(0))
+    buffer.packString(data.f18.getOrElse(""))
+    buffer.packString(data.f19.getOrElse(""))
+    buffer.packString(data.f20.getOrElse(""))
+  }
+
+  def msgunpackData(buffer: MessageUnpacker): Data = Data(
+    Option(buffer.unpackString()),
+    Option(buffer.unpackDouble()),
+    Option(buffer.unpackLong()),
+    Option(buffer.unpackInt()),
+    Option(buffer.unpackString()),
+    Option(buffer.unpackDouble()),
+    Option(buffer.unpackLong()),
+    Option(buffer.unpackInt()),
+    Option(buffer.unpackInt()),
+    Option(buffer.unpackLong()),
+    Option(buffer.unpackFloat()),
+    Option(buffer.unpackDouble()),
+    Option(buffer.unpackString()),
+    Option(buffer.unpackString()),
+    Option(buffer.unpackLong()),
+    Option(buffer.unpackInt()),
+    Option(buffer.unpackInt()),
+    Option(buffer.unpackString()),
+    Option(buffer.unpackString()),
+    Option(buffer.unpackString())
+  )
 }

@@ -23,6 +23,7 @@ val parquetVersion = "1.10.1"
 val snappyVersion = "1.1.7.3"
 val lz4Version = "1.5.1"
 val apacheCommonCompressVersion = "1.18"
+val msgpackVersion = "0.8.16"
 
 libraryDependencies ++= Seq(
   "org.apache.hadoop" % "hadoop-client" % hdfsVersion,
@@ -40,8 +41,9 @@ libraryDependencies ++= Seq(
   "org.apache.parquet" % "parquet-thrift" % parquetVersion,
   "org.apache.parquet" % "parquet-protobuf" % parquetVersion,
   "org.apache.parquet" % "parquet-hadoop" % parquetVersion,
+  "org.msgpack" % "msgpack-core" % msgpackVersion,
 
-  "org.xerial.snappy" % "snappy-java" % snappyVersion,
+"org.xerial.snappy" % "snappy-java" % snappyVersion,
   "org.lz4" % "lz4-java" % lz4Version,
   "org.apache.commons" % "commons-compress" % apacheCommonCompressVersion,
 
