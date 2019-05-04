@@ -9,12 +9,14 @@ import org.xerial.snappy._
 import java.util.zip.GZIPInputStream
 
 import bench.Settings
+import net.jpountz.lz4.LZ4BlockInputStream
 
 
 object JavaDeserialization extends Bench.LocalTime {
   val javaFile = Gen.single("input file")("javaSerialization.out")
   val javaFileSnappy = Gen.single("input file")("javaSerializationSnappyCompression.out")
   val javaFileGzip = Gen.single("input file")("javaSerializationGzipCompression.out")
+  val javaFileLz4 = Gen.single("input file")("javaSerializationLz4Compression.out")
 
   performance of "java deserialization" in {
     measure method "deserialize" in {
@@ -66,6 +68,27 @@ object JavaDeserialization extends Bench.LocalTime {
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { file =>
         val in = new ObjectInputStream(new GZIPInputStream(new FileInputStream(new File(file))))
+        var i = 0
+
+        var next = in.readObject()
+        while (next != null) {
+          i += 1
+          val data = next.asInstanceOf[Data]
+          next = in.readObject()
+        }
+
+        assert(i == Settings.recordsCount)
+        in.close()
+      }
+    }
+
+    measure method "deserialize - lz4" in {
+      using(javaFileLz4) config(
+        exec.benchRuns -> Settings.benchRuns,
+        exec.minWarmupRuns -> Settings.minWarmupRuns,
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+      ) in { file =>
+        val in = new ObjectInputStream(new LZ4BlockInputStream(new FileInputStream(new File(file))))
         var i = 0
 
         var next = in.readObject()

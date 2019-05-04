@@ -10,9 +10,9 @@ import org.json4s.jackson.Serialization._
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import org.xerial.snappy._
-import java.util.zip.GZIPOutputStream
 
 import bench.Settings
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import project.{Data, DataUtils}
 
 object JsonSerialization extends Bench.LocalTime {
@@ -92,7 +92,7 @@ object JsonSerialization extends Bench.LocalTime {
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { file =>
-        val out = new GZIPOutputStream(new FileOutputStream(new File("jsonSerializationGzipCompression.out")))
+        val out = new GzipCompressorOutputStream(new FileOutputStream(new File("jsonSerializationGzipCompression.out")))
         var i = 0
 
         val in = DataUtils.readCsv(file)
