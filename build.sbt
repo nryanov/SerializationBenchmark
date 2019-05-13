@@ -43,7 +43,7 @@ libraryDependencies ++= Seq(
   "org.apache.parquet" % "parquet-hadoop" % parquetVersion,
   "org.msgpack" % "msgpack-core" % msgpackVersion,
 
-"org.xerial.snappy" % "snappy-java" % snappyVersion,
+  "org.xerial.snappy" % "snappy-java" % snappyVersion,
   "org.lz4" % "lz4-java" % lz4Version,
   "org.apache.commons" % "commons-compress" % apacheCommonCompressVersion,
 
@@ -57,3 +57,5 @@ scroogeLanguages in Compile := Seq("java", "scala")
 PB.targets in Compile := Seq(
   scalapb.gen() -> (sourceManaged in Compile).value
 )
+
+(Compile / compile) := ((Compile / compile) dependsOn (Compile / scroogeGen)).value
