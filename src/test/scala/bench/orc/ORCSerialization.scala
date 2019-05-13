@@ -9,7 +9,8 @@ import org.apache.hadoop.hive.ql.exec.vector._
 import org.apache.orc.{CompressionKind, OrcFile, TypeDescription}
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-import project.DataUtils
+import project.{DataUtils, MixedData}
+import project.Implicits._
 
 object ORCSerialization extends Bench.LocalTime {
   val gen = Gen.single("input file")("input.csv")
@@ -79,7 +80,7 @@ object ORCSerialization extends Bench.LocalTime {
         val f20ColumnVector = batch.cols(19).asInstanceOf[BytesColumnVector]
 
 
-        val in = DataUtils.readCsv(fileCompression._1)
+        val in = DataUtils.readCsv[MixedData](fileCompression._1)
         in.foreach(rs => {
           rs.foreach(data => {
             val row = batch.size

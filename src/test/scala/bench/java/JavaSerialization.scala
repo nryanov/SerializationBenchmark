@@ -4,9 +4,10 @@ import java.io._
 
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-import project.DataUtils
+import project.{DataUtils, MixedData}
 import org.xerial.snappy._
 import java.util.zip.GZIPOutputStream
+import project.Implicits._
 
 import bench.Settings
 import net.jpountz.lz4.LZ4BlockOutputStream
@@ -25,7 +26,7 @@ object JavaSerialization extends Bench.LocalTime {
         val out = new ObjectOutputStream(new FileOutputStream(new File("javaSerialization.out")))
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         in.foreach(rs => {
           rs.foreach(data => {
             out.writeObject(data)
@@ -56,7 +57,7 @@ object JavaSerialization extends Bench.LocalTime {
         val out = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(new File("javaSerializationGzipCompression.out"))))
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         in.foreach(rs => {
           rs.foreach(data => {
             out.writeObject(data)
@@ -87,7 +88,7 @@ object JavaSerialization extends Bench.LocalTime {
         val out = new ObjectOutputStream(new SnappyOutputStream(new FileOutputStream(new File("javaSerializationSnappyCompression.out"))))
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         in.foreach(rs => {
           rs.foreach(data => {
             out.writeObject(data)
@@ -118,7 +119,7 @@ object JavaSerialization extends Bench.LocalTime {
         val out = new ObjectOutputStream(new LZ4BlockOutputStream(new FileOutputStream(new File("javaSerializationLz4Compression.out"))))
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         in.foreach(rs => {
           rs.foreach(data => {
             out.writeObject(data)

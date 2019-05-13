@@ -10,8 +10,8 @@ import org.apache.thrift.transport.TMemoryBuffer
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import org.xerial.snappy.SnappyOutputStream
-import project.DataUtils
-import thriftBenchmark.scala.MixedData
+import project.{DataUtils, MixedData}
+import project.Implicits._
 
 object ThriftSerialization extends Bench.LocalTime {
   val gen = Gen.single("input file")("input.csv")
@@ -26,14 +26,14 @@ object ThriftSerialization extends Bench.LocalTime {
         val out = new BufferedOutputStream(new FileOutputStream(new File("binaryThriftSerialization.out")))
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         val protocolFactory: TBinaryProtocol.Factory = new TBinaryProtocol.Factory()
 
         in.foreach(rs => {
           rs.foreach(data => {
             val buffer = new TMemoryBuffer(64)
             val protocol = protocolFactory.getProtocol(buffer)
-            MixedData.encode(DataUtils.dataToScalaThrift(data), protocol)
+            thriftBenchmark.scala.MixedData.encode(DataUtils.mixedDataToScalaThrift(data), protocol)
 
             out.write(ByteBuffer.allocate(4).putInt(buffer.getArray.length).array())
             out.write(buffer.getArray)
@@ -63,14 +63,14 @@ object ThriftSerialization extends Bench.LocalTime {
         val out = new SnappyOutputStream(new FileOutputStream(new File("binaryThriftSerializationSnappyCompression.out")))
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         val protocolFactory: TBinaryProtocol.Factory = new TBinaryProtocol.Factory()
 
         in.foreach(rs => {
           rs.foreach(data => {
             val buffer = new TMemoryBuffer(64)
             val protocol = protocolFactory.getProtocol(buffer)
-            MixedData.encode(DataUtils.dataToScalaThrift(data), protocol)
+            thriftBenchmark.scala.MixedData.encode(DataUtils.mixedDataToScalaThrift(data), protocol)
 
             out.write(ByteBuffer.allocate(4).putInt(buffer.getArray.length).array())
             out.write(buffer.getArray)
@@ -100,14 +100,14 @@ object ThriftSerialization extends Bench.LocalTime {
         val out = new GzipCompressorOutputStream(new FileOutputStream(new File("binaryThriftSerializationGzipCompression.out")))
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         val protocolFactory: TBinaryProtocol.Factory = new TBinaryProtocol.Factory()
 
         in.foreach(rs => {
           rs.foreach(data => {
             val buffer = new TMemoryBuffer(64)
             val protocol = protocolFactory.getProtocol(buffer)
-            MixedData.encode(DataUtils.dataToScalaThrift(data), protocol)
+            thriftBenchmark.scala.MixedData.encode(DataUtils.mixedDataToScalaThrift(data), protocol)
 
             out.write(ByteBuffer.allocate(4).putInt(buffer.getArray.length).array())
             out.write(buffer.getArray)
@@ -137,14 +137,14 @@ object ThriftSerialization extends Bench.LocalTime {
         val out = new BufferedOutputStream(new FileOutputStream(new File("compactThriftSerialization.out")))
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory()
 
         in.foreach(rs => {
           rs.foreach(data => {
             val buffer = new TMemoryBuffer(64)
             val protocol = protocolFactory.getProtocol(buffer)
-            MixedData.encode(DataUtils.dataToScalaThrift(data), protocol)
+            thriftBenchmark.scala.MixedData.encode(DataUtils.mixedDataToScalaThrift(data), protocol)
 
             out.write(ByteBuffer.allocate(4).putInt(buffer.getArray.length).array())
             out.write(buffer.getArray)
@@ -174,14 +174,14 @@ object ThriftSerialization extends Bench.LocalTime {
         val out = new SnappyOutputStream(new FileOutputStream(new File("compactThriftSerializationSnappyCompression.out")))
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory()
 
         in.foreach(rs => {
           rs.foreach(data => {
             val buffer = new TMemoryBuffer(64)
             val protocol = protocolFactory.getProtocol(buffer)
-            MixedData.encode(DataUtils.dataToScalaThrift(data), protocol)
+            thriftBenchmark.scala.MixedData.encode(DataUtils.mixedDataToScalaThrift(data), protocol)
 
             out.write(ByteBuffer.allocate(4).putInt(buffer.getArray.length).array())
             out.write(buffer.getArray)
@@ -211,14 +211,14 @@ object ThriftSerialization extends Bench.LocalTime {
         val out = new GzipCompressorOutputStream(new FileOutputStream(new File("compactThriftSerializationGzipCompression.out")))
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory()
 
         in.foreach(rs => {
           rs.foreach(data => {
             val buffer = new TMemoryBuffer(64)
             val protocol = protocolFactory.getProtocol(buffer)
-            MixedData.encode(DataUtils.dataToScalaThrift(data), protocol)
+            thriftBenchmark.scala.MixedData.encode(DataUtils.mixedDataToScalaThrift(data), protocol)
 
             out.write(ByteBuffer.allocate(4).putInt(buffer.getArray.length).array())
             out.write(buffer.getArray)

@@ -7,9 +7,10 @@ import java.util.zip.GZIPOutputStream
 import bench.Settings
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-import project.DataUtils
+import project.{DataUtils, MixedData}
 import org.msgpack.core.MessagePack
 import org.xerial.snappy.SnappyOutputStream
+import project.Implicits._
 
 object MsgpackSerialization extends Bench.LocalTime {
   val gen = Gen.single("input file")("input.csv")
@@ -25,10 +26,10 @@ object MsgpackSerialization extends Bench.LocalTime {
         val packer = MessagePack.newDefaultBufferPacker
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         in.foreach(rs => {
           rs.foreach(data => {
-            DataUtils.msgpackData(data, packer)
+            mixedDataOps.msgpack(data, packer)
             val d = packer.toByteArray
 
             out.write(ByteBuffer.allocate(4).putInt(d.length).array())
@@ -61,10 +62,10 @@ object MsgpackSerialization extends Bench.LocalTime {
         val packer = MessagePack.newDefaultBufferPacker
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         in.foreach(rs => {
           rs.foreach(data => {
-            DataUtils.msgpackData(data, packer)
+            mixedDataOps.msgpack(data, packer)
             val d = packer.toByteArray
 
             out.write(ByteBuffer.allocate(4).putInt(d.length).array())
@@ -97,10 +98,10 @@ object MsgpackSerialization extends Bench.LocalTime {
         val packer = MessagePack.newDefaultBufferPacker
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         in.foreach(rs => {
           rs.foreach(data => {
-            DataUtils.msgpackData(data, packer)
+            mixedDataOps.msgpack(data, packer)
             val d = packer.toByteArray
 
             out.write(ByteBuffer.allocate(4).putInt(d.length).array())

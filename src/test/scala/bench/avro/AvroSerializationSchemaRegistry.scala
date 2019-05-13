@@ -7,7 +7,9 @@ import com.sksamuel.avro4s.RecordFormat
 import io.confluent.kafka.serializers.{AbstractKafkaAvroSerDeConfig, KafkaAvroSerializer}
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-import project.{Data, DataUtils}
+import project.{Data, DataUtils, MixedData}
+import project.Implicits._
+
 
 object AvroSerializationSchemaRegistry extends Bench.LocalTime {
   val input = Gen.single("input file")("input.csv")
@@ -42,7 +44,7 @@ object AvroSerializationSchemaRegistry extends Bench.LocalTime {
         val out = new BufferedOutputStream(new FileOutputStream(new File("schemaRegistrySerialization.out")))
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         in.foreach(rs => {
           rs.foreach(data => {
             out.write(serializer.serialize(data))

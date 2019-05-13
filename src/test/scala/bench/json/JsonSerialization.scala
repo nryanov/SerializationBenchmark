@@ -10,10 +10,10 @@ import org.json4s.jackson.Serialization._
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import org.xerial.snappy._
-
+import project.Implicits._
 import bench.Settings
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
-import project.{Data, DataUtils}
+import project.{Data, DataUtils, MixedData}
 
 object JsonSerialization extends Bench.LocalTime {
   val gen = Gen.single("input file")("input.csv")
@@ -29,7 +29,7 @@ object JsonSerialization extends Bench.LocalTime {
         val out = new BufferedOutputStream(new FileOutputStream(new File("jsonSerialization.out")))
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         in.foreach(rs => {
           rs.foreach(data => {
             val bytes = mapper.writeValueAsBytes(write[Data](data))
@@ -62,7 +62,7 @@ object JsonSerialization extends Bench.LocalTime {
         val out = new SnappyOutputStream(new FileOutputStream(new File("jsonSerializationSnappyCompression.out")))
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         in.foreach(rs => {
           rs.foreach(data => {
             val bytes = mapper.writeValueAsBytes(write[Data](data))
@@ -95,7 +95,7 @@ object JsonSerialization extends Bench.LocalTime {
         val out = new GzipCompressorOutputStream(new FileOutputStream(new File("jsonSerializationGzipCompression.out")))
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         in.foreach(rs => {
           rs.foreach(data => {
             val bytes = mapper.writeValueAsBytes(write[Data](data))

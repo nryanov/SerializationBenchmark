@@ -8,7 +8,8 @@ import org.apache.avro.file.DataFileReader
 import org.apache.avro.generic.{GenericDatumReader, GenericRecord}
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-import project.Data
+import project.MixedData
+
 
 object AvroDeserialization extends Bench.LocalTime {
   val dataInput = Gen.single("input")("avroDataSerialization")
@@ -23,7 +24,7 @@ object AvroDeserialization extends Bench.LocalTime {
     "xz"
   )
 
-  val schema = AvroSchema[Data]
+  val schema = AvroSchema[MixedData]
 
   performance of "deserialization avro" in {
     measure method "deserialize - data" in {
@@ -32,7 +33,7 @@ object AvroDeserialization extends Bench.LocalTime {
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { s =>
-        val in = AvroInputStream.data[Data].from(new File(s"${s._1}${s._2}.out")).build(schema)
+        val in = AvroInputStream.data[MixedData].from(new File(s"${s._1}${s._2}.out")).build(schema)
         var i = 0
         val iter = in.iterator
 
@@ -52,7 +53,7 @@ object AvroDeserialization extends Bench.LocalTime {
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { s =>
-        val in = AvroInputStream.binary[Data].from(new File(s"${s._1}${s._2}.out")).build(schema)
+        val in = AvroInputStream.binary[MixedData].from(new File(s"${s._1}${s._2}.out")).build(schema)
         var i = 0
         val iter = in.iterator
 

@@ -9,7 +9,7 @@ import org.apache.hadoop.hive.ql.exec.vector._
 import org.apache.orc.{OrcFile, Reader, TypeDescription}
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-import project.Data
+import project.{Data, MixedData}
 
 object ORCDeserialization extends Bench.LocalTime {
   val conf: Configuration = new Configuration()
@@ -80,7 +80,7 @@ object ORCDeserialization extends Bench.LocalTime {
           val f20ColumnVector = batch.cols(19).asInstanceOf[BytesColumnVector]
 
           (0 until batch.size).foreach(i => {
-            val data = Data(
+            val data = MixedData(
               Option(new String(f1ColumnVector.vector(i), f1ColumnVector.start(i), f1ColumnVector.length(i), StandardCharsets.UTF_8)),
               Option(f2ColumnVector.vector(i)),
               Option(f3ColumnVector.vector(i)),

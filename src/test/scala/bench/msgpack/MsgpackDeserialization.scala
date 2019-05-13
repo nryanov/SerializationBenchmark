@@ -9,7 +9,7 @@ import org.msgpack.core.MessagePack
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import org.xerial.snappy.SnappyInputStream
-import project.DataUtils
+import project.Implicits._
 
 object MsgpackDeserialization extends Bench.LocalTime {
   val input = Gen.single("input file")("msgpackSerialization.out")
@@ -33,7 +33,7 @@ object MsgpackDeserialization extends Bench.LocalTime {
           val data = new Array[Byte](length)
           in.read(data)
           val unpacker = MessagePack.newDefaultUnpacker(data)
-          val obj = DataUtils.msgunpackData(unpacker)
+          val obj = mixedDataOps.msgunpack(unpacker)
           i += 1
           unpacker.close()
         }
@@ -59,7 +59,7 @@ object MsgpackDeserialization extends Bench.LocalTime {
           val data = new Array[Byte](length)
           in.read(data)
           val unpacker = MessagePack.newDefaultUnpacker(data)
-          val obj = DataUtils.msgunpackData(unpacker)
+          val obj = mixedDataOps.msgunpack(unpacker)
           i += 1
           unpacker.close()
         }
@@ -85,7 +85,7 @@ object MsgpackDeserialization extends Bench.LocalTime {
           val data = new Array[Byte](length)
           in.read(data)
           val unpacker = MessagePack.newDefaultUnpacker(data)
-          val obj = DataUtils.msgunpackData(unpacker)
+          val obj = mixedDataOps.msgunpack(unpacker)
           i += 1
           unpacker.close()
         }

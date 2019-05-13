@@ -8,7 +8,8 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import org.xerial.snappy.SnappyOutputStream
-import project.DataUtils
+import project.{DataUtils, MixedData}
+import project.Implicits._
 
 object ProtobufSerialization extends Bench.LocalTime {
   val gen = Gen.single("input file")("input.csv")
@@ -23,10 +24,10 @@ object ProtobufSerialization extends Bench.LocalTime {
         val out = new BufferedOutputStream(new FileOutputStream(new File("protobufSerialization.out")))
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         in.foreach(rs => {
           rs.foreach(data => {
-            val o = DataUtils.dataToScalaProtobuf(data).toByteArray
+            val o = DataUtils.mixedDataToScalaProtobuf(data).toByteArray
             val length = o.length
 
             out.write(ByteBuffer.allocate(4).putInt(length).array())
@@ -55,10 +56,10 @@ object ProtobufSerialization extends Bench.LocalTime {
         val out = new SnappyOutputStream(new FileOutputStream(new File("protobufSerializationSnappy.out")))
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         in.foreach(rs => {
           rs.foreach(data => {
-            val o = DataUtils.dataToScalaProtobuf(data).toByteArray
+            val o = DataUtils.mixedDataToScalaProtobuf(data).toByteArray
             val length = o.length
 
             out.write(ByteBuffer.allocate(4).putInt(length).array())
@@ -87,10 +88,10 @@ object ProtobufSerialization extends Bench.LocalTime {
         val out = new GzipCompressorOutputStream(new FileOutputStream(new File("protobufSerializationGzip.out")))
         var i = 0
 
-        val in = DataUtils.readCsv(file)
+        val in = DataUtils.readCsv[MixedData](file)
         in.foreach(rs => {
           rs.foreach(data => {
-            val o = DataUtils.dataToScalaProtobuf(data).toByteArray
+            val o = DataUtils.mixedDataToScalaProtobuf(data).toByteArray
             val length = o.length
 
             out.write(ByteBuffer.allocate(4).putInt(length).array())

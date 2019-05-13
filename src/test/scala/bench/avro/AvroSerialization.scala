@@ -8,7 +8,8 @@ import org.apache.avro.file.{CodecFactory, DataFileWriter}
 import org.apache.avro.generic.{GenericDatumWriter, GenericRecord}
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-import project.{Data, DataUtils}
+import project.{Data, DataUtils, MixedData}
+import project.Implicits._
 
 object AvroSerialization extends Bench.LocalTime {
   val codecs = Map(
@@ -28,7 +29,7 @@ object AvroSerialization extends Bench.LocalTime {
     "xz"
   )
 
-  val schema = AvroSchema[Data]
+  val schema = AvroSchema[MixedData]
 
   performance of "avro serialization" in {
     measure method "serialize with schema" in {
@@ -37,10 +38,10 @@ object AvroSerialization extends Bench.LocalTime {
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { s =>
-        val out = AvroOutputStream.data[Data].to(new FileOutputStream(new File(s"avroDataSerialization${s._2}.out"))).withCodec(codecs(s._2)).build(schema)
+        val out = AvroOutputStream.data[MixedData].to(new FileOutputStream(new File(s"avroDataSerialization${s._2}.out"))).withCodec(codecs(s._2)).build(schema)
         var i = 0
 
-        val in = DataUtils.readCsv(s._1)
+        val in = DataUtils.readCsv[MixedData](s._1)
         in.foreach(rs => {
           rs.foreach(data => {
             out.write(data)
@@ -68,7 +69,7 @@ object AvroSerialization extends Bench.LocalTime {
         val out = AvroOutputStream.binary[Data].to(new FileOutputStream(new File(s"avroBinarySerialization${s._2}.out"))).withCodec(codecs(s._2)).build(schema)
         var i = 0
 
-        val in = DataUtils.readCsv(s._1)
+        val in = DataUtils.readCsv[MixedData](s._1)
         in.foreach(rs => {
           rs.foreach(data => {
             out.write(data)
@@ -96,10 +97,10 @@ object AvroSerialization extends Bench.LocalTime {
         val out = new DataFileWriter[GenericRecord](new GenericDatumWriter[GenericRecord](schema)).setCodec(codecs(s._2)).create(schema, new File(s"lowLevelAvroSerialization${s._2}.out"))
         var i = 0
 
-        val in = DataUtils.readCsv(s._1)
+        val in = DataUtils.readCsv[MixedData](s._1)
         in.foreach(rs => {
           rs.foreach(data => {
-            out.append(DataUtils.dataToGenericRecord(data, schema))
+            out.append(mixedDataOps.toGenericRecord(data))
             i += 1
 
             if (i == Settings.flushInterval) {

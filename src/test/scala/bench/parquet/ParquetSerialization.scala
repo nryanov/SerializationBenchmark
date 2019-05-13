@@ -1,6 +1,6 @@
 package bench.parquet
 
-import org.apache.avro.generic.GenericData
+import org.apache.avro.generic.{GenericData, GenericRecord}
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.parquet.avro.AvroParquetWriter
@@ -9,8 +9,11 @@ import org.apache.parquet.hadoop.metadata.CompressionCodecName
 import org.apache.parquet.thrift.ThriftParquetWriter
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-import project.DataUtils
+import project.{DataUtils, MixedData}
 import bench.Settings
+import com.sksamuel.avro4s.AvroSchema
+import org.apache.avro.Schema
+import project.Implicits._
 
 object ParquetSerialization extends Bench.LocalTime {
   val gen = Gen.single("input file")("input.csv")
@@ -20,6 +23,8 @@ object ParquetSerialization extends Bench.LocalTime {
     CompressionCodecName.GZIP
   )
 
+  val mixedDataschema: Schema = AvroSchema[MixedData]
+
   performance of "parquet serialization" in {
     measure method "parquet-avro serialize" in {
       using(Gen.crossProduct(gen, compression)) config(
@@ -27,9 +32,9 @@ object ParquetSerialization extends Bench.LocalTime {
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { file =>
-        val in = DataUtils.readCsv(file._1)
-        val parquetWriter: ParquetWriter[GenericData.Record] = AvroParquetWriter.builder[GenericData.Record](new Path(s"file://${System.getProperty("user.dir")}/parquetAvroSerialization${file._2.name()}.out"))
-          .withSchema(DataUtils.schema)
+        val in = DataUtils.readCsv[MixedData](file._1)
+        val parquetWriter: ParquetWriter[GenericRecord] = AvroParquetWriter.builder[GenericRecord](new Path(s"file://${System.getProperty("user.dir")}/parquetAvroSerialization${file._2.name()}.out"))
+          .withSchema(mixedDataschema)
           .enableValidation()
           .enableDictionaryEncoding()
           .withCompressionCodec(file._2)
@@ -38,7 +43,7 @@ object ParquetSerialization extends Bench.LocalTime {
 
         in.foreach(rs => {
           rs.foreach(data => {
-            parquetWriter.write(DataUtils.dataToGenericRecord(data))
+            parquetWriter.write(mixedDataOps.toGenericRecord(data))
           })
         })
 
@@ -53,7 +58,7 @@ object ParquetSerialization extends Bench.LocalTime {
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { file =>
-        val in = DataUtils.readCsv(file._1)
+        val in = DataUtils.readCsv[MixedData](file._1)
         val out = new Path(s"file://${System.getProperty("user.dir")}/parquetThriftSerialization${file._2.name()}.out")
         val fs = FileSystem.get(new Configuration())
         if (fs.exists(out)) {
@@ -72,7 +77,7 @@ object ParquetSerialization extends Bench.LocalTime {
 
         in.foreach(rs => {
           rs.foreach(data => {
-            parquetWriter.write(DataUtils.dataToJavaThrift(data))
+            parquetWriter.write(DataUtils.mixedDataToJavaThrift(data))
           })
         })
 
