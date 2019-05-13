@@ -11,7 +11,7 @@ import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import org.xerial.snappy.SnappyOutputStream
 import project.DataUtils
-import thriftBenchmark.scala.DataThrift
+import thriftBenchmark.scala.MixedData
 
 object ThriftSerialization extends Bench.LocalTime {
   val gen = Gen.single("input file")("input.csv")
@@ -33,7 +33,7 @@ object ThriftSerialization extends Bench.LocalTime {
           rs.foreach(data => {
             val buffer = new TMemoryBuffer(64)
             val protocol = protocolFactory.getProtocol(buffer)
-            DataThrift.encode(DataUtils.dataToScalaThrift(data), protocol)
+            MixedData.encode(DataUtils.dataToScalaThrift(data), protocol)
 
             out.write(ByteBuffer.allocate(4).putInt(buffer.getArray.length).array())
             out.write(buffer.getArray)
@@ -70,7 +70,7 @@ object ThriftSerialization extends Bench.LocalTime {
           rs.foreach(data => {
             val buffer = new TMemoryBuffer(64)
             val protocol = protocolFactory.getProtocol(buffer)
-            DataThrift.encode(DataUtils.dataToScalaThrift(data), protocol)
+            MixedData.encode(DataUtils.dataToScalaThrift(data), protocol)
 
             out.write(ByteBuffer.allocate(4).putInt(buffer.getArray.length).array())
             out.write(buffer.getArray)
@@ -107,7 +107,7 @@ object ThriftSerialization extends Bench.LocalTime {
           rs.foreach(data => {
             val buffer = new TMemoryBuffer(64)
             val protocol = protocolFactory.getProtocol(buffer)
-            DataThrift.encode(DataUtils.dataToScalaThrift(data), protocol)
+            MixedData.encode(DataUtils.dataToScalaThrift(data), protocol)
 
             out.write(ByteBuffer.allocate(4).putInt(buffer.getArray.length).array())
             out.write(buffer.getArray)
@@ -144,7 +144,7 @@ object ThriftSerialization extends Bench.LocalTime {
           rs.foreach(data => {
             val buffer = new TMemoryBuffer(64)
             val protocol = protocolFactory.getProtocol(buffer)
-            DataThrift.encode(DataUtils.dataToScalaThrift(data), protocol)
+            MixedData.encode(DataUtils.dataToScalaThrift(data), protocol)
 
             out.write(ByteBuffer.allocate(4).putInt(buffer.getArray.length).array())
             out.write(buffer.getArray)
@@ -181,7 +181,7 @@ object ThriftSerialization extends Bench.LocalTime {
           rs.foreach(data => {
             val buffer = new TMemoryBuffer(64)
             val protocol = protocolFactory.getProtocol(buffer)
-            DataThrift.encode(DataUtils.dataToScalaThrift(data), protocol)
+            MixedData.encode(DataUtils.dataToScalaThrift(data), protocol)
 
             out.write(ByteBuffer.allocate(4).putInt(buffer.getArray.length).array())
             out.write(buffer.getArray)
@@ -218,7 +218,7 @@ object ThriftSerialization extends Bench.LocalTime {
           rs.foreach(data => {
             val buffer = new TMemoryBuffer(64)
             val protocol = protocolFactory.getProtocol(buffer)
-            DataThrift.encode(DataUtils.dataToScalaThrift(data), protocol)
+            MixedData.encode(DataUtils.dataToScalaThrift(data), protocol)
 
             out.write(ByteBuffer.allocate(4).putInt(buffer.getArray.length).array())
             out.write(buffer.getArray)

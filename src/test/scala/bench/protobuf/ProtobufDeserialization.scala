@@ -32,7 +32,7 @@ object ProtobufDeserialization extends Bench.LocalTime {
           val length = ByteBuffer.wrap(lengthBytes).getInt
           val buffer = new Array[Byte](length)
           in.read(buffer)
-          val obj = protobufBenchmark.data.Data.parseFrom(buffer)
+          val obj = protobufBenchmark.data.MixedData.parseFrom(buffer)
           i += 1
           in.mark(1)
         }
@@ -57,7 +57,7 @@ object ProtobufDeserialization extends Bench.LocalTime {
           val length = ByteBuffer.wrap(lengthBytes).getInt
           val buffer = new Array[Byte](length)
           in.read(buffer)
-          val obj = protobufBenchmark.data.Data.parseFrom(buffer)
+          val obj = protobufBenchmark.data.MixedData.parseFrom(buffer)
           i += 1
         }
 
@@ -82,7 +82,7 @@ object ProtobufDeserialization extends Bench.LocalTime {
           val length = ByteBuffer.wrap(lengthBytes).getInt
           val buffer = new Array[Byte](length)
           in.read(buffer)
-          val obj = protobufBenchmark.data.Data.parseFrom(buffer)
+          val obj = protobufBenchmark.data.MixedData.parseFrom(buffer)
           i += 1
           cnt = in.read(lengthBytes)
         }

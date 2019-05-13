@@ -60,9 +60,9 @@ object ParquetSerialization extends Bench.LocalTime {
           fs.delete(out, false)
         }
 
-        val parquetWriter = new ThriftParquetWriter[thriftBenchmark.java.DataThrift](
+        val parquetWriter = new ThriftParquetWriter[thriftBenchmark.java.MixedData](
           out,
-          classOf[thriftBenchmark.java.DataThrift],
+          classOf[thriftBenchmark.java.MixedData],
           file._2,
           ParquetWriter.DEFAULT_BLOCK_SIZE,
           ParquetWriter.DEFAULT_PAGE_SIZE,

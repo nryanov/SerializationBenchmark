@@ -8,7 +8,7 @@ import org.apache.thrift.transport.{TIOStreamTransport, TMemoryBuffer}
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import org.xerial.snappy.SnappyInputStream
-import thriftBenchmark.scala.DataThrift
+import thriftBenchmark.scala.MixedData
 import bench.Settings
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 
@@ -40,7 +40,7 @@ object ThriftDeserialization extends Bench.LocalTime {
           in.read(data)
           buffer.write(data)
           val protocol = protocolFactory.getProtocol(buffer)
-          val obj = DataThrift.decode(protocol)
+          val obj = MixedData.decode(protocol)
           i += 1
           buffer.close()
         }
@@ -69,7 +69,7 @@ object ThriftDeserialization extends Bench.LocalTime {
           in.read(data)
           buffer.write(data)
           val protocol = protocolFactory.getProtocol(buffer)
-          val obj = DataThrift.decode(protocol)
+          val obj = MixedData.decode(protocol)
           i += 1
           buffer.close()
         }
@@ -99,7 +99,7 @@ object ThriftDeserialization extends Bench.LocalTime {
           in.read(data)
           buffer.write(data)
           val protocol = protocolFactory.getProtocol(buffer)
-          val obj = DataThrift.decode(protocol)
+          val obj = MixedData.decode(protocol)
           i += 1
           buffer.close()
           cnt = in.read(lengthBytes)
@@ -131,7 +131,7 @@ object ThriftDeserialization extends Bench.LocalTime {
           in.read(data)
           buffer.write(data)
           val protocol = protocolFactory.getProtocol(buffer)
-          val obj = DataThrift.decode(protocol)
+          val obj = MixedData.decode(protocol)
           i += 1
           buffer.close()
         }
@@ -162,7 +162,7 @@ object ThriftDeserialization extends Bench.LocalTime {
           in.read(data)
           buffer.write(data)
           val protocol = protocolFactory.getProtocol(buffer)
-          val obj = DataThrift.decode(protocol)
+          val obj = MixedData.decode(protocol)
           i += 1
           buffer.close()
         }
@@ -194,7 +194,7 @@ object ThriftDeserialization extends Bench.LocalTime {
           in.read(data)
           buffer.write(data)
           val protocol = protocolFactory.getProtocol(buffer)
-          val obj = DataThrift.decode(protocol)
+          val obj = MixedData.decode(protocol)
           i += 1
           buffer.close()
           cnt = in.read(lengthBytes)

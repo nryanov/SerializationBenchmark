@@ -8,7 +8,7 @@ import kantan.csv._
 import kantan.csv.ops._
 import org.apache.avro.Schema
 import org.apache.avro.generic.{GenericData, GenericRecord}
-import org.msgpack.core.{MessageBufferPacker, MessagePack, MessageUnpacker}
+import org.msgpack.core.{MessageBufferPacker, MessageUnpacker}
 
 import scala.util.Random
 
@@ -92,14 +92,14 @@ object DataUtils {
     record
   }
 
-  def dataToScalaThrift(data: Data): thriftBenchmark.scala.DataThrift = thriftBenchmark.scala.DataThrift(
+  def dataToScalaThrift(data: Data): thriftBenchmark.scala.MixedData = thriftBenchmark.scala.MixedData(
     data.f1, data.f2, data.f3, data.f4, data.f5, data.f6, data.f7,
     data.f8, data.f9, data.f10, data.f11.map(_.toDouble), data.f12, data.f13,
     data.f14, data.f15, data.f16, data.f17, data.f18, data.f19, data.f20
   )
 
-  def dataToJavaThrift(data: Data): thriftBenchmark.java.DataThrift = {
-    val r = new thriftBenchmark.java.DataThrift()
+  def dataToJavaThrift(data: Data): thriftBenchmark.java.MixedData = {
+    val r = new thriftBenchmark.java.MixedData()
 
     r.f1 = data.f1.orNull
     r.f2 = data.f2.getOrElse(0.0)
@@ -125,7 +125,7 @@ object DataUtils {
     r
   }
 
-  def dataToScalaProtobuf(data: Data): protobufBenchmark.data.Data = protobufBenchmark.data.Data(
+  def dataToScalaProtobuf(data: Data): protobufBenchmark.data.MixedData = protobufBenchmark.data.MixedData(
     data.f1.getOrElse(""),
     data.f2.getOrElse(0.0),
     data.f3.getOrElse(0),

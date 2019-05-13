@@ -56,8 +56,8 @@ object ParquetDeserialization extends Bench.LocalTime {
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { file =>
         val inputFile = new Path(s"file://${System.getProperty("user.dir")}/$file")
-        val in: ParquetReader[thriftBenchmark.java.DataThrift] = ThriftParquetReader.build[thriftBenchmark.java.DataThrift](inputFile)
-          .withThriftClass(classOf[thriftBenchmark.java.DataThrift])
+        val in: ParquetReader[thriftBenchmark.java.MixedData] = ThriftParquetReader.build[thriftBenchmark.java.MixedData](inputFile)
+          .withThriftClass(classOf[thriftBenchmark.java.MixedData])
           .build()
 
         var i = 0
