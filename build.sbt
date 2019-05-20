@@ -59,3 +59,5 @@ PB.targets in Compile := Seq(
 )
 
 (Compile / compile) := ((Compile / compile) dependsOn (Compile / scroogeGen)).value
+
+parallelExecution in Test := false

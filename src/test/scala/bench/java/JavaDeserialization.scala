@@ -13,88 +13,33 @@ import net.jpountz.lz4.LZ4BlockInputStream
 
 
 object JavaDeserialization extends Bench.LocalTime {
-  val javaFile = Gen.single("input file")("javaSerialization.out")
-  val javaFileSnappy = Gen.single("input file")("javaSerializationSnappyCompression.out")
-  val javaFileGzip = Gen.single("input file")("javaSerializationGzipCompression.out")
-  val javaFileLz4 = Gen.single("input file")("javaSerializationLz4Compression.out")
+  @volatile
+  var data: Data = _
+
+  val streams = Map(
+    "none" -> ((dataType: String) => new ObjectInputStream(new FileInputStream(new File(s"${dataType}JavaSerialization.out")))),
+    "gzip" -> ((dataType: String) => new ObjectInputStream(new GZIPInputStream(new FileInputStream(new File(s"${dataType}JavaSerializationGzip.out"))))),
+    "snappy" -> ((dataType: String) => new ObjectInputStream(new SnappyInputStream(new FileInputStream(new File(s"${dataType}JavaSerializationSnappy.out"))))),
+    "lz4" -> ((dataType: String) => new ObjectInputStream(new LZ4BlockInputStream(new FileInputStream(new File(s"${dataType}JavaSerializationLz4.out"))))),
+  )
+
+  val dataType = Gen.enumeration("input file")( "onlyLongs", "mixedData", "onlyStrings")
+  val compression = Gen.enumeration("compression")("none", "gzip", "snappy", "lz4")
 
   performance of "java deserialization" in {
     measure method "deserialize" in {
-      using(javaFile) config(
+      using(Gen.crossProduct(dataType, compression)) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { file =>
-        val in = new ObjectInputStream(new FileInputStream(new File(file)))
+      ) in { gen =>
+        val in = streams(gen._2)(gen._1)
         var i = 0
 
         var next = in.readObject()
         while (next != null) {
           i += 1
-          val data = next.asInstanceOf[Data]
-          next = in.readObject()
-        }
-
-        assert(i == Settings.recordsCount)
-        in.close()
-      }
-    }
-
-    measure method "deserialize - snappy" in {
-      using(javaFileSnappy) config(
-        exec.benchRuns -> Settings.benchRuns,
-        exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { file =>
-        val in = new ObjectInputStream(new SnappyInputStream(new FileInputStream(new File(file))))
-        var i = 0
-
-        var next = in.readObject()
-        while (next != null) {
-          i += 1
-          val data = next.asInstanceOf[Data]
-          next = in.readObject()
-        }
-
-        assert(i == Settings.recordsCount)
-        in.close()
-      }
-    }
-
-    measure method "deserialize - gzip" in {
-      using(javaFileGzip) config(
-        exec.benchRuns -> Settings.benchRuns,
-        exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { file =>
-        val in = new ObjectInputStream(new GZIPInputStream(new FileInputStream(new File(file))))
-        var i = 0
-
-        var next = in.readObject()
-        while (next != null) {
-          i += 1
-          val data = next.asInstanceOf[Data]
-          next = in.readObject()
-        }
-
-        assert(i == Settings.recordsCount)
-        in.close()
-      }
-    }
-
-    measure method "deserialize - lz4" in {
-      using(javaFileLz4) config(
-        exec.benchRuns -> Settings.benchRuns,
-        exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { file =>
-        val in = new ObjectInputStream(new LZ4BlockInputStream(new FileInputStream(new File(file))))
-        var i = 0
-
-        var next = in.readObject()
-        while (next != null) {
-          i += 1
-          val data = next.asInstanceOf[Data]
+          data = next.asInstanceOf[Data]
           next = in.readObject()
         }
 
