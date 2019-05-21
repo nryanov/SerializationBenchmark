@@ -4,11 +4,11 @@ import java.io.{File, FileOutputStream}
 
 import bench.Settings
 import com.sksamuel.avro4s.{AvroOutputStream, AvroSchema}
-import org.apache.avro.file.{CodecFactory, DataFileWriter}
-import org.apache.avro.generic.{GenericDatumWriter, GenericRecord}
+import org.apache.avro.Schema
+import org.apache.avro.file.CodecFactory
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-import project.{Data, DataUtils, MixedData}
+import project._
 import project.Implicits._
 
 object AvroSerialization extends Bench.LocalTime {
@@ -20,7 +20,17 @@ object AvroSerialization extends Bench.LocalTime {
     "xz" -> CodecFactory.xzCodec(CodecFactory.DEFAULT_XZ_LEVEL)
   )
 
-  val input = Gen.single("input file")("input.csv")
+  val streams = Map(
+    "data" -> ((dataType: String, codec: String, schema: Schema) => AvroOutputStream.data[Data].to(new FileOutputStream(new File(s"${dataType}AvroDataSerialization$codec.out"))).withCodec(codecs(codec)).build(schema)),
+    "binary" -> ((dataType: String, codec: String, schema: Schema) => AvroOutputStream.binary[Data].to(new FileOutputStream(new File(s"${dataType}AvroBinarySerialization$codec.out"))).withCodec(codecs(codec)).build(schema))
+  )
+
+  val inputs = Map(
+    "mixedData" -> (() => (AvroSchema[MixedData], DataUtils.readCsv[MixedData]("mixedDataInput.csv"))),
+    "onlyStrings" -> (() => (AvroSchema[OnlyStrings], DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv"))),
+    "onlyLongs" -> (() => (AvroSchema[OnlyLongs], DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv")))
+  )
+
   val codec = Gen.enumeration("codec")(
     "none",
     "snappy",
@@ -29,78 +39,28 @@ object AvroSerialization extends Bench.LocalTime {
     "xz"
   )
 
-  val schema = AvroSchema[MixedData]
+  val format = Gen.enumeration("format")(
+    "data",
+    // binary do not use compression codec
+//    "binary"
+  )
+  val dataType = Gen.enumeration("data type")("onlyLongs", "mixedData", "onlyStrings")
 
   performance of "avro serialization" in {
     measure method "serialize with schema" in {
-      using(Gen.crossProduct(input, codec)) config(
+      using(Gen.crossProduct(dataType, codec, format)) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { s =>
-        val out = AvroOutputStream.data[MixedData].to(new FileOutputStream(new File(s"avroDataSerialization${s._2}.out"))).withCodec(codecs(s._2)).build(schema)
+      ) in { gen =>
         var i = 0
 
-        val in = DataUtils.readCsv[MixedData](s._1)
+        val (schema, in) = inputs(gen._1)()
+        val out = streams(gen._3)(gen._1, gen._2, schema)
+
         in.foreach(rs => {
           rs.foreach(data => {
             out.write(data)
-            i += 1
-
-            if (i == Settings.flushInterval) {
-              out.flush()
-              i = 0
-            }
-          })
-        })
-
-        out.flush()
-        out.close()
-        in.close()
-      }
-    }
-
-    measure method "binary serialization without schema" in {
-      using(Gen.crossProduct(input, codec)) config(
-        exec.benchRuns -> Settings.benchRuns,
-        exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { s =>
-        val out = AvroOutputStream.binary[Data].to(new FileOutputStream(new File(s"avroBinarySerialization${s._2}.out"))).withCodec(codecs(s._2)).build(schema)
-        var i = 0
-
-        val in = DataUtils.readCsv[MixedData](s._1)
-        in.foreach(rs => {
-          rs.foreach(data => {
-            out.write(data)
-            i += 1
-
-            if (i == Settings.flushInterval) {
-              out.flush()
-              i = 0
-            }
-          })
-        })
-
-        out.flush()
-        out.close()
-        in.close()
-      }
-    }
-
-    measure method "low-level API avro serialization" in {
-      using(Gen.crossProduct(input, codec)) config(
-        exec.benchRuns -> Settings.benchRuns,
-        exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { s =>
-        val out = new DataFileWriter[GenericRecord](new GenericDatumWriter[GenericRecord](schema)).setCodec(codecs(s._2)).create(schema, new File(s"lowLevelAvroSerialization${s._2}.out"))
-        var i = 0
-
-        val in = DataUtils.readCsv[MixedData](s._1)
-        in.foreach(rs => {
-          rs.foreach(data => {
-            out.append(mixedDataOps.toGenericRecord(data))
             i += 1
 
             if (i == Settings.flushInterval) {

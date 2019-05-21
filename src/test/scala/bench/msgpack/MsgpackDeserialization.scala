@@ -1,39 +1,45 @@
 package bench.msgpack
 
-import java.io.{BufferedInputStream, File, FileInputStream}
-import java.nio.ByteBuffer
-import java.util.zip.GZIPInputStream
+import java.io.{File, FileInputStream}
 
 import bench.Settings
+import net.jpountz.lz4.LZ4BlockInputStream
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.msgpack.core.MessagePack
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import org.xerial.snappy.SnappyInputStream
+import project.Data
 import project.Implicits._
 
 object MsgpackDeserialization extends Bench.LocalTime {
-  val input = Gen.single("input file")("msgpackSerialization.out")
-  val inputSnappy = Gen.single("input file")("msgpackSerializationSnappy.out")
-  val inputGzip = Gen.single("input file")("msgpackSerializationGzip.out")
+  @volatile
+  var data: Data = _
 
+  val streams = Map(
+    "none" -> ((dataType: String) => new FileInputStream(new File(s"${dataType}MsgpackSerialization.out"))),
+    "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(new File(s"${dataType}MsgpackSerializationGzip.out")))),
+    "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(new File(s"${dataType}MsgpackSerializationSnappy.out")))),
+    "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(new File(s"${dataType}MsgpackSerializationLz4.out")))),
+  )
+
+  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
   performance of "msgpack deserialization" in {
-    measure method "deserialize" in {
-      using(input) config(
+    measure method "deserialize - mixed data" in {
+      using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { file =>
-        val in = new BufferedInputStream(new FileInputStream(new File(file)))
+      ) in { gen =>
+        val in = MessagePack.newDefaultUnpacker(streams(gen)("mixedData"))
         var i = 0
 
-        while (in.available() > 0) {
-          val lengthBytes = new Array[Byte](4)
-          in.read(lengthBytes)
-          val length = ByteBuffer.wrap(lengthBytes).getInt
-          val data = new Array[Byte](length)
-          in.read(data)
-          val unpacker = MessagePack.newDefaultUnpacker(data)
-          val obj = mixedDataOps.msgunpack(unpacker)
+        while (in.hasNext) {
+          val length = in.unpackInt()
+          val buffer = in.readPayload(length)
+
+          val unpacker = MessagePack.newDefaultUnpacker(buffer)
+          data = mixedDataOps.msgunpack(unpacker)
           i += 1
           unpacker.close()
         }
@@ -43,23 +49,21 @@ object MsgpackDeserialization extends Bench.LocalTime {
       }
     }
 
-    measure method "deserialize - snappy" in {
-      using(inputSnappy) config(
+    measure method "deserialize - only strings" in {
+      using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { file =>
-        val in = new SnappyInputStream(new FileInputStream(new File(file)))
+      ) in { gen =>
+        val in = MessagePack.newDefaultUnpacker(streams(gen)("onlyStrings"))
         var i = 0
 
-        while (in.available() > 0) {
-          val lengthBytes = new Array[Byte](4)
-          in.read(lengthBytes)
-          val length = ByteBuffer.wrap(lengthBytes).getInt
-          val data = new Array[Byte](length)
-          in.read(data)
-          val unpacker = MessagePack.newDefaultUnpacker(data)
-          val obj = mixedDataOps.msgunpack(unpacker)
+        while (in.hasNext) {
+          val length = in.unpackInt()
+          val buffer = in.readPayload(length)
+
+          val unpacker = MessagePack.newDefaultUnpacker(buffer)
+          data = onlyStringOps.msgunpack(unpacker)
           i += 1
           unpacker.close()
         }
@@ -69,23 +73,21 @@ object MsgpackDeserialization extends Bench.LocalTime {
       }
     }
 
-    measure method "deserialize - gzip" in {
-      using(inputGzip) config(
+    measure method "deserialize - only longs" in {
+      using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { file =>
-        val in = new GZIPInputStream(new FileInputStream(new File(file)))
+      ) in { gen =>
+        val in = MessagePack.newDefaultUnpacker(streams(gen)("onlyLongs"))
         var i = 0
 
-        while (in.available() > 0) {
-          val lengthBytes = new Array[Byte](4)
-          in.read(lengthBytes)
-          val length = ByteBuffer.wrap(lengthBytes).getInt
-          val data = new Array[Byte](length)
-          in.read(data)
-          val unpacker = MessagePack.newDefaultUnpacker(data)
-          val obj = mixedDataOps.msgunpack(unpacker)
+        while (in.hasNext) {
+          val length = in.unpackInt()
+          val buffer = in.readPayload(length)
+
+          val unpacker = MessagePack.newDefaultUnpacker(buffer)
+          data = onlyLongsOps.msgunpack(unpacker)
           i += 1
           unpacker.close()
         }

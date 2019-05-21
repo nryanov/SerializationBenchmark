@@ -1,20 +1,29 @@
 package bench.avro
 
-import java.io.File
+import java.io.{File, FileInputStream}
 
 import bench.Settings
 import com.sksamuel.avro4s.{AvroInputStream, AvroSchema}
-import org.apache.avro.file.DataFileReader
-import org.apache.avro.generic.{GenericDatumReader, GenericRecord}
+import org.apache.avro.Schema
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-import project.MixedData
+import project._
 
 
 object AvroDeserialization extends Bench.LocalTime {
-  val dataInput = Gen.single("input")("avroDataSerialization")
-  val binaryInput = Gen.single("input")("avroBinarySerialization")
-  val lowLevelInput = Gen.single("input")("lowLevelAvroSerialization")
+  @volatile
+  var data: Data = _
+
+  val streams = Map(
+    "data" -> ((dataType: String, codec: String, schema: Schema) => AvroInputStream.data[Data].from(new FileInputStream(new File(s"${dataType}AvroDataSerialization$codec.out"))).build(schema)),
+    "binary" -> ((dataType: String, codec: String, schema: Schema) => AvroInputStream.binary[Data].from(new FileInputStream(new File(s"${dataType}AvroBinarySerialization$codec.out"))).build(schema))
+  )
+
+  val schemas = Map(
+    "mixedData" -> AvroSchema[MixedData],
+    "onlyStrings" -> AvroSchema[OnlyStrings],
+    "onlyLongs" -> AvroSchema[OnlyLongs]
+  )
 
   val codec = Gen.enumeration("codec")(
     "none",
@@ -24,62 +33,26 @@ object AvroDeserialization extends Bench.LocalTime {
     "xz"
   )
 
-  val schema = AvroSchema[MixedData]
+  val format = Gen.enumeration("format")(
+    "data",
+//    "binary"
+  )
+  val dataType = Gen.enumeration("data type")("onlyLongs", "mixedData", "onlyStrings")
 
   performance of "deserialization avro" in {
     measure method "deserialize - data" in {
-      using(Gen.crossProduct(dataInput, codec)) config (
+      using(Gen.crossProduct(dataType, codec, format)) config (
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { s =>
-        val in = AvroInputStream.data[MixedData].from(new File(s"${s._1}${s._2}.out")).build(schema)
+      ) in { gen =>
+        val schema = schemas(gen._1)
+        val in = streams(gen._3)(gen._1, gen._2, schema)
         var i = 0
         val iter = in.iterator
 
         while(iter.nonEmpty) {
-          val next = iter.next()
-          i += 1
-        }
-
-        in.close()
-        assert(i == Settings.recordsCount)
-      }
-    }
-
-    measure method "deserialize - binary" in {
-      using(Gen.crossProduct(binaryInput, codec)) config (
-        exec.benchRuns -> Settings.benchRuns,
-        exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { s =>
-        val in = AvroInputStream.binary[MixedData].from(new File(s"${s._1}${s._2}.out")).build(schema)
-        var i = 0
-        val iter = in.iterator
-
-        while(iter.nonEmpty) {
-          val next = iter.next()
-          i += 1
-        }
-
-        in.close()
-        assert(i == Settings.recordsCount)
-      }
-    }
-
-    measure method "deserialize - low-level" in {
-      using(Gen.crossProduct(lowLevelInput, codec)) config (
-        exec.benchRuns -> Settings.benchRuns,
-        exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { s =>
-        val in = new DataFileReader[GenericRecord](new File(s"${s._1}${s._2}.out"), new GenericDatumReader[GenericRecord](schema))
-        var i = 0
-
-        val iter = in.iterator
-
-        while(iter.hasNext) {
-          val next = iter.next()
+          data = iter.next()
           i += 1
         }
 

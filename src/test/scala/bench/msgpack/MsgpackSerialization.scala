@@ -1,39 +1,46 @@
 package bench.msgpack
 
-import java.io.{BufferedOutputStream, File, FileOutputStream, ObjectOutputStream}
-import java.nio.ByteBuffer
-import java.util.zip.GZIPOutputStream
+import java.io.{File, FileOutputStream}
 
 import bench.Settings
+import net.jpountz.lz4.LZ4BlockOutputStream
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-import project.{DataUtils, MixedData}
+import project.{DataUtils, MixedData, OnlyLongs, OnlyStrings}
 import org.msgpack.core.MessagePack
 import org.xerial.snappy.SnappyOutputStream
 import project.Implicits._
 
 object MsgpackSerialization extends Bench.LocalTime {
-  val gen = Gen.single("input file")("input.csv")
+  val streams = Map(
+    "none" -> ((dataType: String) => new FileOutputStream(new File(s"${dataType}MsgpackSerialization.out"))),
+    "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(new File(s"${dataType}MsgpackSerializationGzip.out")))),
+    "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(new File(s"${dataType}MsgpackSerializationSnappy.out")))),
+    "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}MsgpackSerializationLz4.out")))),
+  )
+
+  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
 
   performance of "msgpack serialization" in {
-    measure method "serialize" in {
-      using(gen) config(
+    measure method "serialize - mixed data" in {
+      using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { file =>
-        val out = new BufferedOutputStream(new FileOutputStream(new File("msgpackSerialization.out")))
+      ) in { gen =>
+        val out = MessagePack.newDefaultPacker(streams(gen)("mixedData"))
         val packer = MessagePack.newDefaultBufferPacker
         var i = 0
 
-        val in = DataUtils.readCsv[MixedData](file)
+        val in = DataUtils.readCsv[MixedData]("mixedDataInput.csv")
         in.foreach(rs => {
           rs.foreach(data => {
             mixedDataOps.msgpack(data, packer)
             val d = packer.toByteArray
 
-            out.write(ByteBuffer.allocate(4).putInt(d.length).array())
-            out.write(d)
+            out.packInt(d.length)
+            out.writePayload(d)
 
             packer.clear()
             i += 1
@@ -52,24 +59,24 @@ object MsgpackSerialization extends Bench.LocalTime {
       }
     }
 
-    measure method "serialize - snappy" in {
-      using(gen) config(
+    measure method "serialize - only strings" in {
+      using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { file =>
-        val out = new SnappyOutputStream(new FileOutputStream(new File("msgpackSerializationSnappy.out")))
+      ) in { gen =>
+        val out = MessagePack.newDefaultPacker(streams(gen)("onlyStrings"))
         val packer = MessagePack.newDefaultBufferPacker
         var i = 0
 
-        val in = DataUtils.readCsv[MixedData](file)
+        val in = DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv")
         in.foreach(rs => {
           rs.foreach(data => {
-            mixedDataOps.msgpack(data, packer)
+            onlyStringOps.msgpack(data, packer)
             val d = packer.toByteArray
 
-            out.write(ByteBuffer.allocate(4).putInt(d.length).array())
-            out.write(d)
+            out.packInt(d.length)
+            out.writePayload(d)
 
             packer.clear()
             i += 1
@@ -88,24 +95,24 @@ object MsgpackSerialization extends Bench.LocalTime {
       }
     }
 
-    measure method "serialize - gzip" in {
-      using(gen) config(
+    measure method "serialize - only longs" in {
+      using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { file =>
-        val out = new GZIPOutputStream(new FileOutputStream(new File("msgpackSerializationGzip.out")))
+      ) in { gen =>
+        val out = MessagePack.newDefaultPacker(streams(gen)("onlyLongs"))
         val packer = MessagePack.newDefaultBufferPacker
         var i = 0
 
-        val in = DataUtils.readCsv[MixedData](file)
+        val in = DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv")
         in.foreach(rs => {
           rs.foreach(data => {
-            mixedDataOps.msgpack(data, packer)
+            onlyLongsOps.msgpack(data, packer)
             val d = packer.toByteArray
 
-            out.write(ByteBuffer.allocate(4).putInt(d.length).array())
-            out.write(d)
+            out.packInt(d.length)
+            out.writePayload(d)
 
             packer.clear()
             i += 1
