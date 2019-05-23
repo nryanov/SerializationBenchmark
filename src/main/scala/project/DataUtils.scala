@@ -45,26 +45,26 @@ object DataUtils {
   def mixedDataToJavaThrift(data: MixedData): thriftBenchmark.java.MixedData = {
     val r = new thriftBenchmark.java.MixedData()
 
-    r.f1 = data.f1.orNull
-    r.f2 = data.f2.getOrElse(0.0)
-    r.f3 = data.f3.getOrElse(0)
-    r.f4 = data.f4.getOrElse(0)
-    r.f5 = data.f5.orNull
-    r.f6 = data.f6.getOrElse(0.0)
-    r.f7 = data.f7.getOrElse(0)
-    r.f8 = data.f8.getOrElse(0)
-    r.f9 = data.f9.getOrElse(0)
-    r.f10 = data.f10.getOrElse(0)
-    r.f11 = data.f11.map(_.toDouble).getOrElse(0.0)
-    r.f12 = data.f12.getOrElse(0.0)
-    r.f13 = data.f13.orNull
-    r.f14 = data.f14.orNull
-    r.f15 = data.f15.getOrElse(0)
-    r.f16 = data.f16.getOrElse(0)
-    r.f17 = data.f17.getOrElse(0)
-    r.f18 = data.f18.orNull
-    r.f19 = data.f19.orNull
-    r.f20 = data.f20.orNull
+    r.setF1(data.f1.orNull)
+    r.setF2(data.f2.getOrElse(0.0))
+    r.setF3(data.f3.getOrElse(0))
+    r.setF4(data.f4.getOrElse(0))
+    r.setF5(data.f5.orNull)
+    r.setF6(data.f6.getOrElse(0.0))
+    r.setF7(data.f7.getOrElse(0))
+    r.setF8(data.f8.getOrElse(0))
+    r.setF9(data.f9.getOrElse(0))
+    r.setF10(data.f10.getOrElse(0))
+    r.setF11(data.f11.map(_.toDouble).getOrElse(0.0))
+    r.setF12(data.f12.getOrElse(0.0))
+    r.setF13(data.f13.orNull)
+    r.setF14(data.f14.orNull)
+    r.setF15(data.f15.getOrElse(0))
+    r.setF16(data.f16.getOrElse(0))
+    r.setF17(data.f17.getOrElse(0))
+    r.setF18(data.f18.orNull)
+    r.setF19(data.f19.orNull)
+    r.setF20(data.f20.orNull)
 
     r
   }
@@ -72,26 +72,26 @@ object DataUtils {
   def onlyStringsToJavaThrift(data: OnlyStrings): thriftBenchmark.java.OnlyStrings = {
     val r = new thriftBenchmark.java.OnlyStrings()
 
-    r.f1 = data.f1.orNull
-    r.f2 = data.f2.orNull
-    r.f3 = data.f3.orNull
-    r.f4 = data.f4.orNull
-    r.f5 = data.f5.orNull
-    r.f6 = data.f6.orNull
-    r.f7 = data.f7.orNull
-    r.f8 = data.f8.orNull
-    r.f9 = data.f9.orNull
-    r.f10 = data.f10.orNull
-    r.f11 = data.f11.orNull
-    r.f12 = data.f12.orNull
-    r.f13 = data.f13.orNull
-    r.f14 = data.f14.orNull
-    r.f15 = data.f15.orNull
-    r.f16 = data.f16.orNull
-    r.f17 = data.f17.orNull
-    r.f18 = data.f18.orNull
-    r.f19 = data.f19.orNull
-    r.f20 = data.f20.orNull
+    r.setF1(data.f1.orNull)
+    r.setF2(data.f2.orNull)
+    r.setF3(data.f3.orNull)
+    r.setF4(data.f4.orNull)
+    r.setF5(data.f5.orNull)
+    r.setF6(data.f6.orNull)
+    r.setF7(data.f7.orNull)
+    r.setF8(data.f8.orNull)
+    r.setF9(data.f9.orNull)
+    r.setF10(data.f10.orNull)
+    r.setF11(data.f11.orNull)
+    r.setF12(data.f12.orNull)
+    r.setF13(data.f13.orNull)
+    r.setF14(data.f14.orNull)
+    r.setF15(data.f15.orNull)
+    r.setF16(data.f16.orNull)
+    r.setF17(data.f17.orNull)
+    r.setF18(data.f18.orNull)
+    r.setF19(data.f19.orNull)
+    r.setF20(data.f20.orNull)
 
     r
   }
@@ -99,26 +99,26 @@ object DataUtils {
   def onlyLongsToJavaThrift(data: OnlyLongs): thriftBenchmark.java.OnlyLongs = {
     val r = new thriftBenchmark.java.OnlyLongs()
 
-    r.f1 = data.f1.getOrElse(0)
-    r.f2 = data.f2.getOrElse(0)
-    r.f3 = data.f3.getOrElse(0)
-    r.f4 = data.f4.getOrElse(0)
-    r.f5 = data.f5.getOrElse(0)
-    r.f6 = data.f6.getOrElse(0)
-    r.f7 = data.f7.getOrElse(0)
-    r.f8 = data.f8.getOrElse(0)
-    r.f9 = data.f9.getOrElse(0)
-    r.f10 = data.f10.getOrElse(0)
-    r.f11 = data.f11.getOrElse(0)
-    r.f12 = data.f12.getOrElse(0)
-    r.f13 = data.f13.getOrElse(0)
-    r.f14 = data.f14.getOrElse(0)
-    r.f15 = data.f15.getOrElse(0)
-    r.f16 = data.f16.getOrElse(0)
-    r.f17 = data.f17.getOrElse(0)
-    r.f18 = data.f18.getOrElse(0)
-    r.f19 = data.f19.getOrElse(0)
-    r.f20 = data.f20.getOrElse(0)
+    r.setF1(data.f1.getOrElse(0))
+    r.setF2(data.f2.getOrElse(0))
+    r.setF3(data.f3.getOrElse(0))
+    r.setF4(data.f4.getOrElse(0))
+    r.setF5(data.f5.getOrElse(0))
+    r.setF6(data.f6.getOrElse(0))
+    r.setF7(data.f7.getOrElse(0))
+    r.setF8(data.f8.getOrElse(0))
+    r.setF9(data.f9.getOrElse(0))
+    r.setF10(data.f10.getOrElse(0))
+    r.setF11(data.f11.getOrElse(0))
+    r.setF12(data.f12.getOrElse(0))
+    r.setF13(data.f13.getOrElse(0))
+    r.setF14(data.f14.getOrElse(0))
+    r.setF15(data.f15.getOrElse(0))
+    r.setF16(data.f16.getOrElse(0))
+    r.setF17(data.f17.getOrElse(0))
+    r.setF18(data.f18.getOrElse(0))
+    r.setF19(data.f19.getOrElse(0))
+    r.setF20(data.f20.getOrElse(0))
 
     r
   }
