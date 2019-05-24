@@ -24,8 +24,6 @@ object ThriftSerialization extends Bench.LocalTime {
 
   val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
 
-  val gen = Gen.single("input file")("input.csv")
-
   performance of "thrift serialization" in {
     measure method "serialize using binary protocol - mixed data" in {
       using(compression) config(

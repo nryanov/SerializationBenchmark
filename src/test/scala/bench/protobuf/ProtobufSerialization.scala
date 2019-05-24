@@ -4,27 +4,35 @@ import java.io._
 import java.nio.ByteBuffer
 
 import bench.Settings
+import net.jpountz.lz4.LZ4BlockOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import org.xerial.snappy.SnappyOutputStream
-import project.{DataUtils, MixedData}
+import project.{DataUtils, MixedData, OnlyLongs, OnlyStrings}
 import project.Implicits._
 
 object ProtobufSerialization extends Bench.LocalTime {
-  val gen = Gen.single("input file")("input.csv")
+  val streams = Map(
+    "none" -> ((dataType: String) => new FileOutputStream(new File(s"${dataType}ProtobufSerialization.out"))),
+    "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(new File(s"${dataType}ProtobufSerializationGzip.out")))),
+    "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(new File(s"${dataType}ProtobufSerializationSnappy.out")))),
+    "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}ProtobufSerializationLz4.out")))),
+  )
+
+  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
 
   performance of "protobuf serialization" in {
-    measure method "serialize" in {
-      using(gen) config(
+    measure method "serialize - mixed data" in {
+      using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { file =>
-        val out = new BufferedOutputStream(new FileOutputStream(new File("protobufSerialization.out")))
+      ) in { codec =>
+        val out = streams(codec)("mixedData")
         var i = 0
 
-        val in = DataUtils.readCsv[MixedData](file)
+        val in = DataUtils.readCsv[MixedData]("mixedDataInput.csv")
         in.foreach(rs => {
           rs.foreach(data => {
             val o = DataUtils.mixedDataToScalaProtobuf(data).toByteArray
@@ -47,19 +55,19 @@ object ProtobufSerialization extends Bench.LocalTime {
       }
     }
 
-    measure method "serialize - snappy compression" in {
-      using(gen) config(
+    measure method "serialize - only strings" in {
+      using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { file =>
-        val out = new SnappyOutputStream(new FileOutputStream(new File("protobufSerializationSnappy.out")))
+      ) in { codec =>
+        val out = streams(codec)("onlyStrings")
         var i = 0
 
-        val in = DataUtils.readCsv[MixedData](file)
+        val in = DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv")
         in.foreach(rs => {
           rs.foreach(data => {
-            val o = DataUtils.mixedDataToScalaProtobuf(data).toByteArray
+            val o = DataUtils.onlyStringsToScalaProtobufdata(data).toByteArray
             val length = o.length
 
             out.write(ByteBuffer.allocate(4).putInt(length).array())
@@ -79,19 +87,19 @@ object ProtobufSerialization extends Bench.LocalTime {
       }
     }
 
-    measure method "serialize - gzip compression" in {
-      using(gen) config(
+    measure method "serialize - only longs" in {
+      using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
-      ) in { file =>
-        val out = new GzipCompressorOutputStream(new FileOutputStream(new File("protobufSerializationGzip.out")))
+      ) in { codec =>
+        val out = streams(codec)("onlyLongs")
         var i = 0
 
-        val in = DataUtils.readCsv[MixedData](file)
+        val in = DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv")
         in.foreach(rs => {
           rs.foreach(data => {
-            val o = DataUtils.mixedDataToScalaProtobuf(data).toByteArray
+            val o = DataUtils.onlyLongsToScalaProtobuf(data).toByteArray
             val length = o.length
 
             out.write(ByteBuffer.allocate(4).putInt(length).array())
