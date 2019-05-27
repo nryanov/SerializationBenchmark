@@ -17,7 +17,7 @@ object ThriftDeserialization extends Bench.LocalTime {
   var data: Any = _
 
   val streams = Map(
-    "none" -> ((dataType: String) => new FileInputStream(new File(s"${dataType}ThriftSerialization.out"))),
+    "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(new File(s"${dataType}ThriftSerialization.out")))),
     "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(new File(s"${dataType}ThriftSerializationGzip.out")))),
     "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(new File(s"${dataType}ThriftSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(new File(s"${dataType}ThriftSerializationLz4.out")))),

@@ -15,7 +15,7 @@ import net.jpountz.lz4.LZ4BlockOutputStream
 
 object JavaSerialization extends Bench.LocalTime {
   val streams = Map(
-    "none" -> ((dataType: String) => new ObjectOutputStream(new FileOutputStream(new File(s"${dataType}JavaSerialization.out")))),
+    "none" -> ((dataType: String) => new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}JavaSerialization.out"))))),
     "gzip" -> ((dataType: String) => new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(new File(s"${dataType}JavaSerializationGzip.out"))))),
     "snappy" -> ((dataType: String) => new ObjectOutputStream(new SnappyOutputStream(new FileOutputStream(new File(s"${dataType}JavaSerializationSnappy.out"))))),
     "lz4" -> ((dataType: String) => new ObjectOutputStream(new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}JavaSerializationLz4.out"))))),

@@ -1,6 +1,6 @@
 package bench.msgpack
 
-import java.io.{File, FileInputStream}
+import java.io.{BufferedInputStream, File, FileInputStream}
 
 import bench.Settings
 import net.jpountz.lz4.LZ4BlockInputStream
@@ -17,7 +17,7 @@ object MsgpackDeserialization extends Bench.LocalTime {
   var data: Data = _
 
   val streams = Map(
-    "none" -> ((dataType: String) => new FileInputStream(new File(s"${dataType}MsgpackSerialization.out"))),
+    "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(new File(s"${dataType}MsgpackSerialization.out")))),
     "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(new File(s"${dataType}MsgpackSerializationGzip.out")))),
     "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(new File(s"${dataType}MsgpackSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(new File(s"${dataType}MsgpackSerializationLz4.out")))),

@@ -21,7 +21,7 @@ object JsonSerialization extends Bench.LocalTime {
   implicit val noTypeHintsFormat = Serialization.formats(NoTypeHints)
 
   val streams = Map(
-    "none" -> ((dataType: String) => new FileOutputStream(new File(s"${dataType}JsonSerialization.out"))),
+    "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}JsonSerialization.out")))),
     "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(new File(s"${dataType}JsonSerializationGzip.out")))),
     "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(new File(s"${dataType}JsonSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}JsonSerializationLz4.out")))),

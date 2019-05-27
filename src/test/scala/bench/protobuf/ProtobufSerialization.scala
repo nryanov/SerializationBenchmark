@@ -14,7 +14,7 @@ import project.Implicits._
 
 object ProtobufSerialization extends Bench.LocalTime {
   val streams = Map(
-    "none" -> ((dataType: String) => new FileOutputStream(new File(s"${dataType}ProtobufSerialization.out"))),
+    "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}ProtobufSerialization.out")))),
     "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(new File(s"${dataType}ProtobufSerializationGzip.out")))),
     "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(new File(s"${dataType}ProtobufSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}ProtobufSerializationLz4.out")))),

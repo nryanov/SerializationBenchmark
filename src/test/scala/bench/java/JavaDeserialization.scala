@@ -17,7 +17,7 @@ object JavaDeserialization extends Bench.LocalTime {
   var data: Data = _
 
   val streams = Map(
-    "none" -> ((dataType: String) => new ObjectInputStream(new FileInputStream(new File(s"${dataType}JavaSerialization.out")))),
+    "none" -> ((dataType: String) => new ObjectInputStream(new BufferedInputStream(new FileInputStream(new File(s"${dataType}JavaSerialization.out"))))),
     "gzip" -> ((dataType: String) => new ObjectInputStream(new GZIPInputStream(new FileInputStream(new File(s"${dataType}JavaSerializationGzip.out"))))),
     "snappy" -> ((dataType: String) => new ObjectInputStream(new SnappyInputStream(new FileInputStream(new File(s"${dataType}JavaSerializationSnappy.out"))))),
     "lz4" -> ((dataType: String) => new ObjectInputStream(new LZ4BlockInputStream(new FileInputStream(new File(s"${dataType}JavaSerializationLz4.out"))))),

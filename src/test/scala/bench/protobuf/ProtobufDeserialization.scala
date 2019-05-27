@@ -12,7 +12,7 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 
 object ProtobufDeserialization extends Bench.LocalTime {
   val streams = Map(
-    "none" -> ((dataType: String) => new FileInputStream(new File(s"${dataType}ProtobufSerialization.out"))),
+    "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(new File(s"${dataType}ProtobufSerialization.out")))),
     "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(new File(s"${dataType}ProtobufSerializationGzip.out")))),
     "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(new File(s"${dataType}ProtobufSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(new File(s"${dataType}ProtobufSerializationLz4.out")))),

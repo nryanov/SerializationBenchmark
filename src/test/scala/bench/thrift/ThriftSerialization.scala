@@ -16,7 +16,7 @@ import project.Implicits._
 
 object ThriftSerialization extends Bench.LocalTime {
   val streams = Map(
-    "none" -> ((dataType: String) => new FileOutputStream(new File(s"${dataType}ThriftSerialization.out"))),
+    "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}ThriftSerialization.out")))),
     "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(new File(s"${dataType}ThriftSerializationGzip.out")))),
     "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(new File(s"${dataType}ThriftSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}ThriftSerializationLz4.out")))),
