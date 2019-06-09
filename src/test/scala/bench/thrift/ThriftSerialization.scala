@@ -14,13 +14,15 @@ import org.xerial.snappy.SnappyOutputStream
 import project.{DataUtils, MixedData, OnlyLongs, OnlyStrings}
 import project.Implicits._
 
-object ThriftSerialization extends Bench.LocalTime {
+object ThriftSerialization extends Bench.ForkedTime {
   val streams = Map(
     "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}ThriftSerialization.out")))),
     "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(new File(s"${dataType}ThriftSerializationGzip.out")))),
     "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(new File(s"${dataType}ThriftSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}ThriftSerializationLz4.out")))),
   )
+
+  override def aggregator: Aggregator[Double] = Aggregator.average
 
   val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
 

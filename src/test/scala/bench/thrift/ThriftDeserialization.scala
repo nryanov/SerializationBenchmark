@@ -12,9 +12,11 @@ import bench.Settings
 import net.jpountz.lz4.LZ4BlockInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 
-object ThriftDeserialization extends Bench.LocalTime {
+object ThriftDeserialization extends Bench.ForkedTime {
   @volatile
   var data: Any = _
+
+  override def aggregator: Aggregator[Double] = Aggregator.average
 
   val streams = Map(
     "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(new File(s"${dataType}ThriftSerialization.out")))),

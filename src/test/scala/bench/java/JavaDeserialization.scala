@@ -12,9 +12,11 @@ import bench.Settings
 import net.jpountz.lz4.LZ4BlockInputStream
 
 
-object JavaDeserialization extends Bench.LocalTime {
+object JavaDeserialization extends Bench.ForkedTime {
   @volatile
   var data: Data = _
+
+  override def aggregator: Aggregator[Double] = Aggregator.average
 
   val streams = Map(
     "none" -> ((dataType: String) => new ObjectInputStream(new BufferedInputStream(new FileInputStream(new File(s"${dataType}JavaSerialization.out"))))),

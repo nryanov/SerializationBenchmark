@@ -15,12 +15,14 @@ import com.sksamuel.avro4s.AvroSchema
 import org.apache.avro.Schema
 import project.Implicits._
 
-object ParquetSerialization extends Bench.LocalTime {
+object ParquetSerialization extends Bench.ForkedTime {
   val compression = Gen.enumeration("compression")(
     CompressionCodecName.UNCOMPRESSED,
     CompressionCodecName.SNAPPY,
     CompressionCodecName.GZIP,
   )
+
+  override def aggregator: Aggregator[Double] = Aggregator.average
 
   val mixedDataschema: Schema = AvroSchema[MixedData]
   val onlyStringsSchema: Schema = AvroSchema[OnlyStrings]

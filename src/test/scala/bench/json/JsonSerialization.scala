@@ -1,7 +1,6 @@
 package bench.json
 
 import java.io._
-import java.nio.ByteBuffer
 
 import org.json4s._
 import org.json4s.jackson.Serialization
@@ -17,8 +16,10 @@ import net.jpountz.lz4.LZ4BlockOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import project._
 
-object JsonSerialization extends Bench.LocalTime {
+object JsonSerialization extends Bench.ForkedTime {
   implicit val noTypeHintsFormat = Serialization.formats(NoTypeHints)
+
+  override def aggregator: Aggregator[Double] = Aggregator.average
 
   val streams = Map(
     "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}JsonSerialization.out")))),

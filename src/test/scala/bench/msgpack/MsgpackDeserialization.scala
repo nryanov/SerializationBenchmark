@@ -12,9 +12,11 @@ import org.xerial.snappy.SnappyInputStream
 import project.Data
 import project.Implicits._
 
-object MsgpackDeserialization extends Bench.LocalTime {
+object MsgpackDeserialization extends Bench.ForkedTime {
   @volatile
   var data: Data = _
+
+  override def aggregator: Aggregator[Double] = Aggregator.average
 
   val streams = Map(
     "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(new File(s"${dataType}MsgpackSerialization.out")))),

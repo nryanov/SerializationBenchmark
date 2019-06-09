@@ -13,7 +13,9 @@ import bench.Settings
 import net.jpountz.lz4.LZ4BlockOutputStream
 
 
-object JavaSerialization extends Bench.LocalTime {
+object JavaSerialization extends Bench.ForkedTime {
+  override def aggregator: Aggregator[Double] = Aggregator.average
+
   val streams = Map(
     "none" -> ((dataType: String) => new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}JavaSerialization.out"))))),
     "gzip" -> ((dataType: String) => new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(new File(s"${dataType}JavaSerializationGzip.out"))))),

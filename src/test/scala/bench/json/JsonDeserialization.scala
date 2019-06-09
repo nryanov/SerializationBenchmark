@@ -15,8 +15,10 @@ import com.fasterxml.jackson.core.JsonParser.Feature
 import net.jpountz.lz4.LZ4BlockInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 
-object JsonDeserialization extends Bench.LocalTime {
+object JsonDeserialization extends Bench.ForkedTime {
   implicit val noTypeHintsFormat = Serialization.formats(NoTypeHints)
+
+  override def aggregator: Aggregator[Double] = Aggregator.average
 
   @volatile
   var data: Data = _
