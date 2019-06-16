@@ -16,10 +16,10 @@ import net.jpountz.lz4.LZ4BlockOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import project._
 
-object JsonSerialization extends Bench.ForkedTime {
+object JsonSerialization extends Bench.LocalTime {
   implicit val noTypeHintsFormat = Serialization.formats(NoTypeHints)
 
-  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def aggregator: Aggregator[Double] = Aggregator.min
 
   val streams = Map(
     "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}JsonSerialization.out")))),

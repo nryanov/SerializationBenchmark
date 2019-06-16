@@ -13,8 +13,8 @@ import bench.Settings
 import net.jpountz.lz4.LZ4BlockOutputStream
 
 
-object JavaSerialization extends Bench.ForkedTime {
-  override def aggregator: Aggregator[Double] = Aggregator.average
+object JavaSerialization extends Bench.LocalTime {
+  override def aggregator: Aggregator[Double] = Aggregator.min
 
   val streams = Map(
     "none" -> ((dataType: String) => new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}JavaSerialization.out"))))),
@@ -33,7 +33,7 @@ object JavaSerialization extends Bench.ForkedTime {
   val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
 
 
-  performance of "java serialization of mixed data" in {
+  performance of "java serialization" in {
     measure method "serialize" in {
       using(Gen.crossProduct(dataType, compression)) config(
         exec.benchRuns -> Settings.benchRuns,

@@ -12,7 +12,7 @@ import bench.Settings
 import org.apache.parquet.hadoop.metadata.CompressionCodecName
 import org.apache.parquet.hadoop.util.HadoopInputFile
 
-object ParquetDeserialization extends Bench.ForkedTime {
+object ParquetDeserialization extends Bench.LocalTime {
   @volatile
   var data: Any = _
 
@@ -22,7 +22,7 @@ object ParquetDeserialization extends Bench.ForkedTime {
     CompressionCodecName.GZIP,
   )
 
-  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def aggregator: Aggregator[Double] = Aggregator.min
 
   performance of "parquet deserialization" in {
     measure method "deserialize-avro - mixed data" in {

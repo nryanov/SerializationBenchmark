@@ -12,7 +12,7 @@ import org.msgpack.core.MessagePack
 import org.xerial.snappy.SnappyOutputStream
 import project.Implicits._
 
-object MsgpackSerialization extends Bench.ForkedTime {
+object MsgpackSerialization extends Bench.LocalTime {
   val streams = Map(
     "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}MsgpackSerialization.out")))),
     "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(new File(s"${dataType}MsgpackSerializationGzip.out")))),
@@ -20,7 +20,7 @@ object MsgpackSerialization extends Bench.ForkedTime {
     "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}MsgpackSerializationLz4.out")))),
   )
 
-  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def aggregator: Aggregator[Double] = Aggregator.min
 
   val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
 

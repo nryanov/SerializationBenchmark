@@ -12,7 +12,7 @@ import org.scalameter.picklers.Implicits._
 import project.{DataUtils, MixedData, OnlyLongs, OnlyStrings}
 import project.Implicits._
 
-object ORCSerialization extends Bench.ForkedTime {
+object ORCSerialization extends Bench.LocalTime {
   val compression = Gen.enumeration("compression")(
     CompressionKind.NONE,
     CompressionKind.SNAPPY,
@@ -21,7 +21,7 @@ object ORCSerialization extends Bench.ForkedTime {
     CompressionKind.LZ4
   )
 
-  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def aggregator: Aggregator[Double] = Aggregator.min
 
   val conf: Configuration = new Configuration()
   val mixedDataSchema: TypeDescription = TypeDescription.createStruct()

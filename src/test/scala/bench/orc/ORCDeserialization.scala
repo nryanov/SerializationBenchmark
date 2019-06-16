@@ -11,11 +11,11 @@ import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import project.{Data, MixedData, OnlyLongs, OnlyStrings}
 
-object ORCDeserialization extends Bench.ForkedTime {
+object ORCDeserialization extends Bench.LocalTime {
   @volatile
   var data: Data = _
 
-  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def aggregator: Aggregator[Double] = Aggregator.min
 
   val conf: Configuration = new Configuration()
 

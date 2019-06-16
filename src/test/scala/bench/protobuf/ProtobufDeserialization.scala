@@ -10,7 +10,7 @@ import bench.Settings
 import net.jpountz.lz4.LZ4BlockInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 
-object ProtobufDeserialization extends Bench.ForkedTime {
+object ProtobufDeserialization extends Bench.LocalTime {
   val streams = Map(
     "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(new File(s"${dataType}ProtobufSerialization.out")))),
     "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(new File(s"${dataType}ProtobufSerializationGzip.out")))),
@@ -18,7 +18,7 @@ object ProtobufDeserialization extends Bench.ForkedTime {
     "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(new File(s"${dataType}ProtobufSerializationLz4.out")))),
   )
 
-  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def aggregator: Aggregator[Double] = Aggregator.min
 
   val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
 

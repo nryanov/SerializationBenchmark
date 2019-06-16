@@ -14,6 +14,8 @@ object AvroDeserialization extends Bench.LocalTime {
   @volatile
   var data: Data = _
 
+  override def aggregator: Aggregator[Double] = Aggregator.min
+
   val streams = Map(
     "data" -> ((dataType: String, codec: String, schema: Schema) => AvroInputStream.data[Data].from(new FileInputStream(new File(s"${dataType}AvroDataSerialization$codec.out"))).build(schema)),
     "binary" -> ((dataType: String, codec: String, schema: Schema) => AvroInputStream.binary[Data].from(new FileInputStream(new File(s"${dataType}AvroBinarySerialization$codec.out"))).build(schema))

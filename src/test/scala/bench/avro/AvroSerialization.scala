@@ -20,6 +20,8 @@ object AvroSerialization extends Bench.LocalTime {
     "xz" -> CodecFactory.xzCodec(CodecFactory.DEFAULT_XZ_LEVEL)
   )
 
+  override def aggregator: Aggregator[Double] = Aggregator.min
+
   val streams = Map(
     "data" -> ((dataType: String, codec: String, schema: Schema) => AvroOutputStream.data[Data].to(new FileOutputStream(new File(s"${dataType}AvroDataSerialization$codec.out"))).withCodec(codecs(codec)).build(schema)),
     "binary" -> ((dataType: String, codec: String, schema: Schema) => AvroOutputStream.binary[Data].to(new FileOutputStream(new File(s"${dataType}AvroBinarySerialization$codec.out"))).withCodec(codecs(codec)).build(schema))
