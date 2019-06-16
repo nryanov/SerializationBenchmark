@@ -1,16 +1,6 @@
 # SerializationBenchmark
 
-## Thrift
-
-`sbt clean compile`
-
-`sbt scroogeGen`
-
-`scroogeLanguages in Compile := Seq("java")` - will generate standard java code
-
-## Protobuf
-
-`sbt clean compile`
+`sbt clean compile` - will generate Thrift and Protobuf classes
 
 # Formats
 1. Java
