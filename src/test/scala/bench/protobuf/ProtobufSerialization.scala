@@ -6,6 +6,7 @@ import java.nio.ByteBuffer
 import bench.Settings
 import net.jpountz.lz4.LZ4BlockOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
+import org.scalameter.api
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import org.xerial.snappy.SnappyOutputStream
@@ -20,7 +21,8 @@ object ProtobufSerialization extends Bench.LocalTime {
     "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}ProtobufSerializationLz4.out")))),
   )
 
-  override def aggregator: Aggregator[Double] = Aggregator.min
+  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
 
@@ -29,7 +31,8 @@ object ProtobufSerialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val out = streams(codec)("mixedData")
         var i = 0
@@ -61,7 +64,8 @@ object ProtobufSerialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val out = streams(codec)("onlyStrings")
         var i = 0
@@ -93,7 +97,8 @@ object ProtobufSerialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val out = streams(codec)("onlyLongs")
         var i = 0

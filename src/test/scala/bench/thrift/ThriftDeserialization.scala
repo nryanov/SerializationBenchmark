@@ -11,12 +11,14 @@ import org.xerial.snappy.SnappyInputStream
 import bench.Settings
 import net.jpountz.lz4.LZ4BlockInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
+import org.scalameter.api
 
 object ThriftDeserialization extends Bench.LocalTime {
   @volatile
   var data: Any = _
 
-  override def aggregator: Aggregator[Double] = Aggregator.min
+  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val streams = Map(
     "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(new File(s"${dataType}ThriftSerialization.out")))),
@@ -49,7 +51,8 @@ object ThriftDeserialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val in = streams(codec)("mixedDataBinary")
         val protocolFactory: TBinaryProtocol.Factory = new TBinaryProtocol.Factory()
@@ -83,10 +86,11 @@ object ThriftDeserialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val in = streams(codec)("mixedDataCompact")
-        val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory()
+        val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory(36)
         var i = 0
 
         val lengthBytes = new Array[Byte](4)
@@ -117,7 +121,8 @@ object ThriftDeserialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val in = streams(codec)("onlyStringsBinary")
         val protocolFactory: TBinaryProtocol.Factory = new TBinaryProtocol.Factory()
@@ -151,10 +156,11 @@ object ThriftDeserialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val in = streams(codec)("onlyStringsCompact")
-        val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory()
+        val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory(36)
         var i = 0
 
         val lengthBytes = new Array[Byte](4)
@@ -185,7 +191,8 @@ object ThriftDeserialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val in = streams(codec)("onlyLongsBinary")
         val protocolFactory: TBinaryProtocol.Factory = new TBinaryProtocol.Factory()
@@ -219,10 +226,11 @@ object ThriftDeserialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val in = streams(codec)("onlyLongsCompact")
-        val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory()
+        val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory(36)
         var i = 0
 
         val lengthBytes = new Array[Byte](4)

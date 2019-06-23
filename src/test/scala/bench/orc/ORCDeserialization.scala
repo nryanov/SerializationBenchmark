@@ -7,6 +7,7 @@ import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.hive.ql.exec.vector._
 import org.apache.orc.{CompressionKind, OrcFile, Reader, TypeDescription}
+import org.scalameter.api
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import project.{Data, MixedData, OnlyLongs, OnlyStrings}
@@ -15,7 +16,8 @@ object ORCDeserialization extends Bench.LocalTime {
   @volatile
   var data: Data = _
 
-  override def aggregator: Aggregator[Double] = Aggregator.min
+  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val conf: Configuration = new Configuration()
 
@@ -32,7 +34,8 @@ object ORCDeserialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val reader: Reader = OrcFile.createReader(new Path(s"mixedDataOrcSerialization${codec.name()}.orc"),
           OrcFile.readerOptions(conf))
@@ -100,7 +103,8 @@ object ORCDeserialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val reader: Reader = OrcFile.createReader(new Path(s"onlyStringsOrcSerialization${codec.name()}.orc"),
           OrcFile.readerOptions(conf))
@@ -168,7 +172,8 @@ object ORCDeserialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val reader: Reader = OrcFile.createReader(new Path(s"onlyLongsOrcSerialization${codec.name()}.orc"),
           OrcFile.readerOptions(conf))

@@ -7,6 +7,7 @@ import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.hive.ql.exec.vector._
 import org.apache.orc.{CompressionKind, OrcFile, TypeDescription}
+import org.scalameter.api
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import project.{DataUtils, MixedData, OnlyLongs, OnlyStrings}
@@ -21,7 +22,8 @@ object ORCSerialization extends Bench.LocalTime {
     CompressionKind.LZ4
   )
 
-  override def aggregator: Aggregator[Double] = Aggregator.min
+  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val conf: Configuration = new Configuration()
   val mixedDataSchema: TypeDescription = TypeDescription.createStruct()
@@ -95,7 +97,8 @@ object ORCSerialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val writer = OrcFile.createWriter(
           new Path(s"mixedDataOrcSerialization${codec.name()}.orc"),
@@ -173,7 +176,8 @@ object ORCSerialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val writer = OrcFile.createWriter(
           new Path(s"onlyStringsOrcSerialization${codec.name()}.orc"),
@@ -251,7 +255,8 @@ object ORCSerialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val writer = OrcFile.createWriter(
           new Path(s"onlyLongsOrcSerialization${codec.name()}.orc"),

@@ -10,13 +10,15 @@ import java.util.zip.GZIPInputStream
 
 import bench.Settings
 import net.jpountz.lz4.LZ4BlockInputStream
+import org.scalameter.api
 
 
 object JavaDeserialization extends Bench.LocalTime {
   @volatile
   var data: Data = _
 
-  override def aggregator: Aggregator[Double] = Aggregator.min
+  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val streams = Map(
     "none" -> ((dataType: String) => new ObjectInputStream(new BufferedInputStream(new FileInputStream(new File(s"${dataType}JavaSerialization.out"))))),
@@ -33,7 +35,8 @@ object JavaDeserialization extends Bench.LocalTime {
       using(Gen.crossProduct(dataType, compression)) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
         val in = streams(gen._2)(gen._1)
         var i = 0

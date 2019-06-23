@@ -6,6 +6,7 @@ import bench.Settings
 import com.sksamuel.avro4s.{AvroOutputStream, AvroSchema}
 import org.apache.avro.Schema
 import org.apache.avro.file.CodecFactory
+import org.scalameter.api
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import project._
@@ -20,7 +21,8 @@ object AvroSerialization extends Bench.LocalTime {
     "xz" -> CodecFactory.xzCodec(CodecFactory.DEFAULT_XZ_LEVEL)
   )
 
-  override def aggregator: Aggregator[Double] = Aggregator.min
+  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val streams = Map(
     "data" -> ((dataType: String, codec: String, schema: Schema) => AvroOutputStream.data[Data].to(new FileOutputStream(new File(s"${dataType}AvroDataSerialization$codec.out"))).withCodec(codecs(codec)).build(schema)),
@@ -53,7 +55,8 @@ object AvroSerialization extends Bench.LocalTime {
       using(Gen.crossProduct(dataType, codec, format)) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
         var i = 0
 

@@ -6,6 +6,7 @@ import bench.Settings
 import net.jpountz.lz4.LZ4BlockInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.msgpack.core.MessagePack
+import org.scalameter.api
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import org.xerial.snappy.SnappyInputStream
@@ -16,7 +17,8 @@ object MsgpackDeserialization extends Bench.LocalTime {
   @volatile
   var data: Data = _
 
-  override def aggregator: Aggregator[Double] = Aggregator.min
+  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val streams = Map(
     "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(new File(s"${dataType}MsgpackSerialization.out")))),
@@ -31,7 +33,8 @@ object MsgpackDeserialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
         val in = MessagePack.newDefaultUnpacker(streams(gen)("mixedData"))
         var i = 0
@@ -55,7 +58,8 @@ object MsgpackDeserialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
         val in = MessagePack.newDefaultUnpacker(streams(gen)("onlyStrings"))
         var i = 0
@@ -79,7 +83,8 @@ object MsgpackDeserialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
         val in = MessagePack.newDefaultUnpacker(streams(gen)("onlyLongs"))
         var i = 0

@@ -13,6 +13,7 @@ import project.{DataUtils, MixedData, OnlyLongs, OnlyStrings}
 import bench.Settings
 import com.sksamuel.avro4s.AvroSchema
 import org.apache.avro.Schema
+import org.scalameter.api
 import project.Implicits._
 
 object ParquetSerialization extends Bench.LocalTime {
@@ -22,7 +23,8 @@ object ParquetSerialization extends Bench.LocalTime {
     CompressionCodecName.GZIP,
   )
 
-  override def aggregator: Aggregator[Double] = Aggregator.min
+  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val mixedDataschema: Schema = AvroSchema[MixedData]
   val onlyStringsSchema: Schema = AvroSchema[OnlyStrings]

@@ -5,6 +5,7 @@ import java.io.{File, FileInputStream}
 import bench.Settings
 import com.sksamuel.avro4s.{AvroInputStream, AvroSchema}
 import org.apache.avro.Schema
+import org.scalameter.api
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import project._
@@ -14,7 +15,8 @@ object AvroDeserialization extends Bench.LocalTime {
   @volatile
   var data: Data = _
 
-  override def aggregator: Aggregator[Double] = Aggregator.min
+  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val streams = Map(
     "data" -> ((dataType: String, codec: String, schema: Schema) => AvroInputStream.data[Data].from(new FileInputStream(new File(s"${dataType}AvroDataSerialization$codec.out"))).build(schema)),
@@ -46,7 +48,8 @@ object AvroDeserialization extends Bench.LocalTime {
       using(Gen.crossProduct(dataType, codec, format)) config (
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
         val schema = schemas(gen._1)
         val in = streams(gen._3)(gen._1, gen._2, schema)

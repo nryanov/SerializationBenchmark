@@ -14,11 +14,13 @@ import bench.Settings
 import com.fasterxml.jackson.core.JsonParser.Feature
 import net.jpountz.lz4.LZ4BlockInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
+import org.scalameter.api
 
 object JsonDeserialization extends Bench.LocalTime {
   implicit val noTypeHintsFormat = Serialization.formats(NoTypeHints)
 
-  override def aggregator: Aggregator[Double] = Aggregator.min
+  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   @volatile
   var data: Data = _
@@ -47,7 +49,8 @@ object JsonDeserialization extends Bench.LocalTime {
       using(Gen.crossProduct(dataType, compression)) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
         var i = 0
         val in = streams(gen._2)(gen._1)

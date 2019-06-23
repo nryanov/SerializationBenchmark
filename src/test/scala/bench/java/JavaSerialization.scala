@@ -11,10 +11,12 @@ import java.util.zip.GZIPOutputStream
 import project.Implicits._
 import bench.Settings
 import net.jpountz.lz4.LZ4BlockOutputStream
+import org.scalameter.api
 
 
 object JavaSerialization extends Bench.LocalTime {
-  override def aggregator: Aggregator[Double] = Aggregator.min
+  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val streams = Map(
     "none" -> ((dataType: String) => new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}JavaSerialization.out"))))),
@@ -38,7 +40,8 @@ object JavaSerialization extends Bench.LocalTime {
       using(Gen.crossProduct(dataType, compression)) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
         var i = 0
 

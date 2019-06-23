@@ -8,6 +8,7 @@ import net.jpountz.lz4.LZ4BlockOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.apache.thrift.protocol.{TBinaryProtocol, TCompactProtocol}
 import org.apache.thrift.transport.TMemoryBuffer
+import org.scalameter.api
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import org.xerial.snappy.SnappyOutputStream
@@ -22,7 +23,8 @@ object ThriftSerialization extends Bench.LocalTime {
     "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}ThriftSerializationLz4.out")))),
   )
 
-  override def aggregator: Aggregator[Double] = Aggregator.min
+  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
 
@@ -31,7 +33,8 @@ object ThriftSerialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val out = streams(codec)("mixedDataBinary")
         var i = 0
@@ -68,13 +71,14 @@ object ThriftSerialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val out = streams(codec)("mixedDataCompact")
         var i = 0
 
         val in = DataUtils.readCsv[MixedData]("mixedDataInput.csv")
-        val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory()
+        val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory(36)
 
         in.foreach(rs => {
           rs.foreach(data => {
@@ -105,7 +109,8 @@ object ThriftSerialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val out = streams(codec)("onlyStringsBinary")
         var i = 0
@@ -142,13 +147,14 @@ object ThriftSerialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val out = streams(codec)("onlyStringsCompact")
         var i = 0
 
         val in = DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv")
-        val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory()
+        val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory(36)
 
         in.foreach(rs => {
           rs.foreach(data => {
@@ -179,7 +185,8 @@ object ThriftSerialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val out = streams(codec)("onlyLongsBinary")
         var i = 0
@@ -216,13 +223,14 @@ object ThriftSerialization extends Bench.LocalTime {
       using(compression) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val out = streams(codec)("onlyLongsCompact")
         var i = 0
 
         val in = DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv")
-        val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory()
+        val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory(36)
 
         in.foreach(rs => {
           rs.foreach(data => {

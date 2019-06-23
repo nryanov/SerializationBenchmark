@@ -14,12 +14,14 @@ import bench.Settings
 import com.fasterxml.jackson.core.JsonParser.Feature
 import net.jpountz.lz4.LZ4BlockOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
+import org.scalameter.api
 import project._
 
 object JsonSerialization extends Bench.LocalTime {
   implicit val noTypeHintsFormat = Serialization.formats(NoTypeHints)
 
-  override def aggregator: Aggregator[Double] = Aggregator.min
+  override def aggregator: Aggregator[Double] = Aggregator.average
+  override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val streams = Map(
     "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}JsonSerialization.out")))),
@@ -45,7 +47,8 @@ object JsonSerialization extends Bench.LocalTime {
       using(Gen.crossProduct(dataType, compression)) config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
-        exec.maxWarmupRuns -> Settings.maxWarmupRuns
+        exec.maxWarmupRuns -> Settings.maxWarmupRuns,
+        exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
         val out = streams(gen._2)(gen._1)
         val sw = mapper.writerWithDefaultPrettyPrinter().writeValues(out)
