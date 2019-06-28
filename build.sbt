@@ -24,6 +24,7 @@ val snappyVersion = "1.1.7.3"
 val lz4Version = "1.5.1"
 val apacheCommonCompressVersion = "1.18"
 val msgpackVersion = "0.8.16"
+val borerVersion = "0.9.0"
 
 libraryDependencies ++= Seq(
   "org.apache.hadoop" % "hadoop-client" % hdfsVersion,
@@ -42,6 +43,8 @@ libraryDependencies ++= Seq(
   "org.apache.parquet" % "parquet-protobuf" % parquetVersion,
   "org.apache.parquet" % "parquet-hadoop" % parquetVersion,
   "org.msgpack" % "msgpack-core" % msgpackVersion,
+  "io.bullet" %% "borer-core" % borerVersion,
+  "io.bullet" %% "borer-derivation" % borerVersion,
 
   "org.xerial.snappy" % "snappy-java" % snappyVersion,
   "org.lz4" % "lz4-java" % lz4Version,
