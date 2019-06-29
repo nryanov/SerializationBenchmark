@@ -4,6 +4,8 @@ version := "0.1"
 
 scalaVersion := "2.12.8"
 
+javaOptions += "-Dfile.encoding=UTF-8"
+
 resolvers += "Confluent" at "http://packages.confluent.io/maven/"
 // to fix problem with hadoop codec dependency import
 resolvers += "Twitter Maven Repo" at "https://maven.twttr.com"
