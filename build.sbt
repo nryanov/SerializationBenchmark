@@ -17,6 +17,7 @@ resolvers += "Confluent" at "https://packages.confluent.io/maven/"
 resolvers += "Twitter Maven Repo" at "https://maven.twttr.com"
 
 val hdfsVersion = "3.4.1"
+val hiveExecVersion = "4.2.0"
 val kantanVersion = "0.8.0"
 val json4sVersion = "4.0.7"
 val avro4sVersion = "4.1.2"
@@ -36,6 +37,7 @@ val borerVersion = "1.8.0"
 
 libraryDependencies ++= Seq(
   "org.apache.hadoop" % "hadoop-client" % hdfsVersion,
+  "org.apache.hive" % "hive-exec" % hiveExecVersion,
   "com.nrinaudo" %% "kantan.csv" % kantanVersion,
   "com.nrinaudo" %% "kantan.csv-generic" % kantanVersion,
   "org.json4s" %% "json4s-jackson" % json4sVersion,

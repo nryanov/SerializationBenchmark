@@ -6,7 +6,7 @@ import bench.Settings
 import bench.ScalameterImplicits._
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.Path
-import bench.Settings
+import org.apache.hadoop.hive.ql.exec.vector._
 import org.apache.orc.{CompressionKind, OrcFile, TypeDescription}
 import org.scalameter.api
 import org.scalameter.api._
