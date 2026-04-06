@@ -21,3 +21,40 @@ val apacheCommonCompressVersion = "1.28.0"
 val msgpackVersion = "0.9.11"
 val borerVersion = "1.8.0"
 ```
+
+## Formats
+1. Java
+2. Json
+3. Avro
+4. Thrift
+5. Protobuf
+6. ORC
+7. Parquet
+8. Msgpack
+9. CBOR
+
+## System info
+```
+CPU: Apple M4 Pro
+RAM: 48 GB
+macOS: 15.7
+External SSD: Adata 2.5" 500GB SE880 USB-C
+Java: OpenJDK 64-Bit Server VM Temurin-21.0.5+11
+```
+
+## Input data:
+10kk records:
+- mixed data: **2907378121** bytes
+- only longs: **2147950698** bytes
+- only strings: **7410000000** bytes
+
+## Results
+### Java
+### Json
+### Avro
+### Thrift
+### Protobuf
+### ORC
+### Parquet
+### Msgpack
+### CBOR

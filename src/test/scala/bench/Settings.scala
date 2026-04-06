@@ -6,7 +6,7 @@ import _root_.java.nio.file.{Path => JPath, Paths}
 import org.apache.hadoop.fs.Path
 
 object Settings {
-  val recordsCount: Int = 100000
+  val recordsCount: Int = Option(System.getenv("BENCH_RECORDS_COUNT").toInt).getOrElse(100000)
   val flushInterval: Int = 5000
 
   val benchRuns: Int = 15
@@ -15,7 +15,7 @@ object Settings {
   val independentSamples: Int = 1
 
   val dataRoot: JPath = Paths
-    .get(sys.props.getOrElse("bench.data.dir", System.getProperty("user.dir")))
+    .get(Option(System.getenv("BENCH_DATA_DIR")).getOrElse(System.getProperty("user.dir")))
     .toAbsolutePath
     .normalize()
 

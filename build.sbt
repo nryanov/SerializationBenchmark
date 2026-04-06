@@ -34,6 +34,7 @@ val lz4Version = "1.8.1"
 val apacheCommonCompressVersion = "1.28.0"
 val msgpackVersion = "0.9.11"
 val borerVersion = "1.8.0"
+val logbackVersion = "1.4.14"
 
 libraryDependencies ++= Seq(
   "org.apache.hadoop" % "hadoop-client" % hdfsVersion,
@@ -60,7 +61,8 @@ libraryDependencies ++= Seq(
   "org.lz4" % "lz4-java" % lz4Version,
   "org.apache.commons" % "commons-compress" % apacheCommonCompressVersion,
 
-  "com.storm-enroute" %% "scalameter" % scalameterVersion
+  "com.storm-enroute" %% "scalameter" % scalameterVersion,
+  "ch.qos.logback" % "logback-classic" % logbackVersion,
 )
 
 // to generate java and scala versions
