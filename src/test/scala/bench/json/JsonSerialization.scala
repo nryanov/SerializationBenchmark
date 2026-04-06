@@ -11,6 +11,7 @@ import org.scalameter.picklers.Implicits._
 import org.xerial.snappy._
 import project.Implicits._
 import bench.Settings
+import bench.ScalameterImplicits._
 import com.fasterxml.jackson.core.JsonParser.Feature
 import net.jpountz.lz4.LZ4BlockOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream

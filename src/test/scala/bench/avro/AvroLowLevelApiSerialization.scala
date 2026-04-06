@@ -3,6 +3,7 @@ package bench.avro
 import java.io.File
 
 import bench.Settings
+import bench.ScalameterImplicits._
 import com.sksamuel.avro4s.AvroSchema
 import org.apache.avro.file.{CodecFactory, DataFileWriter}
 import org.apache.avro.generic.{GenericDatumWriter, GenericRecord}

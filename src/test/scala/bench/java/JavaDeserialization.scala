@@ -9,6 +9,7 @@ import org.xerial.snappy._
 import java.util.zip.GZIPInputStream
 
 import bench.Settings
+import bench.ScalameterImplicits._
 import net.jpountz.lz4.LZ4BlockInputStream
 import org.scalameter.api
 

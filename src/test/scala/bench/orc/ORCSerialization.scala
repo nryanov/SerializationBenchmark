@@ -3,6 +3,7 @@ package bench.orc
 import java.nio.charset.StandardCharsets
 
 import bench.Settings
+import bench.ScalameterImplicits._
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.Path
 import org.apache.hadoop.hive.ql.exec.vector._

@@ -10,6 +10,7 @@ import java.util.zip.GZIPOutputStream
 
 import project.Implicits._
 import bench.Settings
+import bench.ScalameterImplicits._
 import net.jpountz.lz4.LZ4BlockOutputStream
 import org.scalameter.api
 

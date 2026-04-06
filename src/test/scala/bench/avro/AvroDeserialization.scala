@@ -1,8 +1,8 @@
 package bench.avro
 
 import java.io.{File, FileInputStream}
-
 import bench.Settings
+import bench.ScalameterImplicits._
 import com.sksamuel.avro4s.{AvroInputStream, AvroSchema}
 import org.apache.avro.Schema
 import org.scalameter.api

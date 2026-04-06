@@ -4,6 +4,7 @@ import java.io._
 import java.nio.ByteBuffer
 
 import bench.Settings
+import bench.ScalameterImplicits._
 import net.jpountz.lz4.LZ4BlockOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.apache.thrift.protocol.{TBinaryProtocol, TCompactProtocol}

@@ -7,6 +7,7 @@ import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import org.xerial.snappy.SnappyInputStream
 import bench.Settings
+import bench.ScalameterImplicits._
 import net.jpountz.lz4.LZ4BlockInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.scalameter.api

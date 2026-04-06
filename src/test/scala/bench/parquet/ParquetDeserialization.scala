@@ -9,6 +9,7 @@ import org.apache.parquet.thrift.ThriftParquetReader
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import bench.Settings
+import bench.ScalameterImplicits._
 import org.apache.parquet.hadoop.metadata.CompressionCodecName
 import org.apache.parquet.hadoop.util.HadoopInputFile
 import org.scalameter.api
