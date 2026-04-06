@@ -2,7 +2,7 @@ name := "SerializationBenchmark"
 
 version := "0.1"
 
-scalaVersion := "2.12.8"
+scalaVersion := "2.13.18"
 
 scalacOptions := List("-encoding", "utf8")
 
@@ -12,27 +12,27 @@ Compile / javaOptions += "-Dfile.encoding=UTF-8"
 
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-resolvers += "Confluent" at "http://packages.confluent.io/maven/"
+resolvers += "Confluent" at "https://packages.confluent.io/maven/"
 // to fix problem with hadoop codec dependency import
 resolvers += "Twitter Maven Repo" at "https://maven.twttr.com"
 
-val hdfsVersion = "2.7.3"
-val kantanVersion = "0.5.0"
-val json4sVersion = "3.6.5"
-val avro4sVersion = "2.0.4"
-val confluent = "5.2.1"
-val kafkaVersion = "2.2.0"
-val scroogeVersion = "19.4.0"
-val scalameterVersion = "0.17"
-val finagleThriftVersion = "19.4.0"
-val libthriftVersion = "0.12.0"
-val orcVersion = "1.5.5"
-val parquetVersion = "1.10.1"
-val snappyVersion = "1.1.7.3"
-val lz4Version = "1.5.1"
-val apacheCommonCompressVersion = "1.18"
-val msgpackVersion = "0.8.16"
-val borerVersion = "0.9.0"
+val hdfsVersion = "3.4.1"
+val kantanVersion = "0.8.0"
+val json4sVersion = "4.0.7"
+val avro4sVersion = "4.1.2"
+val confluent = "8.1.1"
+val kafkaVersion = "4.2.0"
+val scroogeVersion = "24.2.0"
+val scalameterVersion = "0.21"
+val finagleThriftVersion = "24.2.0"
+val libthriftVersion = "0.22.0"
+val orcVersion = "2.3.0"
+val parquetVersion = "1.17.0"
+val snappyVersion = "1.1.10.8"
+val lz4Version = "1.8.1"
+val apacheCommonCompressVersion = "1.28.0"
+val msgpackVersion = "0.9.11"
+val borerVersion = "1.8.0"
 
 libraryDependencies ++= Seq(
   "org.apache.hadoop" % "hadoop-client" % hdfsVersion,
