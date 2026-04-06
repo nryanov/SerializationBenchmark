@@ -24,7 +24,7 @@ object JavaSerialization extends Bench.LocalTime {
     "gzip" -> ((dataType: String) => new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerializationGzip.out"))))),
     "snappy" -> ((dataType: String) => new ObjectOutputStream(new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerializationSnappy.out"))))),
     "lz4" -> ((dataType: String) => new ObjectOutputStream(new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerializationLz4.out"))))),
-    "xz" -> ((dataType: String) => new ObjectOutputStream(new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerializationLz4.out")), new ARM64Options()))),
+    "xz" -> ((dataType: String) => new ObjectOutputStream(new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerializationXz.out")), new ARM64Options()))),
   )
 
   val inputs = Map(

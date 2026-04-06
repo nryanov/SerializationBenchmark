@@ -2,7 +2,6 @@ package bench.protobuf
 
 import java.io._
 import java.nio.ByteBuffer
-
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import org.xerial.snappy.SnappyInputStream
@@ -11,6 +10,7 @@ import bench.ScalameterImplicits._
 import net.jpountz.lz4.LZ4BlockInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.scalameter.api
+import org.tukaani.xz.XZInputStream
 
 object ProtobufDeserialization extends Bench.LocalTime {
   val streams = Map(
@@ -18,12 +18,13 @@ object ProtobufDeserialization extends Bench.LocalTime {
     "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(Settings.file(s"${dataType}ProtobufSerializationGzip.out")))),
     "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(Settings.file(s"${dataType}ProtobufSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(Settings.file(s"${dataType}ProtobufSerializationLz4.out")))),
+    "xz" -> ((dataType: String) => new XZInputStream(new FileInputStream(Settings.file(s"${dataType}ProtobufSerializationXz.out")))),
   )
 
   override def aggregator: Aggregator[Double] = Aggregator.average
   override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
-  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
+  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4", "xz")
 
   def readAll(in: InputStream, buffer: Array[Byte], off: Int, len: Int): Int = {
     var got = 0

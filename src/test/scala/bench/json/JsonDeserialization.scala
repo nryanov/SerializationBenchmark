@@ -1,7 +1,6 @@
 package bench.json
 
 import java.io._
-
 import org.json4s._
 import org.json4s.jackson.Serialization
 import org.json4s.jackson.JsonMethods.mapper
@@ -16,6 +15,7 @@ import com.fasterxml.jackson.core.JsonParser.Feature
 import net.jpountz.lz4.LZ4BlockInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.scalameter.api
+import org.tukaani.xz.XZInputStream
 
 object JsonDeserialization extends Bench.LocalTime {
   implicit val noTypeHintsFormat = Serialization.formats(NoTypeHints)
@@ -31,6 +31,7 @@ object JsonDeserialization extends Bench.LocalTime {
     "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(Settings.file(s"${dataType}JsonSerializationGzip.out")))),
     "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(Settings.file(s"${dataType}JsonSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(Settings.file(s"${dataType}JsonSerializationLz4.out")))),
+    "xz" -> ((dataType: String) => new XZInputStream(new FileInputStream(Settings.file(s"${dataType}JsonSerializationXz.out")))),
   )
 
   val bytesToData = Map(
@@ -40,7 +41,7 @@ object JsonDeserialization extends Bench.LocalTime {
   )
 
   val dataType = Gen.enumeration("input file")("onlyLongs", "mixedData", "onlyStrings")
-  val compression = Gen.enumeration("compression")("none", "gzip", "snappy", "lz4")
+  val compression = Gen.enumeration("compression")("none", "gzip", "snappy", "lz4", "xz")
 
   mapper.configure(Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true)
   mapper.configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true)

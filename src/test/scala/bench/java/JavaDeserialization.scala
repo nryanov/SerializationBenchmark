@@ -26,7 +26,7 @@ object JavaDeserialization extends Bench.LocalTime {
     "gzip" -> ((dataType: String) => new ObjectInputStream(new GZIPInputStream(new FileInputStream(Settings.file(s"${dataType}JavaSerializationGzip.out"))))),
     "snappy" -> ((dataType: String) => new ObjectInputStream(new SnappyInputStream(new FileInputStream(Settings.file(s"${dataType}JavaSerializationSnappy.out"))))),
     "lz4" -> ((dataType: String) => new ObjectInputStream(new LZ4BlockInputStream(new FileInputStream(Settings.file(s"${dataType}JavaSerializationLz4.out"))))),
-    "xz" -> ((dataType: String) => new ObjectInputStream(new XZInputStream(new FileInputStream(Settings.file(s"${dataType}JavaSerializationLz4.out"))))),
+    "xz" -> ((dataType: String) => new ObjectInputStream(new XZInputStream(new FileInputStream(Settings.file(s"${dataType}JavaSerializationXz.out"))))),
   )
 
   val dataType = Gen.enumeration("input file")( "onlyLongs", "mixedData", "onlyStrings")

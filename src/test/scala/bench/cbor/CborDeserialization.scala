@@ -2,7 +2,6 @@ package bench.cbor
 
 import java.io.{BufferedInputStream, FileInputStream, InputStream}
 import java.nio.ByteBuffer
-
 import bench.Settings
 import bench.ScalameterImplicits._
 import io.bullet.borer.{Cbor, Decoder}
@@ -11,6 +10,7 @@ import net.jpountz.lz4.LZ4BlockInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
+import org.tukaani.xz.XZInputStream
 import org.xerial.snappy.SnappyInputStream
 import project._
 
@@ -27,13 +27,14 @@ object CborDeserialization extends Bench.LocalTime {
     "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(Settings.file(s"${dataType}CborSerializationGzip.out")))),
     "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(Settings.file(s"${dataType}CborSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(Settings.file(s"${dataType}CborSerializationLz4.out")))),
+    "xz" -> ((dataType: String) => new XZInputStream(new FileInputStream(Settings.file(s"${dataType}CborSerializationXz.out")))),
   )
 
   implicit val mixedDataDecoder: Decoder[MixedData] = deriveDecoder[MixedData]
   implicit val onlyStringsDecoder: Decoder[OnlyStrings] = deriveDecoder[OnlyStrings]
   implicit val onlyLongsDecoder: Decoder[OnlyLongs] = deriveDecoder[OnlyLongs]
 
-  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
+  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4", "xz")
 
   def readAll(in: InputStream, buffer: Array[Byte], off: Int, len: Int): Int = {
     var got = 0

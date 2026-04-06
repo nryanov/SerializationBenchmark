@@ -26,7 +26,9 @@ object ORCDeserialization extends Bench.LocalTime {
     CompressionKind.SNAPPY,
     CompressionKind.ZLIB,
     CompressionKind.LZO,
-    CompressionKind.LZ4
+    CompressionKind.LZ4,
+    CompressionKind.ZSTD,
+    CompressionKind.BROTLI,
   )
 
   performance of "orc deserialization" in {

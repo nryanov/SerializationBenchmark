@@ -19,7 +19,9 @@ object ORCSerialization extends Bench.LocalTime {
     CompressionKind.SNAPPY,
     CompressionKind.ZLIB,
     CompressionKind.LZO,
-    CompressionKind.LZ4
+    CompressionKind.LZ4,
+    CompressionKind.ZSTD,
+    CompressionKind.BROTLI,
   )
 
   override def aggregator: Aggregator[Double] = Aggregator.average

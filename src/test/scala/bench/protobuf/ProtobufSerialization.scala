@@ -2,7 +2,6 @@ package bench.protobuf
 
 import java.io._
 import java.nio.ByteBuffer
-
 import bench.Settings
 import bench.ScalameterImplicits._
 import net.jpountz.lz4.LZ4BlockOutputStream
@@ -10,6 +9,7 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.scalameter.api
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
+import org.tukaani.xz.{ARM64Options, XZOutputStream}
 import org.xerial.snappy.SnappyOutputStream
 import project.{DataUtils, MixedData, OnlyLongs, OnlyStrings}
 import project.Implicits._
@@ -20,12 +20,13 @@ object ProtobufSerialization extends Bench.LocalTime {
     "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(Settings.file(s"${dataType}ProtobufSerializationGzip.out")))),
     "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}ProtobufSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}ProtobufSerializationLz4.out")))),
+    "xz" -> ((dataType: String) => new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}ProtobufSerializationXz.out")), new ARM64Options())),
   )
 
   override def aggregator: Aggregator[Double] = Aggregator.average
   override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
-  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
+  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4", "xz")
 
   performance of "protobuf serialization" in {
     measure method "serialize - mixed data" in {
