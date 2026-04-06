@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets
 import bench.Settings
 import bench.ScalameterImplicits._
 import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.Path
 import org.apache.hadoop.hive.ql.exec.vector._
 import org.apache.orc.{CompressionKind, OrcFile, TypeDescription}
 import org.scalameter.api
@@ -102,7 +101,7 @@ object ORCSerialization extends Bench.LocalTime {
         exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val writer = OrcFile.createWriter(
-          new Path(s"mixedDataOrcSerialization${codec.name()}.orc"),
+          Settings.hadoopPath(s"mixedDataOrcSerialization${codec.name()}.orc"),
           OrcFile.writerOptions(conf).setSchema(mixedDataSchema).overwrite(true).compress(codec)
         )
         val batch: VectorizedRowBatch = mixedDataSchema.createRowBatch(1000)
@@ -129,7 +128,7 @@ object ORCSerialization extends Bench.LocalTime {
         val f20ColumnVector = batch.cols(19).asInstanceOf[BytesColumnVector]
 
 
-        val in = DataUtils.readCsv[MixedData]("mixedDataInput.csv")
+        val in = DataUtils.readCsv[MixedData](Settings.pathString(Settings.InputCsv.mixedData))
         in.foreach(rs => {
           rs.foreach(data => {
             val row = batch.size
@@ -181,7 +180,7 @@ object ORCSerialization extends Bench.LocalTime {
         exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val writer = OrcFile.createWriter(
-          new Path(s"onlyStringsOrcSerialization${codec.name()}.orc"),
+          Settings.hadoopPath(s"onlyStringsOrcSerialization${codec.name()}.orc"),
           OrcFile.writerOptions(conf).setSchema(onlyStringsSchema).overwrite(true).compress(codec)
         )
         val batch: VectorizedRowBatch = onlyStringsSchema.createRowBatch(1000)
@@ -208,7 +207,7 @@ object ORCSerialization extends Bench.LocalTime {
         val f20ColumnVector = batch.cols(19).asInstanceOf[BytesColumnVector]
 
 
-        val in = DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv")
+        val in = DataUtils.readCsv[OnlyStrings](Settings.pathString(Settings.InputCsv.onlyStrings))
         in.foreach(rs => {
           rs.foreach(data => {
             val row = batch.size
@@ -260,7 +259,7 @@ object ORCSerialization extends Bench.LocalTime {
         exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
         val writer = OrcFile.createWriter(
-          new Path(s"onlyLongsOrcSerialization${codec.name()}.orc"),
+          Settings.hadoopPath(s"onlyLongsOrcSerialization${codec.name()}.orc"),
           OrcFile.writerOptions(conf).setSchema(onlyLongsSchema).overwrite(true).compress(codec)
         )
         val batch: VectorizedRowBatch = onlyLongsSchema.createRowBatch(1000)
@@ -287,7 +286,7 @@ object ORCSerialization extends Bench.LocalTime {
         val f20ColumnVector = batch.cols(19).asInstanceOf[LongColumnVector]
 
 
-        val in = DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv")
+        val in = DataUtils.readCsv[OnlyLongs](Settings.pathString(Settings.InputCsv.onlyLongs))
         in.foreach(rs => {
           rs.foreach(data => {
             val row = batch.size

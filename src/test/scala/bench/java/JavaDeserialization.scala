@@ -22,10 +22,10 @@ object JavaDeserialization extends Bench.LocalTime {
   override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val streams = Map(
-    "none" -> ((dataType: String) => new ObjectInputStream(new BufferedInputStream(new FileInputStream(new File(s"${dataType}JavaSerialization.out"))))),
-    "gzip" -> ((dataType: String) => new ObjectInputStream(new GZIPInputStream(new FileInputStream(new File(s"${dataType}JavaSerializationGzip.out"))))),
-    "snappy" -> ((dataType: String) => new ObjectInputStream(new SnappyInputStream(new FileInputStream(new File(s"${dataType}JavaSerializationSnappy.out"))))),
-    "lz4" -> ((dataType: String) => new ObjectInputStream(new LZ4BlockInputStream(new FileInputStream(new File(s"${dataType}JavaSerializationLz4.out"))))),
+    "none" -> ((dataType: String) => new ObjectInputStream(new BufferedInputStream(new FileInputStream(Settings.file(s"${dataType}JavaSerialization.out"))))),
+    "gzip" -> ((dataType: String) => new ObjectInputStream(new GZIPInputStream(new FileInputStream(Settings.file(s"${dataType}JavaSerializationGzip.out"))))),
+    "snappy" -> ((dataType: String) => new ObjectInputStream(new SnappyInputStream(new FileInputStream(Settings.file(s"${dataType}JavaSerializationSnappy.out"))))),
+    "lz4" -> ((dataType: String) => new ObjectInputStream(new LZ4BlockInputStream(new FileInputStream(Settings.file(s"${dataType}JavaSerializationLz4.out"))))),
   )
 
   val dataType = Gen.enumeration("input file")( "onlyLongs", "mixedData", "onlyStrings")

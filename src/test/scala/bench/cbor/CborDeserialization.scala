@@ -1,6 +1,6 @@
 package bench.cbor
 
-import java.io.{BufferedInputStream, File, FileInputStream, InputStream}
+import java.io.{BufferedInputStream, FileInputStream, InputStream}
 import java.nio.ByteBuffer
 
 import bench.Settings
@@ -23,10 +23,10 @@ object CborDeserialization extends Bench.LocalTime {
   var data: Data = _
 
   val streams = Map(
-    "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(new File(s"${dataType}CborSerialization.out")))),
-    "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(new File(s"${dataType}CborSerializationGzip.out")))),
-    "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(new File(s"${dataType}CborSerializationSnappy.out")))),
-    "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(new File(s"${dataType}CborSerializationLz4.out")))),
+    "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(Settings.file(s"${dataType}CborSerialization.out")))),
+    "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(Settings.file(s"${dataType}CborSerializationGzip.out")))),
+    "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(Settings.file(s"${dataType}CborSerializationSnappy.out")))),
+    "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(Settings.file(s"${dataType}CborSerializationLz4.out")))),
   )
 
   implicit val mixedDataDecoder: Decoder[MixedData] = deriveDecoder[MixedData]

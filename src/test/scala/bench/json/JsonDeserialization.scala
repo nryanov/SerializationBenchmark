@@ -27,10 +27,10 @@ object JsonDeserialization extends Bench.LocalTime {
   var data: Data = _
 
   val streams = Map(
-    "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(new File(s"${dataType}JsonSerialization.out")))),
-    "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(new File(s"${dataType}JsonSerializationGzip.out")))),
-    "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(new File(s"${dataType}JsonSerializationSnappy.out")))),
-    "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(new File(s"${dataType}JsonSerializationLz4.out")))),
+    "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(Settings.file(s"${dataType}JsonSerialization.out")))),
+    "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(Settings.file(s"${dataType}JsonSerializationGzip.out")))),
+    "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(Settings.file(s"${dataType}JsonSerializationSnappy.out")))),
+    "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(Settings.file(s"${dataType}JsonSerializationLz4.out")))),
   )
 
   val bytesToData = Map(

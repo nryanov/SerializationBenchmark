@@ -16,10 +16,10 @@ import project.Implicits._
 
 object ProtobufSerialization extends Bench.LocalTime {
   val streams = Map(
-    "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}ProtobufSerialization.out")))),
-    "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(new File(s"${dataType}ProtobufSerializationGzip.out")))),
-    "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(new File(s"${dataType}ProtobufSerializationSnappy.out")))),
-    "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}ProtobufSerializationLz4.out")))),
+    "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(Settings.file(s"${dataType}ProtobufSerialization.out")))),
+    "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(Settings.file(s"${dataType}ProtobufSerializationGzip.out")))),
+    "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}ProtobufSerializationSnappy.out")))),
+    "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}ProtobufSerializationLz4.out")))),
   )
 
   override def aggregator: Aggregator[Double] = Aggregator.average
@@ -38,7 +38,7 @@ object ProtobufSerialization extends Bench.LocalTime {
         val out = streams(codec)("mixedData")
         var i = 0
 
-        val in = DataUtils.readCsv[MixedData]("mixedDataInput.csv")
+        val in = DataUtils.readCsv[MixedData](Settings.pathString(Settings.InputCsv.mixedData))
         in.foreach(rs => {
           rs.foreach(data => {
             val o = DataUtils.mixedDataToScalaProtobuf(data).toByteArray
@@ -71,7 +71,7 @@ object ProtobufSerialization extends Bench.LocalTime {
         val out = streams(codec)("onlyStrings")
         var i = 0
 
-        val in = DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv")
+        val in = DataUtils.readCsv[OnlyStrings](Settings.pathString(Settings.InputCsv.onlyStrings))
         in.foreach(rs => {
           rs.foreach(data => {
             val o = DataUtils.onlyStringsToScalaProtobufdata(data).toByteArray
@@ -104,7 +104,7 @@ object ProtobufSerialization extends Bench.LocalTime {
         val out = streams(codec)("onlyLongs")
         var i = 0
 
-        val in = DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv")
+        val in = DataUtils.readCsv[OnlyLongs](Settings.pathString(Settings.InputCsv.onlyLongs))
         in.foreach(rs => {
           rs.foreach(data => {
             val o = DataUtils.onlyLongsToScalaProtobuf(data).toByteArray

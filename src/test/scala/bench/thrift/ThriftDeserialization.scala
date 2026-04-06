@@ -22,10 +22,10 @@ object ThriftDeserialization extends Bench.LocalTime {
   override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val streams = Map(
-    "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(new File(s"${dataType}ThriftSerialization.out")))),
-    "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(new File(s"${dataType}ThriftSerializationGzip.out")))),
-    "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(new File(s"${dataType}ThriftSerializationSnappy.out")))),
-    "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(new File(s"${dataType}ThriftSerializationLz4.out")))),
+    "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(Settings.file(s"${dataType}ThriftSerialization.out")))),
+    "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(Settings.file(s"${dataType}ThriftSerializationGzip.out")))),
+    "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(Settings.file(s"${dataType}ThriftSerializationSnappy.out")))),
+    "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(Settings.file(s"${dataType}ThriftSerializationLz4.out")))),
   )
 
   val compression = Gen.enumeration("compression")("none", "gzip", "snappy", "lz4")

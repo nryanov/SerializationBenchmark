@@ -20,16 +20,16 @@ object JavaSerialization extends Bench.LocalTime {
   override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val streams = Map(
-    "none" -> ((dataType: String) => new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}JavaSerialization.out"))))),
-    "gzip" -> ((dataType: String) => new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(new File(s"${dataType}JavaSerializationGzip.out"))))),
-    "snappy" -> ((dataType: String) => new ObjectOutputStream(new SnappyOutputStream(new FileOutputStream(new File(s"${dataType}JavaSerializationSnappy.out"))))),
-    "lz4" -> ((dataType: String) => new ObjectOutputStream(new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}JavaSerializationLz4.out"))))),
+    "none" -> ((dataType: String) => new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerialization.out"))))),
+    "gzip" -> ((dataType: String) => new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerializationGzip.out"))))),
+    "snappy" -> ((dataType: String) => new ObjectOutputStream(new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerializationSnappy.out"))))),
+    "lz4" -> ((dataType: String) => new ObjectOutputStream(new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerializationLz4.out"))))),
   )
 
   val inputs = Map(
-    "mixedData" -> (() => DataUtils.readCsv[MixedData]("mixedDataInput.csv")),
-    "onlyStrings" -> (() => DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv")),
-    "onlyLongs" -> (() => DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv"))
+    "mixedData" -> (() => DataUtils.readCsv[MixedData](Settings.pathString(Settings.InputCsv.mixedData))),
+    "onlyStrings" -> (() => DataUtils.readCsv[OnlyStrings](Settings.pathString(Settings.InputCsv.onlyStrings))),
+    "onlyLongs" -> (() => DataUtils.readCsv[OnlyLongs](Settings.pathString(Settings.InputCsv.onlyLongs)))
   )
 
   val dataType = Gen.enumeration("input file")("onlyLongs", "mixedData", "onlyStrings")

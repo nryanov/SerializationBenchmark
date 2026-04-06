@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets
 import bench.Settings
 import bench.ScalameterImplicits._
 import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.Path
 import org.apache.hadoop.hive.ql.exec.vector._
 import org.apache.orc.{CompressionKind, OrcFile, Reader}
 import org.scalameter.api
@@ -38,7 +37,7 @@ object ORCDeserialization extends Bench.LocalTime {
         exec.maxWarmupRuns -> Settings.maxWarmupRuns,
         exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
-        val reader: Reader = OrcFile.createReader(new Path(s"mixedDataOrcSerialization${codec.name()}.orc"),
+        val reader: Reader = OrcFile.createReader(Settings.hadoopPath(s"mixedDataOrcSerialization${codec.name()}.orc"),
           OrcFile.readerOptions(conf))
 
         val rows = reader.rows()
@@ -107,7 +106,7 @@ object ORCDeserialization extends Bench.LocalTime {
         exec.maxWarmupRuns -> Settings.maxWarmupRuns,
         exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
-        val reader: Reader = OrcFile.createReader(new Path(s"onlyStringsOrcSerialization${codec.name()}.orc"),
+        val reader: Reader = OrcFile.createReader(Settings.hadoopPath(s"onlyStringsOrcSerialization${codec.name()}.orc"),
           OrcFile.readerOptions(conf))
 
         val rows = reader.rows()
@@ -176,7 +175,7 @@ object ORCDeserialization extends Bench.LocalTime {
         exec.maxWarmupRuns -> Settings.maxWarmupRuns,
         exec.independentSamples -> Settings.independentSamples
       ) in { codec =>
-        val reader: Reader = OrcFile.createReader(new Path(s"onlyLongsOrcSerialization${codec.name()}.orc"),
+        val reader: Reader = OrcFile.createReader(Settings.hadoopPath(s"onlyLongsOrcSerialization${codec.name()}.orc"),
           OrcFile.readerOptions(conf))
 
         val rows = reader.rows()

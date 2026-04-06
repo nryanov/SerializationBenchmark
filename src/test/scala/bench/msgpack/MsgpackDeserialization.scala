@@ -1,6 +1,6 @@
 package bench.msgpack
 
-import java.io.{BufferedInputStream, File, FileInputStream}
+import java.io.{BufferedInputStream, FileInputStream}
 
 import bench.Settings
 import bench.ScalameterImplicits._
@@ -22,10 +22,10 @@ object MsgpackDeserialization extends Bench.LocalTime {
   override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val streams = Map(
-    "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(new File(s"${dataType}MsgpackSerialization.out")))),
-    "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(new File(s"${dataType}MsgpackSerializationGzip.out")))),
-    "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(new File(s"${dataType}MsgpackSerializationSnappy.out")))),
-    "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(new File(s"${dataType}MsgpackSerializationLz4.out")))),
+    "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(Settings.file(s"${dataType}MsgpackSerialization.out")))),
+    "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(Settings.file(s"${dataType}MsgpackSerializationGzip.out")))),
+    "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(Settings.file(s"${dataType}MsgpackSerializationSnappy.out")))),
+    "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(Settings.file(s"${dataType}MsgpackSerializationLz4.out")))),
   )
 
   val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")

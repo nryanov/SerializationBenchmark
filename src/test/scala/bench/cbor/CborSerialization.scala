@@ -1,6 +1,6 @@
 package bench.cbor
 
-import java.io.{BufferedOutputStream, File, FileOutputStream}
+import java.io.{BufferedOutputStream, FileOutputStream}
 import java.nio.ByteBuffer
 import java.util.zip.GZIPOutputStream
 
@@ -22,10 +22,10 @@ object CborSerialization extends Bench.LocalTime {
   override def measurer: Measurer[Double] = new Measurer.IgnoringGC
 
   val streams = Map(
-    "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}CborSerialization.out")))),
-    "gzip" -> ((dataType: String) => new GZIPOutputStream(new FileOutputStream(new File(s"${dataType}CborSerializationGzip.out")))),
-    "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(new File(s"${dataType}CborSerializationSnappy.out")))),
-    "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}CborSerializationLz4.out")))),
+    "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborSerialization.out")))),
+    "gzip" -> ((dataType: String) => new GZIPOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborSerializationGzip.out")))),
+    "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborSerializationSnappy.out")))),
+    "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborSerializationLz4.out")))),
   )
 
   val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
@@ -44,7 +44,7 @@ object CborSerialization extends Bench.LocalTime {
         exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
         val out = streams(gen)("mixedData")
-        val in = DataUtils.readCsv[MixedData]("mixedDataInput.csv")
+        val in = DataUtils.readCsv[MixedData](Settings.pathString(Settings.InputCsv.mixedData))
 
         var i = 0
         in.foreach(rs => {
@@ -79,7 +79,7 @@ object CborSerialization extends Bench.LocalTime {
         exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
         val out = streams(gen)("onlyStrings")
-        val in = DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv")
+        val in = DataUtils.readCsv[OnlyStrings](Settings.pathString(Settings.InputCsv.onlyStrings))
 
         var i = 0
         in.foreach(rs => {
@@ -115,7 +115,7 @@ object CborSerialization extends Bench.LocalTime {
         exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
         val out = streams(gen)("onlyLongs")
-        val in = DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv")
+        val in = DataUtils.readCsv[OnlyLongs](Settings.pathString(Settings.InputCsv.onlyLongs))
 
         var i = 0
         in.foreach(rs => {

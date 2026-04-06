@@ -1,7 +1,5 @@
 package bench.avro
 
-import java.io.File
-
 import bench.Settings
 import bench.ScalameterImplicits._
 import com.sksamuel.avro4s.AvroSchema
@@ -40,7 +38,7 @@ object AvroLowLevelApiDeserialization extends Bench.LocalTime {
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { s =>
         val schema = schemas(s._1)
-        val in = new DataFileReader[GenericRecord](new File(s"${s._1}LowLevelAvroSerialization${s._2}.out"), new GenericDatumReader[GenericRecord](schema))
+        val in = new DataFileReader[GenericRecord](Settings.file(s"${s._1}LowLevelAvroSerialization${s._2}.out"), new GenericDatumReader[GenericRecord](schema))
         var i = 0
 
         val iter = in.iterator
