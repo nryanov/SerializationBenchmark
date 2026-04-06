@@ -19,7 +19,8 @@ object AvroSerialization extends Bench.LocalTime {
     "snappy" -> CodecFactory.snappyCodec(),
     "deflate" -> CodecFactory.deflateCodec(CodecFactory.DEFAULT_DEFLATE_LEVEL),
     "bzip2" -> CodecFactory.bzip2Codec(),
-    "xz" -> CodecFactory.xzCodec(CodecFactory.DEFAULT_XZ_LEVEL)
+    "xz" -> CodecFactory.xzCodec(CodecFactory.DEFAULT_XZ_LEVEL),
+    "zstd" -> CodecFactory.zstandardCodec(CodecFactory.DEFAULT_ZSTANDARD_LEVEL)
   )
 
   override def aggregator: Aggregator[Double] = Aggregator.average
@@ -41,7 +42,8 @@ object AvroSerialization extends Bench.LocalTime {
     "snappy",
     "deflate",
     "bzip2",
-    "xz"
+    "xz",
+    "zstd"
   )
 
   val format = Gen.enumeration("format")(

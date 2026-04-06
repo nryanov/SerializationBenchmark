@@ -1,17 +1,17 @@
 package bench.java
 
 import java.io._
-
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import project.Data
 import org.xerial.snappy._
-import java.util.zip.GZIPInputStream
 
+import java.util.zip.GZIPInputStream
 import bench.Settings
 import bench.ScalameterImplicits._
 import net.jpountz.lz4.LZ4BlockInputStream
 import org.scalameter.api
+import org.tukaani.xz.XZInputStream
 
 
 object JavaDeserialization extends Bench.LocalTime {
@@ -26,10 +26,11 @@ object JavaDeserialization extends Bench.LocalTime {
     "gzip" -> ((dataType: String) => new ObjectInputStream(new GZIPInputStream(new FileInputStream(Settings.file(s"${dataType}JavaSerializationGzip.out"))))),
     "snappy" -> ((dataType: String) => new ObjectInputStream(new SnappyInputStream(new FileInputStream(Settings.file(s"${dataType}JavaSerializationSnappy.out"))))),
     "lz4" -> ((dataType: String) => new ObjectInputStream(new LZ4BlockInputStream(new FileInputStream(Settings.file(s"${dataType}JavaSerializationLz4.out"))))),
+    "xz" -> ((dataType: String) => new ObjectInputStream(new XZInputStream(new FileInputStream(Settings.file(s"${dataType}JavaSerializationLz4.out"))))),
   )
 
   val dataType = Gen.enumeration("input file")( "onlyLongs", "mixedData", "onlyStrings")
-  val compression = Gen.enumeration("compression")("none", "gzip", "snappy", "lz4")
+  val compression = Gen.enumeration("compression")("none", "gzip", "snappy", "lz4", "xz")
 
   performance of "java deserialization" in {
     measure method "deserialize" in {

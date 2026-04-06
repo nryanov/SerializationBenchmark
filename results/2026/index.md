@@ -35,21 +35,61 @@ val borerVersion = "1.8.0"
 
 ## System info
 ```
-CPU: Apple M4 Pro
-RAM: 48 GB
-macOS: 15.7
-External SSD: Adata 2.5" 500GB SE880 USB-C
-Java: OpenJDK 64-Bit Server VM Temurin-21.0.5+11
+- CPU: Apple M4 Pro
+- RAM: 48 GB
+- macOS: 15.7
+- External SSD: Adata 2.5" 500GB SE880 USB-C
+- java: OpenJDK 64-Bit Server VM Temurin-21.0.5+11
+- sbt: 1.12.6
+- scala: 2.13.18
 ```
 
 ## Input data:
-10kk records:
-- mixed data: **2907378121** bytes
-- only longs: **2147950698** bytes
-- only strings: **7410000000** bytes
+1kk records:
+- mixed data: **290736953** bytes
+- only longs: **214794129** bytes
+- only strings: **741000000** bytes
+
+
+```shell
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RECORDS_COUNT=1000000 sbt generateDataSets
+
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC javaSerializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC javaDeserializingBench
+
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC avroSerializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC avroDeserializingBench
+
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC cborSerializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC cborDeserializingBench
+
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC jsonSerializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC jsonDeserializingBench
+
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC msgpackSerializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC msgpackDeserializingBench
+
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC orcSerializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC orcDeserializingBench
+
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC parquetSerializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC parquetDeserializingBench
+
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC protobufSerializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC protobufDeserializingBench
+
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC thriftSerializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC thriftDeserializingBench
+```
 
 ## Results
 ### Java
+|             | none | gzip | snappy | lz4 | xz |
+|-------------|------|------|--------|-----|----|
+| mixedData   |      |      |        |     |    |
+| onlyLong    |      |      |        |     |    |
+| onlyStrings |      |      |        |     |    |
+
 ### Json
 ### Avro
 ### Thrift

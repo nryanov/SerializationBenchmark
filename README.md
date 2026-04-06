@@ -7,6 +7,7 @@
 ## Commands
 - To customize benchmark directory use `env: BENCH_DATA_DIR`. Default: current directory
 - To customize count of records use `env BENCH_RECORDS_COUNT`. Default: 100k
+- To customize count of bench runs `env BENCH_RUNS`. Default: 15
 
 `sbt clean compile` - will generate Thrift and Protobuf classes
 

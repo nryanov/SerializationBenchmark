@@ -34,7 +34,8 @@ object AvroDeserialization extends Bench.LocalTime {
     "snappy",
     "deflate",
     "bzip2",
-    "xz"
+    "xz",
+    "zstd"
   )
 
   val format = Gen.enumeration("format")(
