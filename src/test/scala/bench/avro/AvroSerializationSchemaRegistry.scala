@@ -17,7 +17,7 @@ object AvroSerializationSchemaRegistry extends Bench.LocalTime {
   performance of "avro serialization" in {
     class SchemaRegistryGenericRecordSerializer(schemaRegistryUrl: String) {
 
-      import scala.collection.JavaConverters._
+      import scala.jdk.CollectionConverters._
 
       private val serializer: KafkaAvroSerializer = {
         val cfg = Map(
