@@ -6,6 +6,7 @@ import java.nio.ByteBuffer
 import bench.Settings
 import bench.ScalameterImplicits._
 import io.bullet.borer.{Cbor, Decoder}
+import io.bullet.borer.derivation.MapBasedCodecs._
 import net.jpountz.lz4.LZ4BlockInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.scalameter.api._
@@ -28,9 +29,9 @@ object CborDeserialization extends Bench.LocalTime {
     "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(new File(s"${dataType}CborSerializationLz4.out")))),
   )
 
-  implicit val mixedDataDecoder = Decoder.forCaseClass[MixedData]
-  implicit val onlyStringsDecoder = Decoder.forCaseClass[OnlyStrings]
-  implicit val onlyLongsDecoder = Decoder.forCaseClass[OnlyLongs]
+  implicit val mixedDataDecoder: Decoder[MixedData] = deriveDecoder[MixedData]
+  implicit val onlyStringsDecoder: Decoder[OnlyStrings] = deriveDecoder[OnlyStrings]
+  implicit val onlyLongsDecoder: Decoder[OnlyLongs] = deriveDecoder[OnlyLongs]
 
   val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
 

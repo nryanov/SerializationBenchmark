@@ -1,10 +1,10 @@
 package bench.avro
 
 import java.io.{File, FileOutputStream}
-
 import bench.Settings
 import bench.ScalameterImplicits._
 import com.sksamuel.avro4s.{AvroOutputStream, AvroSchema}
+import kantan.csv.ReadResult
 import org.apache.avro.Schema
 import org.apache.avro.file.CodecFactory
 import org.scalameter.api
@@ -26,8 +26,8 @@ object AvroSerialization extends Bench.LocalTime {
   override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val streams = Map(
-    "data" -> ((dataType: String, codec: String, schema: Schema) => AvroOutputStream.data[Data].to(new FileOutputStream(new File(s"${dataType}AvroDataSerialization$codec.out"))).withCodec(codecs(codec)).build(schema)),
-    "binary" -> ((dataType: String, codec: String, schema: Schema) => AvroOutputStream.binary[Data].to(new FileOutputStream(new File(s"${dataType}AvroBinarySerialization$codec.out"))).withCodec(codecs(codec)).build(schema))
+    "data" -> ((dataType: String, codec: String, schema: Schema) => AvroOutputStream.data[Data].to(new FileOutputStream(new File(s"${dataType}AvroDataSerialization$codec.out"))).withCodec(codecs(codec)).build()),
+    "binary" -> ((dataType: String, codec: String, schema: Schema) => AvroOutputStream.binary[Data].to(new FileOutputStream(new File(s"${dataType}AvroBinarySerialization$codec.out"))).withCodec(codecs(codec)).build())
   )
 
   val inputs = Map(
@@ -66,7 +66,7 @@ object AvroSerialization extends Bench.LocalTime {
 
         in.foreach(rs => {
           rs.foreach(data => {
-            out.write(data)
+            out.write(data.asInstanceOf[Data])
             i += 1
 
             if (i == Settings.flushInterval) {

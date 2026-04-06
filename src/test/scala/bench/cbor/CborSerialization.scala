@@ -8,6 +8,7 @@ import bench.Settings
 import bench.ScalameterImplicits._
 import io.bullet.borer.Encoder
 import io.bullet.borer.Cbor
+import io.bullet.borer.derivation.MapBasedCodecs._
 import net.jpountz.lz4.LZ4BlockOutputStream
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
@@ -29,9 +30,9 @@ object CborSerialization extends Bench.LocalTime {
 
   val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
 
-  implicit val mixedDataEncoder = Encoder.forCaseClass[MixedData]
-  implicit val onlyStringsEncoder = Encoder.forCaseClass[OnlyStrings]
-  implicit val onlyLongsEncoder = Encoder.forCaseClass[OnlyLongs]
+  implicit val mixedDataEncoder: Encoder[MixedData] = deriveEncoder[MixedData]
+  implicit val onlyStringsEncoder: Encoder[OnlyStrings] = deriveEncoder[OnlyStrings]
+  implicit val onlyLongsEncoder: Encoder[OnlyLongs] = deriveEncoder[OnlyLongs]
 
 
   performance of "mixedData cbor serialization" in {
