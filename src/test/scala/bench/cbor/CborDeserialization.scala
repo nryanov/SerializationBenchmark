@@ -4,6 +4,7 @@ import java.io.{BufferedInputStream, File, FileInputStream, InputStream}
 import java.nio.ByteBuffer
 
 import bench.Settings
+import bench.ScalameterImplicits._
 import io.bullet.borer.{Cbor, Decoder}
 import net.jpountz.lz4.LZ4BlockInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream

@@ -3,9 +3,10 @@ package bench.orc
 import java.nio.charset.StandardCharsets
 
 import bench.Settings
+import bench.ScalameterImplicits._
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.Path
-import org.apache.hadoop.hive.ql.exec.vector._
+import bench.Settings
 import org.apache.orc.{CompressionKind, OrcFile, Reader, TypeDescription}
 import org.scalameter.api
 import org.scalameter.api._

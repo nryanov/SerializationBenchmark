@@ -11,6 +11,7 @@ import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import project.{DataUtils, MixedData, OnlyLongs, OnlyStrings}
 import bench.Settings
+import bench.ScalameterImplicits._
 import com.sksamuel.avro4s.AvroSchema
 import org.apache.avro.Schema
 import org.scalameter.api

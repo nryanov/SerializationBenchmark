@@ -3,8 +3,9 @@ package bench.avro
 import java.io.{BufferedOutputStream, File, FileOutputStream}
 
 import bench.Settings
+import bench.ScalameterImplicits._
 import com.sksamuel.avro4s.RecordFormat
-import io.confluent.kafka.serializers.{AbstractKafkaAvroSerDeConfig, KafkaAvroSerializer}
+import io.confluent.kafka.serializers.KafkaAvroSerializer
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import project.{Data, DataUtils, MixedData}
@@ -20,7 +21,7 @@ object AvroSerializationSchemaRegistry extends Bench.LocalTime {
 
       private val serializer: KafkaAvroSerializer = {
         val cfg = Map(
-          AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG -> schemaRegistryUrl
+          "schema.registry.url" -> schemaRegistryUrl
         )
         val s = new KafkaAvroSerializer()
         s.configure(cfg.asJava, false)

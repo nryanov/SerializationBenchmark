@@ -3,6 +3,7 @@ package bench.msgpack
 import java.io.{BufferedOutputStream, File, FileOutputStream}
 
 import bench.Settings
+import bench.ScalameterImplicits._
 import net.jpountz.lz4.LZ4BlockOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.scalameter.api._

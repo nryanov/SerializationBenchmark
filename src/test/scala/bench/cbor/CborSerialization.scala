@@ -5,6 +5,7 @@ import java.nio.ByteBuffer
 import java.util.zip.GZIPOutputStream
 
 import bench.Settings
+import bench.ScalameterImplicits._
 import io.bullet.borer.Encoder
 import io.bullet.borer.Cbor
 import net.jpountz.lz4.LZ4BlockOutputStream

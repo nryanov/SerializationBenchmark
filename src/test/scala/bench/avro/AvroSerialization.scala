@@ -3,6 +3,7 @@ package bench.avro
 import java.io.{File, FileOutputStream}
 
 import bench.Settings
+import bench.ScalameterImplicits._
 import com.sksamuel.avro4s.{AvroOutputStream, AvroSchema}
 import org.apache.avro.Schema
 import org.apache.avro.file.CodecFactory
