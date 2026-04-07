@@ -45,56 +45,130 @@ val borerVersion = "1.8.0"
 ```
 
 ## Input data:
-1kk records:
-- mixed data: **290736953** bytes
-- only longs: **214794129** bytes
-- only strings: **741000000** bytes
+100k records:
+- mixed data: **29063336** bytes
+- only longs: **21479973** bytes
+- only strings: **74100000** bytes
 
-
+TODO: cbor (xz), orc (brotli), parquet (brotli)
 ```shell
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RECORDS_COUNT=1000000 sbt generateDataSets
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RECORDS_COUNT=100000 sbt generateDataSets
 
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC javaSerializingBench
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC javaDeserializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC javaSerializingBench > javaSerializingBenchResults.txt
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC javaDeserializingBench > javaDeserializingBenchResults.txt
 
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC avroSerializingBench
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC avroDeserializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC avroSerializingBench > avroSerializingBenchResults.txt
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC avroDeserializingBench > avroDeserializingBenchResults.txt
 
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC cborSerializingBench
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC cborDeserializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC jsonSerializingBench > jsonSerializingBenchResults.txt
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC jsonDeserializingBench > jsonDeserializingBenchResults.txt
 
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC jsonSerializingBench
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC jsonDeserializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC msgpackSerializingBench > msgpackSerializingBenchResults.txt
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC msgpackDeserializingBench > msgpackDeserializingBenchResults.txt
 
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC msgpackSerializingBench
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC msgpackDeserializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC cborSerializingBench > cborSerializingBenchResults.txt
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC cborDeserializingBench > cborDeserializingBenchResults.txt
 
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC orcSerializingBench
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC orcDeserializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC orcSerializingBench > orcSerializingBenchResults.txt
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC orcDeserializingBench > orcDeserializingBenchResults.txt
 
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC parquetSerializingBench
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC parquetDeserializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC parquetSerializingBench > parquetSerializingBenchResults.txt
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC parquetDeserializingBench > parquetDeserializingBenchResults.txt
 
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC protobufSerializingBench
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC protobufDeserializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC protobufSerializingBench > protobufSerializingBenchResults.txt
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC protobufDeserializingBench > protobufDeserializingBenchResults.txt
 
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC thriftSerializingBench
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_RUNS=3 BENCH_RECORDS_COUNT=1000000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC thriftDeserializingBench
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC thriftSerializingBench > thriftSerializingBenchResults.txt
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC thriftDeserializingBench > thriftDeserializingBenchResults.txt
 ```
 
 ## Results
 ### Java
-|             | none | gzip | snappy | lz4 | xz |
-|-------------|------|------|--------|-----|----|
-| mixedData   |      |      |        |     |    |
-| onlyLong    |      |      |        |     |    |
-| onlyStrings |      |      |        |     |    |
+|                               | none | gzip | snappy | lz4 | xz |
+|-------------------------------|------|------|--------|-----|----|
+| mixedData (Serialization)     |      |      |        |     |    |
+| mixedData (Deserialization)   |      |      |        |     |    |
+| onlyLongs (Serialization)     |      |      |        |     |    |
+| onlyLongs (Deserialization)   |      |      |        |     |    |
+| onlyStrings (Serialization)   |      |      |        |     |    |
+| onlyStrings (Deserialization) |      |      |        |     |    |
 
 ### Json
+|                               | none | gzip | snappy | lz4 | xz |
+|-------------------------------|------|------|--------|-----|----|
+| mixedData (Serialization)     |      |      |        |     |    |
+| mixedData (Deserialization)   |      |      |        |     |    |
+| onlyLongs (Serialization)     |      |      |        |     |    |
+| onlyLongs (Deserialization)   |      |      |        |     |    |
+| onlyStrings (Serialization)   |      |      |        |     |    |
+| onlyStrings (Deserialization) |      |      |        |     |    |
+
 ### Avro
+|                               | none | deflate | snappy | xz | bzip2 | zstd |
+|-------------------------------|------|---------|--------|----|-------|------|
+| mixedData (Serialization)     |      |         |        |    |       |      |
+| mixedData (Deserialization)   |      |         |        |    |       |      |
+| onlyLongs (Serialization)     |      |         |        |    |       |      |
+| onlyLongs (Deserialization)   |      |         |        |    |       |      |
+| onlyStrings (Serialization)   |      |         |        |    |       |      |
+| onlyStrings (Deserialization) |      |         |        |    |       |      |
+
 ### Thrift
+|                               | none | gzip | snappy | lz4 | xz |
+|-------------------------------|------|------|--------|-----|----|
+| mixedData (Serialization)     |      |      |        |     |    |
+| mixedData (Deserialization)   |      |      |        |     |    |
+| onlyLongs (Serialization)     |      |      |        |     |    |
+| onlyLongs (Deserialization)   |      |      |        |     |    |
+| onlyStrings (Serialization)   |      |      |        |     |    |
+| onlyStrings (Deserialization) |      |      |        |     |    |
+
 ### Protobuf
+|                               | none | gzip | snappy | lz4 | xz |
+|-------------------------------|------|------|--------|-----|----|
+| mixedData (Serialization)     |      |      |        |     |    |
+| mixedData (Deserialization)   |      |      |        |     |    |
+| onlyLongs (Serialization)     |      |      |        |     |    |
+| onlyLongs (Deserialization)   |      |      |        |     |    |
+| onlyStrings (Serialization)   |      |      |        |     |    |
+| onlyStrings (Deserialization) |      |      |        |     |    |
+
 ### ORC
+|                               | none | snappy | zlib | lz0 | lz4 | zstd | brotli |
+|-------------------------------|------|--------|------|-----|-----|------|--------|
+| mixedData (Serialization)     |      |        |      |     |     |      |        |
+| mixedData (Deserialization)   |      |        |      |     |     |      |        |
+| onlyLongs (Serialization)     |      |        |      |     |     |      |        |
+| onlyLongs (Deserialization)   |      |        |      |     |     |      |        |
+| onlyStrings (Serialization)   |      |        |      |     |     |      |        |
+| onlyStrings (Deserialization) |      |        |      |     |     |      |        |
+
 ### Parquet
+|                               | none | snappy | gzip | lz4 | zstd |
+|-------------------------------|------|--------|------|-----|------|
+| mixedData (Serialization)     |      |        |      |     |      |
+| mixedData (Deserialization)   |      |        |      |     |      |
+| onlyLongs (Serialization)     |      |        |      |     |      |
+| onlyLongs (Deserialization)   |      |        |      |     |      |
+| onlyStrings (Serialization)   |      |        |      |     |      |
+| onlyStrings (Deserialization) |      |        |      |     |      |
+
 ### Msgpack
+|                               | none | gzip | snappy | lz4 | xz |
+|-------------------------------|------|------|--------|-----|----|
+| mixedData (Serialization)     |      |      |        |     |    |
+| mixedData (Deserialization)   |      |      |        |     |    |
+| onlyLongs (Serialization)     |      |      |        |     |    |
+| onlyLongs (Deserialization)   |      |      |        |     |    |
+| onlyStrings (Serialization)   |      |      |        |     |    |
+| onlyStrings (Deserialization) |      |      |        |     |    |
+
 ### CBOR
+|                               | none | gzip | snappy | lz4 | xz |
+|-------------------------------|------|------|--------|-----|----|
+| mixedData (Serialization)     |      |      |        |     |    |
+| mixedData (Deserialization)   |      |      |        |     |    |
+| onlyLongs (Serialization)     |      |      |        |     |    |
+| onlyLongs (Deserialization)   |      |      |        |     |    |
+| onlyStrings (Serialization)   |      |      |        |     |    |
+| onlyStrings (Deserialization) |      |      |        |     |    |
