@@ -1,7 +1,5 @@
 package bench.avro
 
-import java.io.File
-
 import bench.Settings
 import bench.ScalameterImplicits._
 import com.sksamuel.avro4s.AvroSchema
@@ -38,10 +36,10 @@ object AvroLowLevelApiSerialization extends Bench.LocalTime {
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { s =>
         val schema = AvroSchema[MixedData]
-        val out = new DataFileWriter[GenericRecord](new GenericDatumWriter[GenericRecord](schema)).setCodec(codecs(s)).create(schema, new File(s"mixedDataLowLevelAvroSerialization${s}.out"))
+        val out = new DataFileWriter[GenericRecord](new GenericDatumWriter[GenericRecord](schema)).setCodec(codecs(s)).create(schema, Settings.file(s"mixedDataLowLevelAvroSerialization${s}.out"))
         var i = 0
 
-        val in = DataUtils.readCsv[MixedData]("mixedDataInput.csv")
+        val in = DataUtils.readCsv[MixedData](Settings.pathString(Settings.InputCsv.mixedData))
         in.foreach(rs => {
           rs.foreach(data => {
             out.append(mixedDataOps.toGenericRecord(data))
@@ -67,10 +65,10 @@ object AvroLowLevelApiSerialization extends Bench.LocalTime {
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { s =>
         val schema = AvroSchema[OnlyStrings]
-        val out = new DataFileWriter[GenericRecord](new GenericDatumWriter[GenericRecord](schema)).setCodec(codecs(s)).create(schema, new File(s"onlyStringsLowLevelAvroSerialization${s}.out"))
+        val out = new DataFileWriter[GenericRecord](new GenericDatumWriter[GenericRecord](schema)).setCodec(codecs(s)).create(schema, Settings.file(s"onlyStringsLowLevelAvroSerialization${s}.out"))
         var i = 0
 
-        val in = DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv")
+        val in = DataUtils.readCsv[OnlyStrings](Settings.pathString(Settings.InputCsv.onlyStrings))
         in.foreach(rs => {
           rs.foreach(data => {
             out.append(onlyStringOps.toGenericRecord(data))
@@ -96,10 +94,10 @@ object AvroLowLevelApiSerialization extends Bench.LocalTime {
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { s =>
         val schema = AvroSchema[OnlyLongs]
-        val out = new DataFileWriter[GenericRecord](new GenericDatumWriter[GenericRecord](schema)).setCodec(codecs(s)).create(schema, new File(s"onlyLongsLowLevelAvroSerialization${s}.out"))
+        val out = new DataFileWriter[GenericRecord](new GenericDatumWriter[GenericRecord](schema)).setCodec(codecs(s)).create(schema, Settings.file(s"onlyLongsLowLevelAvroSerialization${s}.out"))
         var i = 0
 
-        val in = DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv")
+        val in = DataUtils.readCsv[OnlyLongs](Settings.pathString(Settings.InputCsv.onlyLongs))
         in.foreach(rs => {
           rs.foreach(data => {
             out.append(onlyLongsOps.toGenericRecord(data))

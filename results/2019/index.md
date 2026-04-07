@@ -30,10 +30,10 @@ val borerVersion = "0.9.0"
 6. ORC
 7. Parquet
 8. Msgpack
-9. CBOR
 
 ## System info
-```cores: 4
+```
+cores: 4
 hostname: MAC
 name: Java HotSpot(TM) 64-Bit Server VM
 osArch: x86_64
@@ -47,7 +47,7 @@ version: 25,144-b01
 
 ## Results
 
-## Java
+### Java
 ```
 ::Benchmark java serialization of mixed data,serialize::
 Parameters(input file -> onlyLongs, compression -> none): 2307,343483
@@ -96,7 +96,7 @@ Parameters(input file -> onlyStrings, compression -> lz4): 1835,862634
 70M onlyStringsJavaSerializationSnappy,out
 ```
 
-## Json
+### Json
 ```
 ::Benchmark json serialization,serialize::
 Parameters(input file -> onlyLongs, compression -> none): 3378,21702
@@ -146,7 +146,7 @@ Parameters(input file -> onlyStrings, compression -> lz4): 2906,763224
 
 ```
 
-## Avro
+### Avro
 ```
 ::Benchmark avro serialization,serialize with schema::
 Parameters(data type -> onlyLongs, codec -> none, format -> data): 1023,797601 
@@ -204,7 +204,7 @@ Parameters(data type -> onlyStrings, codec -> xz, format -> data): 10326,75797
 71M onlyStringsInput,csv
 ```
 
-## Thrift
+### Thrift
 ```
 ::Benchmark thrift serialization.serialize using binary protocol - mixed data::
 Parameters(compression -> none): 1125.383898 ms
@@ -310,7 +310,7 @@ Parameters(compression -> lz4): 252.935347 ms
 71M onlyStringsInput.csv
 ```
 
-## Protobuf
+### Protobuf
 ```
 ::Benchmark protobuf serialization.serialize - mixed data::
 Parameters(compression -> none): 1102.173422 ms
@@ -369,7 +369,7 @@ Parameters(compression -> lz4): 65.485835 ms
 
 ```
 
-## ORC
+### ORC
 ```
 ::Benchmark orc serialization.serialize - mixed data::
 Parameters(compression -> NONE): 1912.585564 ms
@@ -437,7 +437,7 @@ Parameters(compression -> LZ4): 103.962426 ms
 
 ```
 
-## Parquet
+### Parquet
 ```
 ::Benchmark parquet serialization.parquet-avro serialize - mixed data::
 Parameters(compression -> UNCOMPRESSED): 10218.814451 ms
@@ -526,7 +526,7 @@ Parameters(compression -> GZIP): 1284.935349 ms
 
 ```
 
-## Msgpack
+### Msgpack
 ```
 ::Benchmark msgpack serialization.serialize - mixed data::
 Parameters(compression -> none): 1020.163951 ms

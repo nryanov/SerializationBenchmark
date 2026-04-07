@@ -1,6 +1,6 @@
 package bench.avro
 
-import java.io.{File, FileOutputStream}
+import java.io.FileOutputStream
 import bench.Settings
 import bench.ScalameterImplicits._
 import com.sksamuel.avro4s.{AvroOutputStream, AvroSchema}
@@ -19,21 +19,22 @@ object AvroSerialization extends Bench.LocalTime {
     "snappy" -> CodecFactory.snappyCodec(),
     "deflate" -> CodecFactory.deflateCodec(CodecFactory.DEFAULT_DEFLATE_LEVEL),
     "bzip2" -> CodecFactory.bzip2Codec(),
-    "xz" -> CodecFactory.xzCodec(CodecFactory.DEFAULT_XZ_LEVEL)
+    "xz" -> CodecFactory.xzCodec(CodecFactory.DEFAULT_XZ_LEVEL),
+    "zstd" -> CodecFactory.zstandardCodec(CodecFactory.DEFAULT_ZSTANDARD_LEVEL)
   )
 
   override def aggregator: Aggregator[Double] = Aggregator.average
   override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val streams = Map(
-    "data" -> ((dataType: String, codec: String, schema: Schema) => AvroOutputStream.data[Data].to(new FileOutputStream(new File(s"${dataType}AvroDataSerialization$codec.out"))).withCodec(codecs(codec)).build()),
-    "binary" -> ((dataType: String, codec: String, schema: Schema) => AvroOutputStream.binary[Data].to(new FileOutputStream(new File(s"${dataType}AvroBinarySerialization$codec.out"))).withCodec(codecs(codec)).build())
+    "data" -> ((dataType: String, codec: String, schema: Schema) => AvroOutputStream.data[Data].to(new FileOutputStream(Settings.file(s"${dataType}AvroDataSerialization$codec.out"))).withCodec(codecs(codec)).build()),
+    "binary" -> ((dataType: String, codec: String, schema: Schema) => AvroOutputStream.binary[Data].to(new FileOutputStream(Settings.file(s"${dataType}AvroBinarySerialization$codec.out"))).withCodec(codecs(codec)).build())
   )
 
   val inputs = Map(
-    "mixedData" -> (() => (AvroSchema[MixedData], DataUtils.readCsv[MixedData]("mixedDataInput.csv"))),
-    "onlyStrings" -> (() => (AvroSchema[OnlyStrings], DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv"))),
-    "onlyLongs" -> (() => (AvroSchema[OnlyLongs], DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv")))
+    "mixedData" -> (() => (AvroSchema[MixedData], DataUtils.readCsv[MixedData](Settings.pathString(Settings.InputCsv.mixedData)))),
+    "onlyStrings" -> (() => (AvroSchema[OnlyStrings], DataUtils.readCsv[OnlyStrings](Settings.pathString(Settings.InputCsv.onlyStrings)))),
+    "onlyLongs" -> (() => (AvroSchema[OnlyLongs], DataUtils.readCsv[OnlyLongs](Settings.pathString(Settings.InputCsv.onlyLongs))))
   )
 
   val codec = Gen.enumeration("codec")(
@@ -41,7 +42,8 @@ object AvroSerialization extends Bench.LocalTime {
     "snappy",
     "deflate",
     "bzip2",
-    "xz"
+    "xz",
+    "zstd"
   )
 
   val format = Gen.enumeration("format")(

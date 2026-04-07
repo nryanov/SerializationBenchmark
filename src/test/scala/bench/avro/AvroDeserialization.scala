@@ -1,6 +1,6 @@
 package bench.avro
 
-import java.io.{File, FileInputStream}
+import java.io.FileInputStream
 import bench.Settings
 import bench.ScalameterImplicits._
 import com.sksamuel.avro4s.{AvroInputStream, AvroSchema}
@@ -19,8 +19,8 @@ object AvroDeserialization extends Bench.LocalTime {
   override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val streams = Map(
-    "data" -> ((dataType: String, codec: String, schema: Schema) => AvroInputStream.data[Data].from(new FileInputStream(new File(s"${dataType}AvroDataSerialization$codec.out"))).build(schema)),
-    "binary" -> ((dataType: String, codec: String, schema: Schema) => AvroInputStream.binary[Data].from(new FileInputStream(new File(s"${dataType}AvroBinarySerialization$codec.out"))).build(schema))
+    "data" -> ((dataType: String, codec: String, schema: Schema) => AvroInputStream.data[Data].from(new FileInputStream(Settings.file(s"${dataType}AvroDataSerialization$codec.out"))).build(schema)),
+    "binary" -> ((dataType: String, codec: String, schema: Schema) => AvroInputStream.binary[Data].from(new FileInputStream(Settings.file(s"${dataType}AvroBinarySerialization$codec.out"))).build(schema))
   )
 
   val schemas = Map(
@@ -34,7 +34,8 @@ object AvroDeserialization extends Bench.LocalTime {
     "snappy",
     "deflate",
     "bzip2",
-    "xz"
+    "xz",
+    "zstd"
   )
 
   val format = Gen.enumeration("format")(

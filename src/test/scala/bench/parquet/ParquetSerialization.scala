@@ -2,7 +2,7 @@ package bench.parquet
 
 import org.apache.avro.generic.{GenericData, GenericRecord}
 import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.{FileSystem, Path}
+import org.apache.hadoop.fs.FileSystem
 import org.apache.parquet.avro.AvroParquetWriter
 import org.apache.parquet.hadoop.{ParquetFileWriter, ParquetWriter}
 import org.apache.parquet.hadoop.metadata.CompressionCodecName
@@ -22,6 +22,8 @@ object ParquetSerialization extends Bench.LocalTime {
     CompressionCodecName.UNCOMPRESSED,
     CompressionCodecName.SNAPPY,
     CompressionCodecName.GZIP,
+    CompressionCodecName.LZ4,
+    CompressionCodecName.ZSTD,
   )
 
   override def aggregator: Aggregator[Double] = Aggregator.average
@@ -38,8 +40,8 @@ object ParquetSerialization extends Bench.LocalTime {
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { gen =>
-        val in = DataUtils.readCsv[MixedData]("mixedDataInput.csv")
-        val parquetWriter: ParquetWriter[GenericRecord] = AvroParquetWriter.builder[GenericRecord](new Path(s"file://${System.getProperty("user.dir")}/mixedDataParquetAvroSerialization${gen.name()}.out"))
+        val in = DataUtils.readCsv[MixedData](Settings.pathString(Settings.InputCsv.mixedData))
+        val parquetWriter: ParquetWriter[GenericRecord] = AvroParquetWriter.builder[GenericRecord](Settings.hadoopPath(s"mixedDataParquetAvroSerialization${gen.name()}.out"))
           .withSchema(mixedDataschema)
           .enableValidation()
           .enableDictionaryEncoding()
@@ -64,8 +66,8 @@ object ParquetSerialization extends Bench.LocalTime {
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { gen =>
-        val in = DataUtils.readCsv[MixedData]("mixedDataInput.csv")
-        val out = new Path(s"file://${System.getProperty("user.dir")}/mixedDataParquetThriftSerialization${gen.name()}.out")
+        val in = DataUtils.readCsv[MixedData](Settings.pathString(Settings.InputCsv.mixedData))
+        val out = Settings.hadoopPath(s"mixedDataParquetThriftSerialization${gen.name()}.out")
         val fs = FileSystem.get(new Configuration())
         if (fs.exists(out)) {
           fs.delete(out, false)
@@ -98,8 +100,8 @@ object ParquetSerialization extends Bench.LocalTime {
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { gen =>
-        val in = DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv")
-        val parquetWriter: ParquetWriter[GenericRecord] = AvroParquetWriter.builder[GenericRecord](new Path(s"file://${System.getProperty("user.dir")}/onlyStringsParquetAvroSerialization${gen.name()}.out"))
+        val in = DataUtils.readCsv[OnlyStrings](Settings.pathString(Settings.InputCsv.onlyStrings))
+        val parquetWriter: ParquetWriter[GenericRecord] = AvroParquetWriter.builder[GenericRecord](Settings.hadoopPath(s"onlyStringsParquetAvroSerialization${gen.name()}.out"))
           .withSchema(onlyStringsSchema)
           .enableValidation()
           .enableDictionaryEncoding()
@@ -124,8 +126,8 @@ object ParquetSerialization extends Bench.LocalTime {
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { gen =>
-        val in = DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv")
-        val out = new Path(s"file://${System.getProperty("user.dir")}/onlyStringsParquetThriftSerialization${gen.name()}.out")
+        val in = DataUtils.readCsv[OnlyStrings](Settings.pathString(Settings.InputCsv.onlyStrings))
+        val out = Settings.hadoopPath(s"onlyStringsParquetThriftSerialization${gen.name()}.out")
         val fs = FileSystem.get(new Configuration())
         if (fs.exists(out)) {
           fs.delete(out, false)
@@ -158,8 +160,8 @@ object ParquetSerialization extends Bench.LocalTime {
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { gen =>
-        val in = DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv")
-        val parquetWriter: ParquetWriter[GenericRecord] = AvroParquetWriter.builder[GenericRecord](new Path(s"file://${System.getProperty("user.dir")}/onlyLongsParquetAvroSerialization${gen.name()}.out"))
+        val in = DataUtils.readCsv[OnlyLongs](Settings.pathString(Settings.InputCsv.onlyLongs))
+        val parquetWriter: ParquetWriter[GenericRecord] = AvroParquetWriter.builder[GenericRecord](Settings.hadoopPath(s"onlyLongsParquetAvroSerialization${gen.name()}.out"))
           .withSchema(onlyLongsSchema)
           .enableValidation()
           .enableDictionaryEncoding()
@@ -184,8 +186,8 @@ object ParquetSerialization extends Bench.LocalTime {
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { gen =>
-        val in = DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv")
-        val out = new Path(s"file://${System.getProperty("user.dir")}/onlyLongsParquetThriftSerialization${gen.name()}.out")
+        val in = DataUtils.readCsv[OnlyLongs](Settings.pathString(Settings.InputCsv.onlyLongs))
+        val out = Settings.hadoopPath(s"onlyLongsParquetThriftSerialization${gen.name()}.out")
         val fs = FileSystem.get(new Configuration())
         if (fs.exists(out)) {
           fs.delete(out, false)

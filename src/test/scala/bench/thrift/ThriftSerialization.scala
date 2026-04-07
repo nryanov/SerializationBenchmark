@@ -2,7 +2,6 @@ package bench.thrift
 
 import java.io._
 import java.nio.ByteBuffer
-
 import bench.Settings
 import bench.ScalameterImplicits._
 import net.jpountz.lz4.LZ4BlockOutputStream
@@ -12,22 +11,24 @@ import org.apache.thrift.transport.TMemoryBuffer
 import org.scalameter.api
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
+import org.tukaani.xz.{LZMA2Options, XZOutputStream}
 import org.xerial.snappy.SnappyOutputStream
 import project.{DataUtils, MixedData, OnlyLongs, OnlyStrings}
 import project.Implicits._
 
 object ThriftSerialization extends Bench.LocalTime {
   val streams = Map(
-    "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}ThriftSerialization.out")))),
-    "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(new File(s"${dataType}ThriftSerializationGzip.out")))),
-    "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(new File(s"${dataType}ThriftSerializationSnappy.out")))),
-    "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}ThriftSerializationLz4.out")))),
+    "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(Settings.file(s"${dataType}ThriftSerialization.out")))),
+    "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(Settings.file(s"${dataType}ThriftSerializationGzip.out")))),
+    "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}ThriftSerializationSnappy.out")))),
+    "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}ThriftSerializationLz4.out")))),
+    "xz" -> ((dataType: String) => new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}ThriftSerializationXz.out")), new LZMA2Options())),
   )
 
   override def aggregator: Aggregator[Double] = Aggregator.average
   override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
-  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
+  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4", "xz")
 
   performance of "thrift serialization" in {
     measure method "serialize using binary protocol - mixed data" in {
@@ -40,7 +41,7 @@ object ThriftSerialization extends Bench.LocalTime {
         val out = streams(codec)("mixedDataBinary")
         var i = 0
 
-        val in = DataUtils.readCsv[MixedData]("mixedDataInput.csv")
+        val in = DataUtils.readCsv[MixedData](Settings.pathString(Settings.InputCsv.mixedData))
         val protocolFactory: TBinaryProtocol.Factory = new TBinaryProtocol.Factory()
 
         in.foreach(rs => {
@@ -78,7 +79,7 @@ object ThriftSerialization extends Bench.LocalTime {
         val out = streams(codec)("mixedDataCompact")
         var i = 0
 
-        val in = DataUtils.readCsv[MixedData]("mixedDataInput.csv")
+        val in = DataUtils.readCsv[MixedData](Settings.pathString(Settings.InputCsv.mixedData))
         val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory(36)
 
         in.foreach(rs => {
@@ -116,7 +117,7 @@ object ThriftSerialization extends Bench.LocalTime {
         val out = streams(codec)("onlyStringsBinary")
         var i = 0
 
-        val in = DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv")
+        val in = DataUtils.readCsv[OnlyStrings](Settings.pathString(Settings.InputCsv.onlyStrings))
         val protocolFactory: TBinaryProtocol.Factory = new TBinaryProtocol.Factory()
 
         in.foreach(rs => {
@@ -154,7 +155,7 @@ object ThriftSerialization extends Bench.LocalTime {
         val out = streams(codec)("onlyStringsCompact")
         var i = 0
 
-        val in = DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv")
+        val in = DataUtils.readCsv[OnlyStrings](Settings.pathString(Settings.InputCsv.onlyStrings))
         val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory(36)
 
         in.foreach(rs => {
@@ -192,7 +193,7 @@ object ThriftSerialization extends Bench.LocalTime {
         val out = streams(codec)("onlyLongsBinary")
         var i = 0
 
-        val in = DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv")
+        val in = DataUtils.readCsv[OnlyLongs](Settings.pathString(Settings.InputCsv.onlyLongs))
         val protocolFactory: TBinaryProtocol.Factory = new TBinaryProtocol.Factory()
 
         in.foreach(rs => {
@@ -230,7 +231,7 @@ object ThriftSerialization extends Bench.LocalTime {
         val out = streams(codec)("onlyLongsCompact")
         var i = 0
 
-        val in = DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv")
+        val in = DataUtils.readCsv[OnlyLongs](Settings.pathString(Settings.InputCsv.onlyLongs))
         val protocolFactory: TCompactProtocol.Factory = new TCompactProtocol.Factory(36)
 
         in.foreach(rs => {

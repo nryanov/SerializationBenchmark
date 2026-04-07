@@ -1,7 +1,6 @@
 package bench.msgpack
 
-import java.io.{BufferedOutputStream, File, FileOutputStream}
-
+import java.io.{BufferedOutputStream, FileOutputStream}
 import bench.Settings
 import bench.ScalameterImplicits._
 import net.jpountz.lz4.LZ4BlockOutputStream
@@ -11,21 +10,23 @@ import org.scalameter.picklers.Implicits._
 import project.{DataUtils, MixedData, OnlyLongs, OnlyStrings}
 import org.msgpack.core.MessagePack
 import org.scalameter.api
+import org.tukaani.xz.{LZMA2Options, XZOutputStream}
 import org.xerial.snappy.SnappyOutputStream
 import project.Implicits._
 
 object MsgpackSerialization extends Bench.LocalTime {
   val streams = Map(
-    "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}MsgpackSerialization.out")))),
-    "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(new File(s"${dataType}MsgpackSerializationGzip.out")))),
-    "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(new File(s"${dataType}MsgpackSerializationSnappy.out")))),
-    "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}MsgpackSerializationLz4.out")))),
+    "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(Settings.file(s"${dataType}MsgpackSerialization.out")))),
+    "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(Settings.file(s"${dataType}MsgpackSerializationGzip.out")))),
+    "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}MsgpackSerializationSnappy.out")))),
+    "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}MsgpackSerializationLz4.out")))),
+    "xz" -> ((dataType: String) => new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}MsgpackSerializationXz.out")), new LZMA2Options())),
   )
 
   override def aggregator: Aggregator[Double] = Aggregator.average
   override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
-  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
+  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4", "xz")
 
   performance of "msgpack serialization" in {
     measure method "serialize - mixed data" in {
@@ -39,7 +40,7 @@ object MsgpackSerialization extends Bench.LocalTime {
         val packer = MessagePack.newDefaultBufferPacker
         var i = 0
 
-        val in = DataUtils.readCsv[MixedData]("mixedDataInput.csv")
+        val in = DataUtils.readCsv[MixedData](Settings.pathString(Settings.InputCsv.mixedData))
         in.foreach(rs => {
           rs.foreach(data => {
             mixedDataOps.msgpack(data, packer)
@@ -76,7 +77,7 @@ object MsgpackSerialization extends Bench.LocalTime {
         val packer = MessagePack.newDefaultBufferPacker
         var i = 0
 
-        val in = DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv")
+        val in = DataUtils.readCsv[OnlyStrings](Settings.pathString(Settings.InputCsv.onlyStrings))
         in.foreach(rs => {
           rs.foreach(data => {
             onlyStringOps.msgpack(data, packer)
@@ -113,7 +114,7 @@ object MsgpackSerialization extends Bench.LocalTime {
         val packer = MessagePack.newDefaultBufferPacker
         var i = 0
 
-        val in = DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv")
+        val in = DataUtils.readCsv[OnlyLongs](Settings.pathString(Settings.InputCsv.onlyLongs))
         in.foreach(rs => {
           rs.foreach(data => {
             onlyLongsOps.msgpack(data, packer)

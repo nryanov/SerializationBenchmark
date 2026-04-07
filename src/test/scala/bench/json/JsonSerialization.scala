@@ -1,7 +1,6 @@
 package bench.json
 
 import java.io._
-
 import org.json4s._
 import org.json4s.jackson.Serialization
 import org.json4s.jackson.JsonMethods.mapper
@@ -16,6 +15,7 @@ import com.fasterxml.jackson.core.JsonParser.Feature
 import net.jpountz.lz4.LZ4BlockOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.scalameter.api
+import org.tukaani.xz.{LZMA2Options, XZOutputStream}
 import project._
 
 object JsonSerialization extends Bench.LocalTime {
@@ -25,20 +25,21 @@ object JsonSerialization extends Bench.LocalTime {
   override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val streams = Map(
-    "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}JsonSerialization.out")))),
-    "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(new File(s"${dataType}JsonSerializationGzip.out")))),
-    "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(new File(s"${dataType}JsonSerializationSnappy.out")))),
-    "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}JsonSerializationLz4.out")))),
+    "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(Settings.file(s"${dataType}JsonSerialization.out")))),
+    "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(Settings.file(s"${dataType}JsonSerializationGzip.out")))),
+    "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}JsonSerializationSnappy.out")))),
+    "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}JsonSerializationLz4.out")))),
+    "xz" -> ((dataType: String) => new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}JsonSerializationXz.out")), new LZMA2Options())),
   )
 
   val inputs = Map(
-    "mixedData" -> (() => DataUtils.readCsv[MixedData]("mixedDataInput.csv")),
-    "onlyStrings" -> (() => DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv")),
-    "onlyLongs" -> (() => DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv"))
+    "mixedData" -> (() => DataUtils.readCsv[MixedData](Settings.pathString(Settings.InputCsv.mixedData))),
+    "onlyStrings" -> (() => DataUtils.readCsv[OnlyStrings](Settings.pathString(Settings.InputCsv.onlyStrings))),
+    "onlyLongs" -> (() => DataUtils.readCsv[OnlyLongs](Settings.pathString(Settings.InputCsv.onlyLongs)))
   )
 
   val dataType = Gen.enumeration("input file")("onlyLongs", "mixedData", "onlyStrings")
-  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
+  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4", "xz")
 
   mapper.configure(Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true)
   mapper.configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true)

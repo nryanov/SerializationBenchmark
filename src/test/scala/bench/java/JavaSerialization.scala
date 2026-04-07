@@ -1,18 +1,18 @@
 package bench.java
 
 import java.io._
-
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
 import project.{DataUtils, MixedData, OnlyLongs, OnlyStrings}
 import org.xerial.snappy._
-import java.util.zip.GZIPOutputStream
 
+import java.util.zip.GZIPOutputStream
 import project.Implicits._
 import bench.Settings
 import bench.ScalameterImplicits._
 import net.jpountz.lz4.LZ4BlockOutputStream
 import org.scalameter.api
+import org.tukaani.xz.{LZMA2Options, XZOutputStream}
 
 
 object JavaSerialization extends Bench.LocalTime {
@@ -20,20 +20,21 @@ object JavaSerialization extends Bench.LocalTime {
   override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
   val streams = Map(
-    "none" -> ((dataType: String) => new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}JavaSerialization.out"))))),
-    "gzip" -> ((dataType: String) => new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(new File(s"${dataType}JavaSerializationGzip.out"))))),
-    "snappy" -> ((dataType: String) => new ObjectOutputStream(new SnappyOutputStream(new FileOutputStream(new File(s"${dataType}JavaSerializationSnappy.out"))))),
-    "lz4" -> ((dataType: String) => new ObjectOutputStream(new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}JavaSerializationLz4.out"))))),
+    "none" -> ((dataType: String) => new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerialization.out"))))),
+    "gzip" -> ((dataType: String) => new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerializationGzip.out"))))),
+    "snappy" -> ((dataType: String) => new ObjectOutputStream(new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerializationSnappy.out"))))),
+    "lz4" -> ((dataType: String) => new ObjectOutputStream(new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerializationLz4.out"))))),
+    "xz" -> ((dataType: String) => new ObjectOutputStream(new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerializationXz.out")), new LZMA2Options()))),
   )
 
   val inputs = Map(
-    "mixedData" -> (() => DataUtils.readCsv[MixedData]("mixedDataInput.csv")),
-    "onlyStrings" -> (() => DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv")),
-    "onlyLongs" -> (() => DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv"))
+    "mixedData" -> (() => DataUtils.readCsv[MixedData](Settings.pathString(Settings.InputCsv.mixedData))),
+    "onlyStrings" -> (() => DataUtils.readCsv[OnlyStrings](Settings.pathString(Settings.InputCsv.onlyStrings))),
+    "onlyLongs" -> (() => DataUtils.readCsv[OnlyLongs](Settings.pathString(Settings.InputCsv.onlyLongs)))
   )
 
   val dataType = Gen.enumeration("input file")("onlyLongs", "mixedData", "onlyStrings")
-  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
+  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4", "xz")
 
 
   performance of "java serialization" in {
@@ -55,6 +56,7 @@ object JavaSerialization extends Bench.LocalTime {
 
             if (i == Settings.flushInterval) {
               out.flush()
+              out.reset()
               i = 0
             }
           })

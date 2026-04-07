@@ -1,6 +1,6 @@
 package bench.avro
 
-import java.io.{BufferedOutputStream, File, FileOutputStream}
+import java.io.{BufferedOutputStream, FileOutputStream}
 
 import bench.Settings
 import bench.ScalameterImplicits._
@@ -13,7 +13,7 @@ import project.Implicits._
 
 
 object AvroSerializationSchemaRegistry extends Bench.LocalTime {
-  val input = Gen.single("input file")("input.csv")
+  val input = Gen.single("input file")(Settings.SchemaRegistry.input)
   performance of "avro serialization" in {
     class SchemaRegistryGenericRecordSerializer(schemaRegistryUrl: String) {
 
@@ -42,10 +42,10 @@ object AvroSerializationSchemaRegistry extends Bench.LocalTime {
         exec.maxWarmupRuns -> Settings.maxWarmupRuns
       ) in { file =>
         val serializer = new SchemaRegistryGenericRecordSerializer("http://localhost:8081")
-        val out = new BufferedOutputStream(new FileOutputStream(new File("schemaRegistrySerialization.out")))
+        val out = new BufferedOutputStream(new FileOutputStream(Settings.file(Settings.SchemaRegistry.output)))
         var i = 0
 
-        val in = DataUtils.readCsv[MixedData](file)
+        val in = DataUtils.readCsv[MixedData](Settings.pathString(file))
         in.foreach(rs => {
           rs.foreach(data => {
             out.write(serializer.serialize(data))

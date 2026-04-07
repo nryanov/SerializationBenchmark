@@ -1,8 +1,7 @@
 package bench.cbor
 
-import java.io.{BufferedInputStream, File, FileInputStream, InputStream}
+import java.io.{BufferedInputStream, FileInputStream, InputStream}
 import java.nio.ByteBuffer
-
 import bench.Settings
 import bench.ScalameterImplicits._
 import io.bullet.borer.{Cbor, Decoder}
@@ -13,6 +12,7 @@ import org.xerial.snappy.SnappyInputStream
 import project.{Data, MixedData, OnlyLongs, OnlyStrings}
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
+import org.tukaani.xz.XZInputStream
 
 object CborManualDeserialization extends Bench.LocalTime {
   override def aggregator: Aggregator[Double] = Aggregator.average
@@ -23,10 +23,11 @@ object CborManualDeserialization extends Bench.LocalTime {
   var data: Data = _
 
   val streams = Map(
-    "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(new File(s"${dataType}CborManualSerialization.out")))),
-    "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(new File(s"${dataType}CborManualSerializationGzip.out")))),
-    "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(new File(s"${dataType}CborManualSerializationSnappy.out")))),
-    "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(new File(s"${dataType}CborManualSerializationLz4.out")))),
+    "none" -> ((dataType: String) => new BufferedInputStream(new FileInputStream(Settings.file(s"${dataType}CborManualSerialization.out")))),
+    "gzip" -> ((dataType: String) => new GzipCompressorInputStream(new FileInputStream(Settings.file(s"${dataType}CborManualSerializationGzip.out")))),
+    "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(Settings.file(s"${dataType}CborManualSerializationSnappy.out")))),
+    "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(Settings.file(s"${dataType}CborManualSerializationLz4.out")))),
+    "xz" -> ((dataType: String) => new XZInputStream(new FileInputStream(Settings.file(s"${dataType}CborManualSerializationXz.out")))),
   )
 
   implicit val mixedDataDecoder = Decoder[MixedData](reader => MixedData(
@@ -97,7 +98,7 @@ object CborManualDeserialization extends Bench.LocalTime {
     Option(reader.readLong())
   ))
 
-  val compression = Gen.enumeration("compression")("none", "gzip", "snappy", "lz4")
+  val compression = Gen.enumeration("compression")("none", "gzip", "snappy", "lz4", "xz")
 
   def readAll(in: InputStream, buffer: Array[Byte], off: Int, len: Int): Int = {
     var got = 0

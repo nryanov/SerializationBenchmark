@@ -2,7 +2,6 @@ package bench.parquet
 
 import org.apache.avro.generic.GenericData
 import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.Path
 import org.apache.parquet.avro.AvroParquetReader
 import org.apache.parquet.hadoop.ParquetReader
 import org.apache.parquet.thrift.ThriftParquetReader
@@ -22,6 +21,8 @@ object ParquetDeserialization extends Bench.LocalTime {
     CompressionCodecName.UNCOMPRESSED,
     CompressionCodecName.SNAPPY,
     CompressionCodecName.GZIP,
+    CompressionCodecName.LZ4,
+    CompressionCodecName.ZSTD,
   )
 
   override def aggregator: Aggregator[Double] = Aggregator.average
@@ -35,7 +36,7 @@ object ParquetDeserialization extends Bench.LocalTime {
         exec.maxWarmupRuns -> Settings.maxWarmupRuns,
         exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
-        val inputFile = new Path(s"file://${System.getProperty("user.dir")}/mixedDataParquetAvroSerialization${gen.name()}.out")
+        val inputFile = Settings.hadoopPath(s"mixedDataParquetAvroSerialization${gen.name()}.out")
         val in = AvroParquetReader.builder[GenericData.Record](HadoopInputFile.fromPath(inputFile, new Configuration()))
           .withDataModel(GenericData.get())
           .build()
@@ -60,7 +61,7 @@ object ParquetDeserialization extends Bench.LocalTime {
         exec.maxWarmupRuns -> Settings.maxWarmupRuns,
         exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
-        val inputFile = new Path(s"file://${System.getProperty("user.dir")}/mixedDataParquetThriftSerialization${gen.name()}.out")
+        val inputFile = Settings.hadoopPath(s"mixedDataParquetThriftSerialization${gen.name()}.out")
         val in: ParquetReader[thriftBenchmark.java.MixedData] = ThriftParquetReader.build[thriftBenchmark.java.MixedData](inputFile)
           .withThriftClass(classOf[thriftBenchmark.java.MixedData])
           .build()
@@ -85,7 +86,7 @@ object ParquetDeserialization extends Bench.LocalTime {
         exec.maxWarmupRuns -> Settings.maxWarmupRuns,
         exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
-        val inputFile = new Path(s"file://${System.getProperty("user.dir")}/onlyStringsParquetAvroSerialization${gen.name()}.out")
+        val inputFile = Settings.hadoopPath(s"onlyStringsParquetAvroSerialization${gen.name()}.out")
         val in = AvroParquetReader.builder[GenericData.Record](HadoopInputFile.fromPath(inputFile, new Configuration()))
           .withDataModel(GenericData.get())
           .build()
@@ -110,7 +111,7 @@ object ParquetDeserialization extends Bench.LocalTime {
         exec.maxWarmupRuns -> Settings.maxWarmupRuns,
         exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
-        val inputFile = new Path(s"file://${System.getProperty("user.dir")}/OnlyStringsParquetThriftSerialization${gen.name()}.out")
+        val inputFile = Settings.hadoopPath(s"onlyStringsParquetThriftSerialization${gen.name()}.out")
         val in: ParquetReader[thriftBenchmark.java.OnlyStrings] = ThriftParquetReader.build[thriftBenchmark.java.OnlyStrings](inputFile)
           .withThriftClass(classOf[thriftBenchmark.java.OnlyStrings])
           .build()
@@ -135,7 +136,7 @@ object ParquetDeserialization extends Bench.LocalTime {
         exec.maxWarmupRuns -> Settings.maxWarmupRuns,
         exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
-        val inputFile = new Path(s"file://${System.getProperty("user.dir")}/OnlyLongsParquetAvroSerialization${gen.name()}.out")
+        val inputFile = Settings.hadoopPath(s"onlyLongsParquetAvroSerialization${gen.name()}.out")
         val in = AvroParquetReader.builder[GenericData.Record](HadoopInputFile.fromPath(inputFile, new Configuration()))
           .withDataModel(GenericData.get())
           .build()
@@ -160,7 +161,7 @@ object ParquetDeserialization extends Bench.LocalTime {
         exec.maxWarmupRuns -> Settings.maxWarmupRuns,
         exec.independentSamples -> Settings.independentSamples
       ) in { gen =>
-        val inputFile = new Path(s"file://${System.getProperty("user.dir")}/onlyLongsParquetThriftSerialization${gen.name()}.out")
+        val inputFile = Settings.hadoopPath(s"onlyLongsParquetThriftSerialization${gen.name()}.out")
         val in: ParquetReader[thriftBenchmark.java.OnlyLongs] = ThriftParquetReader.build[thriftBenchmark.java.OnlyLongs](inputFile)
           .withThriftClass(classOf[thriftBenchmark.java.OnlyLongs])
           .build()

@@ -2,7 +2,6 @@ package bench.protobuf
 
 import java.io._
 import java.nio.ByteBuffer
-
 import bench.Settings
 import bench.ScalameterImplicits._
 import net.jpountz.lz4.LZ4BlockOutputStream
@@ -10,22 +9,24 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.scalameter.api
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
+import org.tukaani.xz.{LZMA2Options, XZOutputStream}
 import org.xerial.snappy.SnappyOutputStream
 import project.{DataUtils, MixedData, OnlyLongs, OnlyStrings}
 import project.Implicits._
 
 object ProtobufSerialization extends Bench.LocalTime {
   val streams = Map(
-    "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(new File(s"${dataType}ProtobufSerialization.out")))),
-    "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(new File(s"${dataType}ProtobufSerializationGzip.out")))),
-    "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(new File(s"${dataType}ProtobufSerializationSnappy.out")))),
-    "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(new File(s"${dataType}ProtobufSerializationLz4.out")))),
+    "none" -> ((dataType: String) => new BufferedOutputStream(new FileOutputStream(Settings.file(s"${dataType}ProtobufSerialization.out")))),
+    "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(Settings.file(s"${dataType}ProtobufSerializationGzip.out")))),
+    "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}ProtobufSerializationSnappy.out")))),
+    "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}ProtobufSerializationLz4.out")))),
+    "xz" -> ((dataType: String) => new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}ProtobufSerializationXz.out")), new LZMA2Options())),
   )
 
   override def aggregator: Aggregator[Double] = Aggregator.average
   override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
-  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4")
+  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4", "xz")
 
   performance of "protobuf serialization" in {
     measure method "serialize - mixed data" in {
@@ -38,7 +39,7 @@ object ProtobufSerialization extends Bench.LocalTime {
         val out = streams(codec)("mixedData")
         var i = 0
 
-        val in = DataUtils.readCsv[MixedData]("mixedDataInput.csv")
+        val in = DataUtils.readCsv[MixedData](Settings.pathString(Settings.InputCsv.mixedData))
         in.foreach(rs => {
           rs.foreach(data => {
             val o = DataUtils.mixedDataToScalaProtobuf(data).toByteArray
@@ -71,7 +72,7 @@ object ProtobufSerialization extends Bench.LocalTime {
         val out = streams(codec)("onlyStrings")
         var i = 0
 
-        val in = DataUtils.readCsv[OnlyStrings]("onlyStringsInput.csv")
+        val in = DataUtils.readCsv[OnlyStrings](Settings.pathString(Settings.InputCsv.onlyStrings))
         in.foreach(rs => {
           rs.foreach(data => {
             val o = DataUtils.onlyStringsToScalaProtobufdata(data).toByteArray
@@ -104,7 +105,7 @@ object ProtobufSerialization extends Bench.LocalTime {
         val out = streams(codec)("onlyLongs")
         var i = 0
 
-        val in = DataUtils.readCsv[OnlyLongs]("onlyLongsInput.csv")
+        val in = DataUtils.readCsv[OnlyLongs](Settings.pathString(Settings.InputCsv.onlyLongs))
         in.foreach(rs => {
           rs.foreach(data => {
             val o = DataUtils.onlyLongsToScalaProtobuf(data).toByteArray
