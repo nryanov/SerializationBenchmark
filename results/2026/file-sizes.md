@@ -14,34 +14,34 @@ Sizes are **bytes on disk** for serialized output (100k records), from `ls -l`.
 #### mixedData
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Java — mixedData (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 40000000
-    bar [37951093, 17930372, 25773738, 25605777, 14933072]
+    title "Java — mixedData (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 42
+    bar [37.95, 17.93, 25.77, 25.61, 14.93, 18.4]
 ```
 
 #### onlyLongs
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Java — onlyLongs (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 30000000
-    bar [25610320, 10207717, 12839417, 12447877, 9403032]
+    title "Java — onlyLongs (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 28
+    bar [25.61, 10.21, 12.84, 12.45, 9.4, 10.28]
 ```
 
 #### onlyStrings
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Java — onlyStrings (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 100000000
-    bar [90606625, 44426569, 73441510, 69936284, 37960440]
+    title "Java — onlyStrings (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 100
+    bar [90.61, 44.43, 73.44, 69.94, 37.96, 42.44]
 ```
 
 ### Json
@@ -55,34 +55,34 @@ xychart-beta
 #### mixedData
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Json — mixedData (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 60000000
-    bar [54364018, 22472516, 52396341, 36181902, 18685252]
+    title "Json — mixedData (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 58
+    bar [54.36, 22.47, 52.4, 36.18, 18.69, 30.2]
 ```
 
 #### onlyLongs
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Json — onlyLongs (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 50000000
-    bar [38173122, 13959884, 36099183, 23733303, 12915648]
+    title "Json — onlyLongs (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 42
+    bar [38.17, 13.96, 36.1, 23.73, 12.92, 20.39]
 ```
 
 #### onlyStrings
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Json — onlyStrings (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 100000000
-    bar [30400002, 57259186, 15544549, 90992389, 44949704]
+    title "Json — onlyStrings (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 100
+    bar [30.4, 57.26, 15.54, 90.99, 44.95, 66.28]
 ```
 
 ### Avro
@@ -98,10 +98,10 @@ xychart-beta
 ```mermaid
 %%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Avro — mixedData (bytes)"
+    title "Avro — mixedData (MB)"
     x-axis ["none", "deflate", "snappy", "xz", "bzip2", "zstd"]
-    y-axis "bytes" 0 --> 30000000
-    bar [22723794, 16694512, 22370461, 15005240, 14728978, 16588948]
+    y-axis "MB" 0 --> 25
+    bar [22.72, 16.69, 22.37, 15.01, 14.73, 16.59]
 ```
 
 #### onlyLongs
@@ -109,10 +109,10 @@ xychart-beta
 ```mermaid
 %%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Avro — onlyLongs (bytes)"
+    title "Avro — onlyLongs (MB)"
     x-axis ["none", "deflate", "snappy", "xz", "bzip2", "zstd"]
-    y-axis "bytes" 0 --> 20000000
-    bar [11602655, 9823440, 11398717, 9299892, 9447654, 9855216]
+    y-axis "MB" 0 --> 13
+    bar [11.6, 9.82, 11.4, 9.3, 9.45, 9.86]
 ```
 
 #### onlyStrings
@@ -120,10 +120,10 @@ xychart-beta
 ```mermaid
 %%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Avro — onlyStrings (bytes)"
+    title "Avro — onlyStrings (MB)"
     x-axis ["none", "deflate", "snappy", "xz", "bzip2", "zstd"]
-    y-axis "bytes" 0 --> 80000000
-    bar [76127354, 43457387, 75005139, 37599808, 38821030, 40686773]
+    y-axis "MB" 0 --> 85
+    bar [76.13, 43.46, 75.01, 37.6, 38.82, 40.69]
 ```
 
 ### Thrift (binary protocol)
@@ -137,34 +137,34 @@ xychart-beta
 #### mixedData
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Thrift (binary protocol) — mixedData (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 50000000
-    bar [38673152, 17677927, 23759227, 22880908, 14869400]
+    title "Thrift (binary protocol) — mixedData (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 42
+    bar [38.67, 17.68, 23.76, 22.88, 14.87, 17.51]
 ```
 
 #### onlyLongs
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Thrift (binary protocol) — onlyLongs (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 20000000
-    bar [16307456, 10196439, 11585112, 11517779, 8933784]
+    title "Thrift (binary protocol) — onlyLongs (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 18
+    bar [16.31, 10.2, 11.59, 11.52, 8.93, 10.39]
 ```
 
 #### onlyStrings
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Thrift (binary protocol) — onlyStrings (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 200000000
-    bar [102800000, 46339274, 77798386, 72930488, 38288884]
+    title "Thrift (binary protocol) — onlyStrings (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 115
+    bar [102.8, 46.34, 77.8, 72.93, 38.29, 43.91]
 ```
 
 ### Thrift (compact protocol)
@@ -178,34 +178,34 @@ xychart-beta
 #### mixedData
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Thrift (compact protocol) — mixedData (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 40000000
-    bar [32519040, 17356376, 22782492, 22070581, 14805864]
+    title "Thrift (compact protocol) — mixedData (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 36
+    bar [32.52, 17.36, 22.78, 22.07, 14.81, 17.19]
 ```
 
 #### onlyLongs
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Thrift (compact protocol) — onlyLongs (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 20000000
-    bar [14909184, 9900293, 11341566, 11213188, 9303548]
+    title "Thrift (compact protocol) — onlyLongs (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 16
+    bar [14.91, 9.9, 11.34, 11.21, 9.3, 9.84]
 ```
 
 #### onlyStrings
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Thrift (compact protocol) — onlyStrings (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 200000000
-    bar [102800000, 44132682, 75268129, 69349947, 37160328]
+    title "Thrift (compact protocol) — onlyStrings (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 115
+    bar [102.8, 44.13, 75.27, 69.35, 37.16, 41.41]
 ```
 
 ### Protobuf
@@ -219,34 +219,34 @@ xychart-beta
 #### mixedData
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Protobuf — mixedData (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 30000000
-    bar [22913304, 16985043, 22874142, 21904990, 14656644]
+    title "Protobuf — mixedData (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 25
+    bar [22.91, 16.99, 22.87, 21.9, 14.66, 16.97]
 ```
 
 #### onlyLongs
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Protobuf — onlyLongs (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 20000000
-    bar [11145897, 10064294, 11149808, 11141548, 9629540]
+    title "Protobuf — onlyLongs (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 12
+    bar [11.15, 10.06, 11.15, 11.14, 9.63, 10.05]
 ```
 
 #### onlyStrings
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Protobuf — onlyStrings (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 90000000
-    bar [76900000, 44451702, 76567456, 71012666, 37794744]
+    title "Protobuf — onlyStrings (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 85
+    bar [76.9, 44.45, 76.57, 71.01, 37.79, 42.35]
 ```
 
 ### ORC
@@ -262,10 +262,10 @@ xychart-beta
 ```mermaid
 %%{init: {"config": {"xyChart": {"width": 695, "height": 360}}}}%%
 xychart-beta
-    title "ORC — mixedData (bytes)"
+    title "ORC — mixedData (MB)"
     x-axis ["none", "snappy", "zlib", "lz0", "lz4", "zstd", "brotli"]
-    y-axis "bytes" 0 --> 30000000
-    bar [22231827, 20573373, 14799829, 21534931, 21486356, 14509311, 13809149]
+    y-axis "MB" 0 --> 24
+    bar [22.23, 20.57, 14.8, 21.53, 21.49, 14.51, 13.81]
 ```
 
 #### onlyLongs
@@ -273,10 +273,10 @@ xychart-beta
 ```mermaid
 %%{init: {"config": {"xyChart": {"width": 695, "height": 360}}}}%%
 xychart-beta
-    title "ORC — onlyLongs (bytes)"
+    title "ORC — onlyLongs (MB)"
     x-axis ["none", "snappy", "zlib", "lz0", "lz4", "zstd", "brotli"]
-    y-axis "bytes" 0 --> 20000000
-    bar [12514162, 9705197, 9259784, 10004456, 9967321, 9045890, 9375716]
+    y-axis "MB" 0 --> 14
+    bar [12.51, 9.71, 9.26, 10.0, 9.97, 9.05, 9.38]
 ```
 
 #### onlyStrings
@@ -284,10 +284,10 @@ xychart-beta
 ```mermaid
 %%{init: {"config": {"xyChart": {"width": 695, "height": 360}}}}%%
 xychart-beta
-    title "ORC — onlyStrings (bytes)"
+    title "ORC — onlyStrings (MB)"
     x-axis ["none", "snappy", "zlib", "lz0", "lz4", "zstd", "brotli"]
-    y-axis "bytes" 0 --> 80000000
-    bar [72044901, 68512618, 42072546, 72025871, 71905093, 40952617, 36939624]
+    y-axis "MB" 0 --> 80
+    bar [72.04, 68.51, 42.07, 72.03, 71.91, 40.95, 36.94]
 ```
 
 ### Parquet (parquet-avro)
@@ -303,10 +303,10 @@ xychart-beta
 ```mermaid
 %%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
 xychart-beta
-    title "Parquet (parquet-avro) — mixedData (bytes)"
+    title "Parquet (parquet-avro) — mixedData (MB)"
     x-axis ["none", "snappy", "gzip", "lz4", "zstd"]
-    y-axis "bytes" 0 --> 30000000
-    bar [21595786, 20103928, 14143560, 20845124, 13659354]
+    y-axis "MB" 0 --> 24
+    bar [21.6, 20.1, 14.14, 20.85, 13.66]
 ```
 
 #### onlyLongs
@@ -314,10 +314,10 @@ xychart-beta
 ```mermaid
 %%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
 xychart-beta
-    title "Parquet (parquet-avro) — onlyLongs (bytes)"
+    title "Parquet (parquet-avro) — onlyLongs (MB)"
     x-axis ["none", "snappy", "gzip", "lz4", "zstd"]
-    y-axis "bytes" 0 --> 9000000
-    bar [8267072, 8247028, 8223377, 8270791, 8268275]
+    y-axis "MB" 0 --> 9
+    bar [8.27, 8.25, 8.22, 8.27, 8.27]
 ```
 
 #### onlyStrings
@@ -325,10 +325,10 @@ xychart-beta
 ```mermaid
 %%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
 xychart-beta
-    title "Parquet (parquet-avro) — onlyStrings (bytes)"
+    title "Parquet (parquet-avro) — onlyStrings (MB)"
     x-axis ["none", "snappy", "gzip", "lz4", "zstd"]
-    y-axis "bytes" 0 --> 90000000
-    bar [80018707, 72219127, 43747037, 76164430, 41104998]
+    y-axis "MB" 0 --> 87
+    bar [80.02, 72.22, 43.75, 76.16, 41.1]
 ```
 
 ### Parquet (parquet-thrift)
@@ -344,10 +344,10 @@ xychart-beta
 ```mermaid
 %%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
 xychart-beta
-    title "Parquet (parquet-thrift) — mixedData (bytes)"
+    title "Parquet (parquet-thrift) — mixedData (MB)"
     x-axis ["none", "snappy", "gzip", "lz4", "zstd"]
-    y-axis "bytes" 0 --> 30000000
-    bar [23483233, 21502596, 15085304, 22265594, 14674280]
+    y-axis "MB" 0 --> 26
+    bar [23.48, 21.5, 15.09, 22.27, 14.67]
 ```
 
 #### onlyLongs
@@ -355,10 +355,10 @@ xychart-beta
 ```mermaid
 %%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
 xychart-beta
-    title "Parquet (parquet-thrift) — onlyLongs (bytes)"
+    title "Parquet (parquet-thrift) — onlyLongs (MB)"
     x-axis ["none", "snappy", "gzip", "lz4", "zstd"]
-    y-axis "bytes" 0 --> 20000000
-    bar [11813874, 11168920, 10358921, 11278716, 10531601]
+    y-axis "MB" 0 --> 13
+    bar [11.81, 11.17, 10.36, 11.28, 10.53]
 ```
 
 #### onlyStrings
@@ -366,10 +366,10 @@ xychart-beta
 ```mermaid
 %%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
 xychart-beta
-    title "Parquet (parquet-thrift) — onlyStrings (bytes)"
+    title "Parquet (parquet-thrift) — onlyStrings (MB)"
     x-axis ["none", "snappy", "gzip", "lz4", "zstd"]
-    y-axis "bytes" 0 --> 90000000
-    bar [80021698, 72222118, 43750028, 76167421, 41107989]
+    y-axis "MB" 0 --> 87
+    bar [80.02, 72.22, 43.75, 76.17, 41.11]
 ```
 
 ### Msgpack
@@ -383,34 +383,34 @@ xychart-beta
 #### mixedData
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Msgpack — mixedData (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 30000000
-    bar [22312244, 16380733, 22337073, 21331339, 14641100]
+    title "Msgpack — mixedData (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 24
+    bar [22.31, 16.38, 22.34, 21.33, 14.64, 16.65]
 ```
 
 #### onlyLongs
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Msgpack — onlyLongs (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 20000000
-    bar [10105770, 9407456, 10106959, 10032253, 9300864]
+    title "Msgpack — onlyLongs (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 11
+    bar [10.11, 9.41, 10.11, 10.03, 9.3, 9.42]
 ```
 
 #### onlyStrings
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "Msgpack — onlyStrings (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 90000000
-    bar [76300000, 42940659, 76324268, 68733101, 37335128]
+    title "Msgpack — onlyStrings (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 83
+    bar [76.3, 42.94, 76.32, 68.73, 37.34, 41.43]
 ```
 
 ### CBOR
@@ -423,33 +423,33 @@ xychart-beta
 #### mixedData
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "CBOR — mixedData (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 30000000
-    bar [22489054, 16421929, 22459267, 21404592, 14714196]
+    title "CBOR — mixedData (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 25
+    bar [22.49, 16.42, 22.46, 21.4, 14.71, 16.51]
 ```
 
 #### onlyLongs
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "CBOR — onlyLongs (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 20000000
-    bar [10400072, 9498079, 10271873, 10244659, 9121880]
+    title "CBOR — onlyLongs (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 11
+    bar [10.4, 9.5, 10.27, 10.24, 9.12, 9.44]
 ```
 
 #### onlyStrings
 
 ```mermaid
-%%{init: {"config": {"xyChart": {"width": 525, "height": 360}}}}%%
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
 xychart-beta
-    title "CBOR — onlyStrings (bytes)"
-    x-axis ["none", "gzip", "snappy", "lz4", "xz"]
-    y-axis "bytes" 0 --> 90000000
-    bar [76400000, 42966763, 75562031, 68721503, 37280848]
+    title "CBOR — onlyStrings (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 83
+    bar [76.4, 42.97, 75.56, 68.72, 37.28, 40.92]
 ```
 
