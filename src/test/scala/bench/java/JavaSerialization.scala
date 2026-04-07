@@ -10,6 +10,7 @@ import java.util.zip.GZIPOutputStream
 import project.Implicits._
 import bench.Settings
 import bench.ScalameterImplicits._
+import com.github.luben.zstd.ZstdOutputStream
 import net.jpountz.lz4.LZ4BlockOutputStream
 import org.scalameter.api
 import org.tukaani.xz.{LZMA2Options, XZOutputStream}
@@ -25,6 +26,7 @@ object JavaSerialization extends Bench.LocalTime {
     "snappy" -> ((dataType: String) => new ObjectOutputStream(new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerializationSnappy.out"))))),
     "lz4" -> ((dataType: String) => new ObjectOutputStream(new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerializationLz4.out"))))),
     "xz" -> ((dataType: String) => new ObjectOutputStream(new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerializationXz.out")), new LZMA2Options()))),
+    "zstd" -> ((dataType: String) => new ObjectOutputStream(new ZstdOutputStream(new FileOutputStream(Settings.file(s"${dataType}JavaSerializationZstd.out"))))),
   )
 
   val inputs = Map(
@@ -34,7 +36,7 @@ object JavaSerialization extends Bench.LocalTime {
   )
 
   val dataType = Gen.enumeration("input file")("onlyLongs", "mixedData", "onlyStrings")
-  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4", "xz")
+  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4", "xz", "zstd")
 
 
   performance of "java serialization" in {

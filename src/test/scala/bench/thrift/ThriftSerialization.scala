@@ -4,6 +4,7 @@ import java.io._
 import java.nio.ByteBuffer
 import bench.Settings
 import bench.ScalameterImplicits._
+import com.github.luben.zstd.ZstdOutputStream
 import net.jpountz.lz4.LZ4BlockOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.apache.thrift.protocol.{TBinaryProtocol, TCompactProtocol}
@@ -23,12 +24,13 @@ object ThriftSerialization extends Bench.LocalTime {
     "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}ThriftSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}ThriftSerializationLz4.out")))),
     "xz" -> ((dataType: String) => new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}ThriftSerializationXz.out")), new LZMA2Options())),
+    "zstd" -> ((dataType: String) => new ZstdOutputStream(new FileOutputStream(Settings.file(s"${dataType}ThriftSerializationZstd.out")))),
   )
 
   override def aggregator: Aggregator[Double] = Aggregator.average
   override def measurer: Measurer[Double] = new api.Measurer.IgnoringGC
 
-  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4", "xz")
+  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4", "xz", "zstd")
 
   performance of "thrift serialization" in {
     measure method "serialize using binary protocol - mixed data" in {

@@ -12,6 +12,7 @@ import project.Implicits._
 import bench.Settings
 import bench.ScalameterImplicits._
 import com.fasterxml.jackson.core.JsonParser.Feature
+import com.github.luben.zstd.ZstdOutputStream
 import net.jpountz.lz4.LZ4BlockOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.scalameter.api
@@ -30,6 +31,7 @@ object JsonSerialization extends Bench.LocalTime {
     "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}JsonSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}JsonSerializationLz4.out")))),
     "xz" -> ((dataType: String) => new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}JsonSerializationXz.out")), new LZMA2Options())),
+    "zstd" -> ((dataType: String) => new ZstdOutputStream(new FileOutputStream(Settings.file(s"${dataType}JsonSerializationZstd.out")))),
   )
 
   val inputs = Map(
@@ -39,7 +41,7 @@ object JsonSerialization extends Bench.LocalTime {
   )
 
   val dataType = Gen.enumeration("input file")("onlyLongs", "mixedData", "onlyStrings")
-  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4", "xz")
+  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4", "xz", "zstd")
 
   mapper.configure(Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true)
   mapper.configure(Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true)

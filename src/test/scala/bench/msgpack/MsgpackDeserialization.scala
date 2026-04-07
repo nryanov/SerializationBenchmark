@@ -3,6 +3,7 @@ package bench.msgpack
 import java.io.{BufferedInputStream, FileInputStream}
 import bench.Settings
 import bench.ScalameterImplicits._
+import com.github.luben.zstd.ZstdInputStream
 import net.jpountz.lz4.LZ4BlockInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.msgpack.core.MessagePack
@@ -27,9 +28,10 @@ object MsgpackDeserialization extends Bench.LocalTime {
     "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(Settings.file(s"${dataType}MsgpackSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(Settings.file(s"${dataType}MsgpackSerializationLz4.out")))),
     "xz" -> ((dataType: String) => new XZInputStream(new FileInputStream(Settings.file(s"${dataType}MsgpackSerializationXz.out")))),
+    "zstd" -> ((dataType: String) => new ZstdInputStream(new FileInputStream(Settings.file(s"${dataType}MsgpackSerializationZstd.out")))),
   )
 
-  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4", "xz")
+  val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4", "xz", "zstd")
   performance of "msgpack deserialization" in {
     measure method "deserialize - mixed data" in {
       using(compression) config(

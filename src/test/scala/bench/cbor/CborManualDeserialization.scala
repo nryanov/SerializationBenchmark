@@ -4,6 +4,7 @@ import java.io.{BufferedInputStream, FileInputStream, InputStream}
 import java.nio.ByteBuffer
 import bench.Settings
 import bench.ScalameterImplicits._
+import com.github.luben.zstd.ZstdInputStream
 import io.bullet.borer.{Cbor, Decoder}
 import net.jpountz.lz4.LZ4BlockInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
@@ -28,6 +29,7 @@ object CborManualDeserialization extends Bench.LocalTime {
     "snappy" -> ((dataType: String) => new SnappyInputStream(new FileInputStream(Settings.file(s"${dataType}CborManualSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockInputStream(new FileInputStream(Settings.file(s"${dataType}CborManualSerializationLz4.out")))),
     "xz" -> ((dataType: String) => new XZInputStream(new FileInputStream(Settings.file(s"${dataType}CborManualSerializationXz.out")))),
+    "zstd" -> ((dataType: String) => new ZstdInputStream(new FileInputStream(Settings.file(s"${dataType}CborManualSerializationZstd.out")))),
   )
 
   implicit val mixedDataDecoder = Decoder[MixedData](reader => MixedData(
@@ -98,7 +100,7 @@ object CborManualDeserialization extends Bench.LocalTime {
     Option(reader.readLong())
   ))
 
-  val compression = Gen.enumeration("compression")("none", "gzip", "snappy", "lz4", "xz")
+  val compression = Gen.enumeration("compression")("none", "gzip", "snappy", "lz4", "xz", "zstd")
 
   def readAll(in: InputStream, buffer: Array[Byte], off: Int, len: Int): Int = {
     var got = 0
