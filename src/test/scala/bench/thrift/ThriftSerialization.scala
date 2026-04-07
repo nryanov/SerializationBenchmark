@@ -11,7 +11,7 @@ import org.apache.thrift.transport.TMemoryBuffer
 import org.scalameter.api
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-import org.tukaani.xz.{ARM64Options, XZOutputStream}
+import org.tukaani.xz.{LZMA2Options, XZOutputStream}
 import org.xerial.snappy.SnappyOutputStream
 import project.{DataUtils, MixedData, OnlyLongs, OnlyStrings}
 import project.Implicits._
@@ -22,7 +22,7 @@ object ThriftSerialization extends Bench.LocalTime {
     "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(Settings.file(s"${dataType}ThriftSerializationGzip.out")))),
     "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}ThriftSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}ThriftSerializationLz4.out")))),
-    "xz" -> ((dataType: String) => new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}ThriftSerializationXz.out")), new ARM64Options())),
+    "xz" -> ((dataType: String) => new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}ThriftSerializationXz.out")), new LZMA2Options())),
   )
 
   override def aggregator: Aggregator[Double] = Aggregator.average

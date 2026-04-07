@@ -11,7 +11,7 @@ import io.bullet.borer.derivation.MapBasedCodecs._
 import net.jpountz.lz4.LZ4BlockOutputStream
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
-import org.tukaani.xz.{ARM64Options, XZOutputStream}
+import org.tukaani.xz.{LZMA2Options, XZOutputStream}
 import org.xerial.snappy.SnappyOutputStream
 import project.{DataUtils, MixedData, OnlyLongs, OnlyStrings}
 import project.Implicits._
@@ -26,7 +26,7 @@ object CborSerialization extends Bench.LocalTime {
     "gzip" -> ((dataType: String) => new GZIPOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborSerializationGzip.out")))),
     "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborSerializationLz4.out")))),
-    "xz" -> ((dataType: String) => new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborSerializationXz.out")), new ARM64Options())),
+    "xz" -> ((dataType: String) => new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborSerializationXz.out")), new LZMA2Options())),
   )
 
   val compression = Gen.enumeration("compression")( "none", "gzip", "snappy", "lz4", "xz")

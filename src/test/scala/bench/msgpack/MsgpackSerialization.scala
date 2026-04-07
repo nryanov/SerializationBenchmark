@@ -10,7 +10,7 @@ import org.scalameter.picklers.Implicits._
 import project.{DataUtils, MixedData, OnlyLongs, OnlyStrings}
 import org.msgpack.core.MessagePack
 import org.scalameter.api
-import org.tukaani.xz.{ARM64Options, XZOutputStream}
+import org.tukaani.xz.{LZMA2Options, XZOutputStream}
 import org.xerial.snappy.SnappyOutputStream
 import project.Implicits._
 
@@ -20,7 +20,7 @@ object MsgpackSerialization extends Bench.LocalTime {
     "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(Settings.file(s"${dataType}MsgpackSerializationGzip.out")))),
     "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}MsgpackSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}MsgpackSerializationLz4.out")))),
-    "xz" -> ((dataType: String) => new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}MsgpackSerializationXz.out")), new ARM64Options())),
+    "xz" -> ((dataType: String) => new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}MsgpackSerializationXz.out")), new LZMA2Options())),
   )
 
   override def aggregator: Aggregator[Double] = Aggregator.average

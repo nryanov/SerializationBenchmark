@@ -15,7 +15,7 @@ import com.fasterxml.jackson.core.JsonParser.Feature
 import net.jpountz.lz4.LZ4BlockOutputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream
 import org.scalameter.api
-import org.tukaani.xz.{ARM64Options, XZOutputStream}
+import org.tukaani.xz.{LZMA2Options, XZOutputStream}
 import project._
 
 object JsonSerialization extends Bench.LocalTime {
@@ -29,7 +29,7 @@ object JsonSerialization extends Bench.LocalTime {
     "gzip" -> ((dataType: String) => new GzipCompressorOutputStream(new FileOutputStream(Settings.file(s"${dataType}JsonSerializationGzip.out")))),
     "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}JsonSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}JsonSerializationLz4.out")))),
-    "xz" -> ((dataType: String) => new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}JsonSerializationXz.out")), new ARM64Options())),
+    "xz" -> ((dataType: String) => new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}JsonSerializationXz.out")), new LZMA2Options())),
   )
 
   val inputs = Map(

@@ -9,9 +9,10 @@ object Settings {
   val recordsCount: Int = Option(System.getenv("BENCH_RECORDS_COUNT").toInt).getOrElse(100000)
   val flushInterval: Int = 5000
 
-  val benchRuns: Int = Option(System.getenv("BENCH_RUNS").toInt).getOrElse(15)
-  val minWarmupRuns: Int = 3
-  val maxWarmupRuns: Int = 3
+  val benchRuns: Int = Option(System.getenv("BENCH_RUNS")).getOrElse("15").toInt
+  val warmups: Int = Option(System.getenv("BENCH_WARMUPS")).getOrElse("3").toInt
+  val minWarmupRuns: Int = warmups
+  val maxWarmupRuns: Int = warmups
   val independentSamples: Int = 1
 
   val dataRoot: JPath = Paths

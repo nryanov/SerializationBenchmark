@@ -24,7 +24,6 @@ object ParquetSerialization extends Bench.LocalTime {
     CompressionCodecName.GZIP,
     CompressionCodecName.LZ4,
     CompressionCodecName.ZSTD,
-    CompressionCodecName.BROTLI,
   )
 
   override def aggregator: Aggregator[Double] = Aggregator.average

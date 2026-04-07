@@ -3,7 +3,6 @@ package bench.cbor
 import java.io.{BufferedOutputStream, FileOutputStream}
 import java.nio.ByteBuffer
 import java.util.zip.GZIPOutputStream
-
 import bench.Settings
 import bench.ScalameterImplicits._
 import io.bullet.borer.{Cbor, Encoder}
@@ -13,6 +12,7 @@ import org.xerial.snappy.SnappyOutputStream
 import project.{DataUtils, MixedData, OnlyLongs, OnlyStrings}
 import org.scalameter.api._
 import org.scalameter.picklers.Implicits._
+import org.tukaani.xz.{LZMA2Options, XZOutputStream}
 import project.Implicits._
 
 object CborManualSerialization extends Bench.LocalTime {
@@ -25,9 +25,10 @@ object CborManualSerialization extends Bench.LocalTime {
     "gzip" -> ((dataType: String) => new GZIPOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborManualSerializationGzip.out")))),
     "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborManualSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborManualSerializationLz4.out")))),
+    "xz" -> ((dataType: String) => new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborManualSerializationXz.out")), new LZMA2Options())),
   )
 
-  val compression = Gen.enumeration("compression")("none", "gzip", "snappy", "lz4")
+  val compression = Gen.enumeration("compression")("none", "gzip", "snappy", "lz4", "xz")
 
   implicit val mixedDataEncoder = Encoder[MixedData]((writer, data) => {
     writer.writeString(data.f1.getOrElse(""))
