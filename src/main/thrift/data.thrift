@@ -72,3 +72,17 @@ struct OnlyLongs {
  19:optional long f19,
  20:optional long f20,
 }
+
+struct NarrowMixedData {
+ 1:optional string f1,
+ 2:optional double f2,
+ 3:optional long f3
+}
+
+struct NarrowOnlyStrings {
+ 1:optional string f1
+}
+
+struct NarrowOnlyLongs {
+ 1:optional long f1
+}

@@ -15,10 +15,8 @@ object Settings {
   val maxWarmupRuns: Int = warmups
   val independentSamples: Int = 1
 
-  val dataRoot: JPath = Paths
-    .get(Option(System.getenv("BENCH_DATA_DIR")).getOrElse(System.getProperty("user.dir")))
-    .toAbsolutePath
-    .normalize()
+  val dataRoot: JPath =
+    Paths.get(Option(System.getenv("BENCH_DATA_DIR")).getOrElse(System.getProperty("user.dir"))).toAbsolutePath.normalize()
 
   def file(relative: String): File = dataRoot.resolve(relative).toFile
 
@@ -30,6 +28,9 @@ object Settings {
     val mixedData: String = "mixedDataInput.csv"
     val onlyStrings: String = "onlyStringsInput.csv"
     val onlyLongs: String = "onlyLongsInput.csv"
+    val narrowMixedData: String = "narrowMixedDataInput.csv"
+    val narrowOnlyStrings: String = "narrowOnlyStringsInput.csv"
+    val narrowOnlyLongs: String = "narrowOnlyLongsInput.csv"
   }
 
   object SchemaRegistry {

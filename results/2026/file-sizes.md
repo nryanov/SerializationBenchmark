@@ -453,3 +453,43 @@ xychart-beta
     bar [76.4, 42.97, 75.56, 68.72, 37.28, 40.92]
 ```
 
+### Fory
+|              | none       | gzip       | snappy     | lz4        | xz         | zstd       |
+|--------------|------------|------------|------------|------------|------------|------------|
+| mixedData    | 46,866,711 | 18,496,757 | 26,590,429 | 25,853,808 | 15,162,208 | 18,531,900 |
+| onlyLongs    | 37,200,000 | 10,613,219 | 13,760,047 | 13,657,906 | 9,764,288  | 10,892,558 |
+| onlyStrings  | 91,400,000 | 44,464,093 | 73,353,217 | 69,612,568 | 37,651,968 | 42,073,746 |
+
+#### mixedData
+
+```mermaid
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
+xychart-beta
+    title "Fory — mixedData (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 50
+    bar [46.87, 18.50, 26.59, 25.85, 15.16, 18.53]
+```
+
+#### onlyLongs
+
+```mermaid
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
+xychart-beta
+    title "Fory — onlyLongs (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 40
+    bar [37.20, 10.61, 13.76, 13.66, 9.76, 10.89]
+```
+
+#### onlyStrings
+
+```mermaid
+%%{init: {"config": {"xyChart": {"width": 610, "height": 360}}}}%%
+xychart-beta
+    title "Fory — onlyStrings (MB)"
+    x-axis ["none", "gzip", "snappy", "lz4", "xz", "zstd"]
+    y-axis "MB" 0 --> 100
+    bar [91.40, 44.46, 73.35, 69.61, 37.65, 42.07]
+```
+

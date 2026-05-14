@@ -49,3 +49,7 @@
 `sbt thriftSerializingBench` - Run thrift serialization benchmark  
 `sbt thriftDeserializingBench` - Run thrift deserialization benchmark  
 `sbt thriftBench` - Run thrift benchmark  
+
+`sbt forySerializingBench` - Run fory serialization benchmark  
+`sbt foryDeserializingBench` - Run fory deserialization benchmark  
+`sbt foryBench` - Run fory benchmark  

@@ -10,11 +10,11 @@ Compile / fork := true
 
 Compile / javaOptions += "-Dfile.encoding=UTF-8"
 
-resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repositories/snapshots")
 
-resolvers += "Confluent" at "https://packages.confluent.io/maven/"
+resolvers += "Confluent".at("https://packages.confluent.io/maven/")
 // to fix problem with hadoop codec dependency import
-resolvers += "Twitter Maven Repo" at "https://maven.twttr.com"
+resolvers += "Twitter Maven Repo".at("https://maven.twttr.com")
 
 val hdfsVersion = "3.4.1"
 val hiveExecVersion = "4.2.0"
@@ -37,6 +37,7 @@ val borerVersion = "1.8.0"
 val logbackVersion = "1.4.14"
 val xzVersion = "1.12"
 val brotliVersion = "1.22.0"
+val foryVersion = "0.17.0"
 
 libraryDependencies ++= Seq(
   "org.apache.hadoop" % "hadoop-client" % hdfsVersion,
@@ -48,8 +49,8 @@ libraryDependencies ++= Seq(
   "io.confluent" % "kafka-avro-serializer" % confluent,
   "org.apache.kafka" %% "kafka" % kafkaVersion,
   "org.apache.thrift" % "libthrift" % libthriftVersion,
-  "com.twitter" %% "scrooge-core" % scroogeVersion exclude("com.twitter", "libthrift"),
-  "com.twitter" %% "finagle-thrift" % finagleThriftVersion exclude("com.twitter", "libthrift"),
+  ("com.twitter" %% "scrooge-core" % scroogeVersion).exclude("com.twitter", "libthrift"),
+  ("com.twitter" %% "finagle-thrift" % finagleThriftVersion).exclude("com.twitter", "libthrift"),
   "org.apache.orc" % "orc-core" % orcVersion,
   "org.apache.parquet" % "parquet-avro" % parquetVersion,
   "org.apache.parquet" % "parquet-thrift" % parquetVersion,
@@ -60,14 +61,13 @@ libraryDependencies ++= Seq(
   "io.bullet" %% "borer-derivation" % borerVersion,
   "com.aayushatharva.brotli4j" % "brotli4j" % brotliVersion,
   "com.aayushatharva.brotli4j" % "native-osx-aarch64" % brotliVersion,
-
+  "org.apache.fory" % "fory-core" % foryVersion,
   "org.xerial.snappy" % "snappy-java" % snappyVersion,
   "org.lz4" % "lz4-java" % lz4Version,
   "org.apache.commons" % "commons-compress" % apacheCommonCompressVersion,
   "org.tukaani" % "xz" % xzVersion,
-
   "com.storm-enroute" %% "scalameter" % scalameterVersion,
-  "ch.qos.logback" % "logback-classic" % logbackVersion,
+  "ch.qos.logback" % "logback-classic" % logbackVersion
 )
 
 // to generate java and scala versions
@@ -79,7 +79,7 @@ PB.targets in Compile := Seq(
 )
 PB.deleteTargetDirectory := false
 
-(Compile / compile) := ((Compile / compile) dependsOn (Compile / scroogeGen)).value
+(Compile / compile) := (Compile / compile).dependsOn(Compile / scroogeGen).value
 
 testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework")
 
@@ -185,4 +185,15 @@ thriftDeserializingBench := (testOnly in Test).fullInput(" bench.thrift.ThriftDe
 thriftBench := {
   val serialization = thriftSerializingBench
   val deserialization = thriftDeserializingBench
+}
+
+val forySerializingBench = inputKey[Unit]("Run fory serialization benchmark")
+val foryDeserializingBench = inputKey[Unit]("Run fory deserialization benchmark")
+val foryBench = inputKey[Unit]("Run fory benchmark")
+
+forySerializingBench := (testOnly in Test).fullInput(" bench.fory.ForySerialization").evaluated
+foryDeserializingBench := (testOnly in Test).fullInput(" bench.fory.ForyDeserialization").evaluated
+foryBench := {
+  val serialization = forySerializingBench
+  val deserialization = foryDeserializingBench
 }

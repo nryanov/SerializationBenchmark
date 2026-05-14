@@ -11,9 +11,9 @@ import org.msgpack.core.{MessageBufferPacker, MessageUnpacker}
 import scala.util.Random
 
 sealed trait DataOps[A <: Data] {
-  final def valueOrNull[A](opt: Option[A]): Any = opt match {
+  final def valueOrNull[T](opt: Option[T]): Any = opt match {
     case Some(v) => v
-    case None => null
+    case None    => null
   }
 
   def generate(): A
@@ -31,24 +31,24 @@ class MixedDataOps extends DataOps[MixedData] {
   override def generate(): MixedData = MixedData(
     f1 = Some(UUID.randomUUID().toString),
     f2 = Some(Random.nextDouble()),
-    f3 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f4 = {val r = Random.nextInt(); if (r % 2 == 0) None else Some(r)},
-    f5 = {val r = Random.nextInt(); if (r % 2 == 0) None else Some(UUID.randomUUID().toString)},
+    f3 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f4 = { val r = Random.nextInt(); if (r % 2 == 0) None else Some(r) },
+    f5 = { val r = Random.nextInt(); if (r % 2 == 0) None else Some(UUID.randomUUID().toString) },
     f6 = Some(Random.nextDouble()),
-    f7 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f8 = {val r = Random.nextInt(); if (r % 2 == 0) None else Some(r)},
-    f9 = {val r = Random.nextInt(); if (r % 2 == 0) None else Some(r)},
-    f10 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
+    f7 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f8 = { val r = Random.nextInt(); if (r % 2 == 0) None else Some(r) },
+    f9 = { val r = Random.nextInt(); if (r % 2 == 0) None else Some(r) },
+    f10 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
     f11 = Some(Random.nextFloat()),
     f12 = Some(Random.nextDouble()),
-    f13 = {val r = Random.nextInt(); if (r % 2 == 0) None else Some(UUID.randomUUID().toString)},
-    f14 = {val r = Random.nextInt(); if (r % 2 == 0) None else Some(UUID.randomUUID().toString)},
-    f15 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f16 = {val r = Random.nextInt(); if (r % 2 == 0) None else Some(r.toShort)},
-    f17 = {val r = Random.nextInt(); if (r % 2 == 0) None else Some(r)},
-    f18 = {val r = Random.nextInt(); if (r % 2 == 0) None else Some(UUID.randomUUID().toString)},
-    f19 = {val r = Random.nextInt(); if (r % 2 == 0) None else Some(UUID.randomUUID().toString)},
-    f20 = {val r = Random.nextInt(); if (r % 2 == 0) None else Some(UUID.randomUUID().toString)}
+    f13 = { val r = Random.nextInt(); if (r % 2 == 0) None else Some(UUID.randomUUID().toString) },
+    f14 = { val r = Random.nextInt(); if (r % 2 == 0) None else Some(UUID.randomUUID().toString) },
+    f15 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f16 = { val r = Random.nextInt(); if (r % 2 == 0) None else Some(r.toShort) },
+    f17 = { val r = Random.nextInt(); if (r % 2 == 0) None else Some(r) },
+    f18 = { val r = Random.nextInt(); if (r % 2 == 0) None else Some(UUID.randomUUID().toString) },
+    f19 = { val r = Random.nextInt(); if (r % 2 == 0) None else Some(UUID.randomUUID().toString) },
+    f20 = { val r = Random.nextInt(); if (r % 2 == 0) None else Some(UUID.randomUUID().toString) }
   )
 
   override def toGenericRecord(data: MixedData): GenericRecord = {
@@ -127,8 +127,9 @@ class MixedDataOps extends DataOps[MixedData] {
 
 trait MixedDataInstances {
   implicit val mixedDataOps: MixedDataOps = new MixedDataOps
-  implicit val mixedDataEncoder: RowEncoder[MixedData] = RowEncoder.ordered((d: MixedData) => (d.f1, d.f2, d.f3, d.f4, d.f5, d.f6, d.f7, d.f8, d.f9,
-    d.f10, d.f11, d.f12, d.f13, d.f14, d.f15, d.f16, d.f17, d.f18, d.f19, d.f20))
+  implicit val mixedDataEncoder: RowEncoder[MixedData] = RowEncoder.ordered((d: MixedData) =>
+    (d.f1, d.f2, d.f3, d.f4, d.f5, d.f6, d.f7, d.f8, d.f9, d.f10, d.f11, d.f12, d.f13, d.f14, d.f15, d.f16, d.f17, d.f18, d.f19, d.f20)
+  )
   implicit val mixedDataHeaderEncoder: HeaderEncoder[MixedData] = HeaderEncoder.defaultHeaderEncoder[MixedData]
   implicit val mixedDataDecoder: RowDecoder[MixedData] = RowDecoder.ordered(MixedData.apply _)
   implicit val mixedDataHeaderDecoder: HeaderDecoder[MixedData] = HeaderDecoder.defaultHeaderDecoder[MixedData]
@@ -236,8 +237,9 @@ class OnlyStringOps extends DataOps[OnlyStrings] {
 
 trait OnlyStringInstances {
   implicit val onlyStringOps: OnlyStringOps = new OnlyStringOps
-  implicit val onlyStringsEncoder: RowEncoder[OnlyStrings] = RowEncoder.ordered((d: OnlyStrings) => (d.f1, d.f2, d.f3, d.f4, d.f5, d.f6, d.f7, d.f8, d.f9,
-    d.f10, d.f11, d.f12, d.f13, d.f14, d.f15, d.f16, d.f17, d.f18, d.f19, d.f20))
+  implicit val onlyStringsEncoder: RowEncoder[OnlyStrings] = RowEncoder.ordered((d: OnlyStrings) =>
+    (d.f1, d.f2, d.f3, d.f4, d.f5, d.f6, d.f7, d.f8, d.f9, d.f10, d.f11, d.f12, d.f13, d.f14, d.f15, d.f16, d.f17, d.f18, d.f19, d.f20)
+  )
   implicit val onlyStringsHeaderEncoder: HeaderEncoder[OnlyStrings] = HeaderEncoder.defaultHeaderEncoder[OnlyStrings]
   implicit val onlyStringsDecoder: RowDecoder[OnlyStrings] = RowDecoder.ordered(OnlyStrings.apply _)
   implicit val onlyStringsHeaderDecoder: HeaderDecoder[OnlyStrings] = HeaderDecoder.defaultHeaderDecoder[OnlyStrings]
@@ -247,26 +249,26 @@ class OnlyLongsOps extends DataOps[OnlyLongs] {
   val schema: Schema = AvroSchema[OnlyLongs]
 
   override def generate(): OnlyLongs = OnlyLongs(
-    f1 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f2 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f3 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f4 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f5 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f6 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f7 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f8 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f9 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f10 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f11 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f12 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f13 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f14 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f15 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f16 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f17 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f18 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f19 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)},
-    f20 = {val r = Random.nextLong(); if (r % 2 == 0) None else Some(r)}
+    f1 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f2 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f3 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f4 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f5 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f6 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f7 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f8 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f9 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f10 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f11 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f12 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f13 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f14 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f15 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f16 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f17 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f18 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f19 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) },
+    f20 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) }
   )
 
   override def toGenericRecord(data: OnlyLongs): GenericRecord = {
@@ -345,9 +347,112 @@ class OnlyLongsOps extends DataOps[OnlyLongs] {
 
 trait OnlyLongsInstances {
   implicit val onlyLongsOps: OnlyLongsOps = new OnlyLongsOps
-  implicit val onlyLongsDataEncoder: RowEncoder[OnlyLongs] = RowEncoder.ordered((d: OnlyLongs) => (d.f1, d.f2, d.f3, d.f4, d.f5, d.f6, d.f7, d.f8, d.f9,
-    d.f10, d.f11, d.f12, d.f13, d.f14, d.f15, d.f16, d.f17, d.f18, d.f19, d.f20))
+  implicit val onlyLongsDataEncoder: RowEncoder[OnlyLongs] = RowEncoder.ordered((d: OnlyLongs) =>
+    (d.f1, d.f2, d.f3, d.f4, d.f5, d.f6, d.f7, d.f8, d.f9, d.f10, d.f11, d.f12, d.f13, d.f14, d.f15, d.f16, d.f17, d.f18, d.f19, d.f20)
+  )
   implicit val onlyLongsHeaderEncoder: HeaderEncoder[OnlyLongs] = HeaderEncoder.defaultHeaderEncoder[OnlyLongs]
   implicit val onlyLongsDecoder: RowDecoder[OnlyLongs] = RowDecoder.ordered(OnlyLongs.apply _)
   implicit val onlyLongsHeaderDecoder: HeaderDecoder[OnlyLongs] = HeaderDecoder.defaultHeaderDecoder[OnlyLongs]
+}
+
+class NarrowMixedDataOps extends DataOps[NarrowMixedData] {
+  val schema: Schema = AvroSchema[NarrowMixedData]
+
+  override def generate(): NarrowMixedData = NarrowMixedData(
+    f1 = Some(UUID.randomUUID().toString),
+    f2 = Some(Random.nextDouble()),
+    f3 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) }
+  )
+
+  override def toGenericRecord(data: NarrowMixedData): GenericRecord = {
+    val record = new GenericData.Record(schema)
+
+    record.put("f1", valueOrNull(data.f1))
+    record.put("f2", valueOrNull(data.f2))
+    record.put("f3", valueOrNull(data.f3))
+
+    record
+  }
+
+  override def msgpack(data: NarrowMixedData, buffer: MessageBufferPacker): Unit = {
+    buffer.packString(data.f1.getOrElse(""))
+    buffer.packDouble(data.f2.getOrElse(0.0))
+    buffer.packLong(data.f3.getOrElse(0))
+  }
+
+  override def msgunpack(buffer: MessageUnpacker): NarrowMixedData = NarrowMixedData(
+    Option(buffer.unpackString()),
+    Option(buffer.unpackDouble()),
+    Option(buffer.unpackLong())
+  )
+}
+
+trait NarrowMixedDataInstances {
+  implicit val narrowMixedDataOps: NarrowMixedDataOps = new NarrowMixedDataOps
+  implicit val narrowMixedDataEncoder: RowEncoder[NarrowMixedData] = RowEncoder.ordered((d: NarrowMixedData) => (d.f1, d.f2, d.f3))
+  implicit val narrowMixedDataHeaderEncoder: HeaderEncoder[NarrowMixedData] = HeaderEncoder.defaultHeaderEncoder[NarrowMixedData]
+  implicit val narrowMixedDataDecoder: RowDecoder[NarrowMixedData] = RowDecoder.ordered(NarrowMixedData.apply _)
+  implicit val narrowMixedDataHeaderDecoder: HeaderDecoder[NarrowMixedData] = HeaderDecoder.defaultHeaderDecoder[NarrowMixedData]
+}
+
+class NarrowOnlyStringOps extends DataOps[NarrowOnlyStrings] {
+  val schema: Schema = AvroSchema[NarrowOnlyStrings]
+
+  override def generate(): NarrowOnlyStrings = NarrowOnlyStrings(
+    f1 = Some(UUID.randomUUID().toString)
+  )
+
+  override def toGenericRecord(data: NarrowOnlyStrings): GenericRecord = {
+    val record = new GenericData.Record(schema)
+
+    record.put("f1", valueOrNull(data.f1))
+
+    record
+  }
+
+  override def msgpack(data: NarrowOnlyStrings, buffer: MessageBufferPacker): Unit =
+    buffer.packString(data.f1.getOrElse(""))
+
+  override def msgunpack(buffer: MessageUnpacker): NarrowOnlyStrings = NarrowOnlyStrings(
+    Option(buffer.unpackString())
+  )
+}
+
+trait NarrowOnlyStringInstances {
+  implicit val narrowOnlyStringOps: NarrowOnlyStringOps = new NarrowOnlyStringOps
+  implicit val narrowOnlyStringsEncoder: RowEncoder[NarrowOnlyStrings] = RowEncoder.ordered((d: NarrowOnlyStrings) => d.f1)
+  implicit val narrowOnlyStringsHeaderEncoder: HeaderEncoder[NarrowOnlyStrings] = HeaderEncoder.defaultHeaderEncoder[NarrowOnlyStrings]
+  implicit val narrowOnlyStringsDecoder: RowDecoder[NarrowOnlyStrings] = RowDecoder.ordered(NarrowOnlyStrings.apply _)
+  implicit val narrowOnlyStringsHeaderDecoder: HeaderDecoder[NarrowOnlyStrings] = HeaderDecoder.defaultHeaderDecoder[NarrowOnlyStrings]
+}
+
+class NarrowOnlyLongsOps extends DataOps[NarrowOnlyLongs] {
+  val schema: Schema = AvroSchema[NarrowOnlyLongs]
+
+  override def generate(): NarrowOnlyLongs = NarrowOnlyLongs(
+    f1 = { val r = Random.nextLong(); if (r % 2 == 0) None else Some(r) }
+  )
+
+  override def toGenericRecord(data: NarrowOnlyLongs): GenericRecord = {
+    val record = new GenericData.Record(schema)
+
+    record.put("f1", valueOrNull(data.f1))
+
+    record
+  }
+
+  override def msgpack(data: NarrowOnlyLongs, buffer: MessageBufferPacker): Unit =
+    buffer.packLong(data.f1.getOrElse(0))
+
+  override def msgunpack(buffer: MessageUnpacker): NarrowOnlyLongs = NarrowOnlyLongs(
+    Option(buffer.unpackLong())
+  )
+}
+
+trait NarrowOnlyLongsInstances {
+  implicit val narrowOnlyLongsOps: NarrowOnlyLongsOps = new NarrowOnlyLongsOps
+  implicit val narrowOnlyLongsDataEncoder: RowEncoder[NarrowOnlyLongs] = RowEncoder.ordered((d: NarrowOnlyLongs) => d.f1)
+  implicit val narrowOnlyLongsHeaderEncoder: HeaderEncoder[NarrowOnlyLongs] = HeaderEncoder.defaultHeaderEncoder[NarrowOnlyLongs]
+  implicit val narrowOnlyLongsDecoder: RowDecoder[NarrowOnlyLongs] = RowDecoder.ordered(NarrowOnlyLongs.apply _)
+  implicit val narrowOnlyLongsHeaderDecoder: HeaderDecoder[NarrowOnlyLongs] = HeaderDecoder.defaultHeaderDecoder[NarrowOnlyLongs]
 }

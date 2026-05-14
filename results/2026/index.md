@@ -1,4 +1,4 @@
-# 2026
+# 2026.04
 
 ## Library versions
 ```sbt
@@ -20,6 +20,10 @@ val lz4Version = "1.8.1"
 val apacheCommonCompressVersion = "1.28.0"
 val msgpackVersion = "0.9.11"
 val borerVersion = "1.8.0"
+val logbackVersion = "1.4.14"
+val xzVersion = "1.12"
+val brotliVersion = "1.22.0"
+val foryVersion = "0.17.0"
 ```
 
 ## Formats
@@ -32,6 +36,7 @@ val borerVersion = "1.8.0"
 7. Parquet
 8. Msgpack
 9. CBOR
+10. Fory
 
 ## System info
 ```
@@ -191,3 +196,13 @@ BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_C
 | onlyLongs (Deserialization)   | 32.55625 ms   | 106.012375 ms  | 32.858459 ms  | 36.672583 ms  | 508.383583 ms   | 73.885542 ms  |
 | onlyStrings (Serialization)   | 303.179375 ms | 2508.323166 ms | 316.428 ms    | 405.535417 ms | 43045.379916 ms | 642.882666 ms |
 | onlyStrings (Deserialization) | 62.763583 ms  | 377.677834 ms  | 60.806709 ms  | 109.494458 ms | 2249.011917 ms  | 140.765959 ms |
+
+### Fory
+|                               | none          | gzip          | snappy        | lz4           | xz              | zstd          |
+|-------------------------------|---------------|---------------|---------------|---------------|-----------------|---------------|
+| mixedData (Serialization)     | 305.119417 ms | 1279.39825 ms | 331.144541 ms | 334.167 ms    | 15792.013208 ms | 443.055375 ms |
+| mixedData (Deserialization)   | 83.906375 ms  | 243.502959 ms | 78.9145 ms    | 100.235083 ms | 983.471375 ms   | 128.499333 ms |
+| onlyLongs (Serialization)     | 289.364042 ms | 816.650667 ms | 287.597333 ms | 298.3065 ms   | 8884.403459 ms  | 368.031458 ms |
+| onlyLongs (Deserialization)   | 82.209542 ms  | 166.380083 ms | 80.893333 ms  | 93.744875 ms  | 620.427792 ms   | 127.530042 ms |
+| onlyStrings (Serialization)   | 337.15025 ms  | 2465.92025 ms | 405.329083 ms | 429.692125 ms | 52536.02075 ms  | 668.1895 ms   |
+| onlyStrings (Deserialization) | 68.858083 ms  | 402.698625 ms | 72.881625 ms  | 106.838708 ms | 2399.203959 ms  | 133.252292 ms |
