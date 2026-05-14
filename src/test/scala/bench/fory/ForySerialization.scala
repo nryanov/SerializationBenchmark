@@ -14,6 +14,7 @@ import org.xerial.snappy.SnappyOutputStream
 import project.{DataUtils, MixedData, NarrowMixedData, NarrowOnlyLongs, NarrowOnlyStrings, OnlyLongs, OnlyStrings}
 
 import java.io.{BufferedOutputStream, FileOutputStream}
+import java.nio.ByteBuffer
 import java.util.zip.GZIPOutputStream
 
 object ForySerialization extends Bench.LocalTime {
@@ -67,7 +68,9 @@ object ForySerialization extends Bench.LocalTime {
 
         in.foreach(rs =>
           rs.foreach { data =>
-            fory.serialize(out, data)
+            val buffer = fory.serialize(data)
+            out.write(ByteBuffer.allocate(4).putInt(buffer.length).array())
+            out.write(buffer)
 
             i += 1
 
