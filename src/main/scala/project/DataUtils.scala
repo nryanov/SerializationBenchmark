@@ -5,41 +5,89 @@ import java.io.File
 import kantan.csv._
 import kantan.csv.ops._
 
-
 object DataUtils {
-  def toCsvFile[A <: Data : DataOps : RowEncoder : HeaderEncoder](path: String, count: Int): Unit = {
+  def toCsvFile[A <: Data: DataOps: RowEncoder: HeaderEncoder](path: String, count: Int): Unit = {
     val writer: CsvWriter[A] = new File(path).asCsvWriter[A](rfc.withoutHeader)
     val generator = implicitly[DataOps[A]]
 
-    (0 until count).foreach(_ => {
-      writer.write(generator.generate())
-    })
+    (0 until count).foreach(_ => writer.write(generator.generate()))
 
     writer.close()
   }
 
-  def readCsv[A <: Data : RowDecoder : HeaderDecoder](path: String): CsvReader[ReadResult[A]] = {
+  def readCsv[A <: Data: RowDecoder: HeaderDecoder](path: String): CsvReader[ReadResult[A]] = {
     val reader = new File(path).asCsvReader[A](rfc.withoutHeader)
 
     reader
   }
 
   def mixedDataToScalaThrift(data: MixedData): thriftBenchmark.scala.MixedData = thriftBenchmark.scala.MixedData(
-    data.f1, data.f2, data.f3, data.f4, data.f5, data.f6, data.f7,
-    data.f8, data.f9, data.f10, data.f11.map(_.toDouble), data.f12, data.f13,
-    data.f14, data.f15, data.f16, data.f17, data.f18, data.f19, data.f20
+    data.f1,
+    data.f2,
+    data.f3,
+    data.f4,
+    data.f5,
+    data.f6,
+    data.f7,
+    data.f8,
+    data.f9,
+    data.f10,
+    data.f11.map(_.toDouble),
+    data.f12,
+    data.f13,
+    data.f14,
+    data.f15,
+    data.f16,
+    data.f17,
+    data.f18,
+    data.f19,
+    data.f20
   )
 
   def onlyStringsToScalaThrift(data: OnlyStrings): thriftBenchmark.scala.OnlyStrings = thriftBenchmark.scala.OnlyStrings(
-    data.f1, data.f2, data.f3, data.f4, data.f5, data.f6, data.f7,
-    data.f8, data.f9, data.f10, data.f11, data.f12, data.f13,
-    data.f14, data.f15, data.f16, data.f17, data.f18, data.f19, data.f20
+    data.f1,
+    data.f2,
+    data.f3,
+    data.f4,
+    data.f5,
+    data.f6,
+    data.f7,
+    data.f8,
+    data.f9,
+    data.f10,
+    data.f11,
+    data.f12,
+    data.f13,
+    data.f14,
+    data.f15,
+    data.f16,
+    data.f17,
+    data.f18,
+    data.f19,
+    data.f20
   )
 
   def onlyLongsToScalaThrift(data: OnlyLongs): thriftBenchmark.scala.OnlyLongs = thriftBenchmark.scala.OnlyLongs(
-    data.f1, data.f2, data.f3, data.f4, data.f5, data.f6, data.f7,
-    data.f8, data.f9, data.f10, data.f11, data.f12, data.f13,
-    data.f14, data.f15, data.f16, data.f17, data.f18, data.f19, data.f20
+    data.f1,
+    data.f2,
+    data.f3,
+    data.f4,
+    data.f5,
+    data.f6,
+    data.f7,
+    data.f8,
+    data.f9,
+    data.f10,
+    data.f11,
+    data.f12,
+    data.f13,
+    data.f14,
+    data.f15,
+    data.f16,
+    data.f17,
+    data.f18,
+    data.f19,
+    data.f20
   )
 
   def mixedDataToJavaThrift(data: MixedData): thriftBenchmark.java.MixedData = {
@@ -143,7 +191,7 @@ object DataUtils {
     data.f17.getOrElse(0),
     data.f18.getOrElse(""),
     data.f19.getOrElse(""),
-    data.f20.getOrElse(""),
+    data.f20.getOrElse("")
   )
 
   def onlyStringsToScalaProtobufdata(data: OnlyStrings): protobufBenchmark.data.OnlyStrings = protobufBenchmark.data.OnlyStrings(
@@ -166,7 +214,7 @@ object DataUtils {
     data.f17.getOrElse(""),
     data.f18.getOrElse(""),
     data.f19.getOrElse(""),
-    data.f20.getOrElse(""),
+    data.f20.getOrElse("")
   )
 
   def onlyLongsToScalaProtobuf(data: OnlyLongs): protobufBenchmark.data.OnlyLongs = protobufBenchmark.data.OnlyLongs(
@@ -189,6 +237,6 @@ object DataUtils {
     data.f17.getOrElse(0),
     data.f18.getOrElse(0),
     data.f19.getOrElse(0),
-    data.f20.getOrElse(0),
+    data.f20.getOrElse(0)
   )
 }

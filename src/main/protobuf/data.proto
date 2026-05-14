@@ -73,3 +73,17 @@ message OnlyLongs {
     sint64 f19 = 19;
     sint64 f20 = 20;
 }
+
+message NarrowMixedData {
+    string f1 = 1;
+    double f2 = 2;
+    sint64 f3 = 3;
+}
+
+message NarrowOnlyStrings {
+    string f1 = 1;
+}
+
+message NarrowOnlyLongs {
+    sint64 f1 = 1;
+}

@@ -27,12 +27,12 @@ object CborManualSerialization extends Bench.LocalTime {
     "snappy" -> ((dataType: String) => new SnappyOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborManualSerializationSnappy.out")))),
     "lz4" -> ((dataType: String) => new LZ4BlockOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborManualSerializationLz4.out")))),
     "xz" -> ((dataType: String) => new XZOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborManualSerializationXz.out")), new LZMA2Options())),
-    "zstd" -> ((dataType: String) => new ZstdOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborManualSerializationZstd.out")))),
+    "zstd" -> ((dataType: String) => new ZstdOutputStream(new FileOutputStream(Settings.file(s"${dataType}CborManualSerializationZstd.out"))))
   )
 
   val compression = Gen.enumeration("compression")("none", "gzip", "snappy", "lz4", "xz", "zstd")
 
-  implicit val mixedDataEncoder = Encoder[MixedData]((writer, data) => {
+  implicit val mixedDataEncoder = Encoder[MixedData] { (writer, data) =>
     writer.writeString(data.f1.getOrElse(""))
     writer.writeDouble(data.f2.getOrElse(0.0))
     writer.writeLong(data.f3.getOrElse(0))
@@ -53,8 +53,8 @@ object CborManualSerialization extends Bench.LocalTime {
     writer.writeString(data.f18.getOrElse(""))
     writer.writeString(data.f19.getOrElse(""))
     writer.writeString(data.f20.getOrElse(""))
-  })
-  implicit val onlyStringsEncoder = Encoder[OnlyStrings]((writer, data) => {
+  }
+  implicit val onlyStringsEncoder = Encoder[OnlyStrings] { (writer, data) =>
     writer.writeString(data.f1.getOrElse(""))
     writer.writeString(data.f2.getOrElse(""))
     writer.writeString(data.f3.getOrElse(""))
@@ -75,8 +75,8 @@ object CborManualSerialization extends Bench.LocalTime {
     writer.writeString(data.f18.getOrElse(""))
     writer.writeString(data.f19.getOrElse(""))
     writer.writeString(data.f20.getOrElse(""))
-  })
-  implicit val onlyLongsEncoder = Encoder[OnlyLongs]((writer, data) => {
+  }
+  implicit val onlyLongsEncoder = Encoder[OnlyLongs] { (writer, data) =>
     writer.writeLong(data.f1.getOrElse(0))
     writer.writeLong(data.f2.getOrElse(0))
     writer.writeLong(data.f3.getOrElse(0))
@@ -97,11 +97,11 @@ object CborManualSerialization extends Bench.LocalTime {
     writer.writeLong(data.f18.getOrElse(0))
     writer.writeLong(data.f19.getOrElse(0))
     writer.writeLong(data.f20.getOrElse(0))
-  })
+  }
 
-  performance of "mixedData cbor serialization" in {
-    measure method "serialize" in {
-      using(compression) config(
+  performance.of("mixedData cbor serialization") in {
+    measure.method("serialize") in {
+      using(compression).config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns,
@@ -111,8 +111,8 @@ object CborManualSerialization extends Bench.LocalTime {
         val in = DataUtils.readCsv[MixedData](Settings.pathString(Settings.InputCsv.mixedData))
 
         var i = 0
-        in.foreach(rs => {
-          rs.foreach(data => {
+        in.foreach(rs =>
+          rs.foreach { data =>
             val buffer = Cbor.encode(data).toByteArray
 
             out.write(ByteBuffer.allocate(4).putInt(buffer.length).array())
@@ -124,8 +124,8 @@ object CborManualSerialization extends Bench.LocalTime {
               out.flush()
               i = 0
             }
-          })
-        })
+          }
+        )
 
         out.flush()
         out.close()
@@ -134,9 +134,9 @@ object CborManualSerialization extends Bench.LocalTime {
     }
   }
 
-  performance of "onlyStrings cbor serialization" in {
-    measure method "serialize" in {
-      using(compression) config(
+  performance.of("onlyStrings cbor serialization") in {
+    measure.method("serialize") in {
+      using(compression).config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns,
@@ -146,10 +146,9 @@ object CborManualSerialization extends Bench.LocalTime {
         val in = DataUtils.readCsv[OnlyStrings](Settings.pathString(Settings.InputCsv.onlyStrings))
 
         var i = 0
-        in.foreach(rs => {
-          rs.foreach(data => {
+        in.foreach(rs =>
+          rs.foreach { data =>
             val buffer = Cbor.encode(data).toByteArray
-
 
             out.write(ByteBuffer.allocate(4).putInt(buffer.length).array())
             out.write(buffer)
@@ -160,8 +159,8 @@ object CborManualSerialization extends Bench.LocalTime {
               out.flush()
               i = 0
             }
-          })
-        })
+          }
+        )
 
         out.flush()
         out.close()
@@ -170,9 +169,9 @@ object CborManualSerialization extends Bench.LocalTime {
     }
   }
 
-  performance of "onlyLongs cbor serialization" in {
-    measure method "serialize" in {
-      using(compression) config(
+  performance.of("onlyLongs cbor serialization") in {
+    measure.method("serialize") in {
+      using(compression).config(
         exec.benchRuns -> Settings.benchRuns,
         exec.minWarmupRuns -> Settings.minWarmupRuns,
         exec.maxWarmupRuns -> Settings.maxWarmupRuns,
@@ -182,8 +181,8 @@ object CborManualSerialization extends Bench.LocalTime {
         val in = DataUtils.readCsv[OnlyLongs](Settings.pathString(Settings.InputCsv.onlyLongs))
 
         var i = 0
-        in.foreach(rs => {
-          rs.foreach(data => {
+        in.foreach(rs =>
+          rs.foreach { data =>
             val buffer = Cbor.encode(data).toByteArray
 
             out.write(ByteBuffer.allocate(4).putInt(buffer.length).array())
@@ -195,8 +194,8 @@ object CborManualSerialization extends Bench.LocalTime {
               out.flush()
               i = 0
             }
-          })
-        })
+          }
+        )
 
         out.flush()
         out.close()

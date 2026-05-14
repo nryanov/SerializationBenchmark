@@ -1,4 +1,4 @@
-# 2026
+# 2026.05
 
 ## Library versions
 ```sbt
@@ -20,6 +20,10 @@ val lz4Version = "1.8.1"
 val apacheCommonCompressVersion = "1.28.0"
 val msgpackVersion = "0.9.11"
 val borerVersion = "1.8.0"
+val logbackVersion = "1.4.14"
+val xzVersion = "1.12"
+val brotliVersion = "1.22.0"
+val foryVersion = "0.17.0"
 ```
 
 ## Formats
@@ -32,6 +36,7 @@ val borerVersion = "1.8.0"
 7. Parquet
 8. Msgpack
 9. CBOR
+10. Fory
 
 ## System info
 ```
@@ -79,6 +84,9 @@ BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_C
 
 BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC thriftSerializingBench > thriftSerializingBenchResults.txt
 BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC thriftDeserializingBench > thriftDeserializingBenchResults.txt
+
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC forySerializingBench > forySerializingBenchResults.txt
+BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC foryDeserializingBench > foryDeserializingBenchResults.txt
 ```
 
 ## Results
@@ -183,6 +191,17 @@ BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_C
 | onlyStrings (Deserialization) | 80.8315 ms    | 334.868125 ms  | 87.956959 ms  | 131.925208 ms | 2611.694625 ms  | 141.02175 ms  |
 
 ### CBOR
+|                               | none          | gzip           | snappy        | lz4           | xz              | zstd          |
+|-------------------------------|---------------|----------------|---------------|---------------|-----------------|---------------|
+| mixedData (Serialization)     | 253.764708 ms | 1090.88975 ms  | 253.440167 ms | 276.037709 ms | 10479.243292 ms | 377.946875 ms |
+| mixedData (Deserialization)   | 47.199458 ms  | 188.402375 ms  | 37.972458 ms  | 52.940042 ms  | 822.294833 ms   | 101.617125 ms |
+| onlyLongs (Serialization)     | 216.420291 ms | 626.440625 ms  | 216.285458 ms | 222.444916 ms | 2742.637209 ms  | 286.402916 ms |
+| onlyLongs (Deserialization)   | 32.55625 ms   | 106.012375 ms  | 32.858459 ms  | 36.672583 ms  | 508.383583 ms   | 73.885542 ms  |
+| onlyStrings (Serialization)   | 303.179375 ms | 2508.323166 ms | 316.428 ms    | 405.535417 ms | 43045.379916 ms | 642.882666 ms |
+| onlyStrings (Deserialization) | 62.763583 ms  | 377.677834 ms  | 60.806709 ms  | 109.494458 ms | 2249.011917 ms  | 140.765959 ms |
+
+
+### Fory
 |                               | none          | gzip           | snappy        | lz4           | xz              | zstd          |
 |-------------------------------|---------------|----------------|---------------|---------------|-----------------|---------------|
 | mixedData (Serialization)     | 253.764708 ms | 1090.88975 ms  | 253.440167 ms | 276.037709 ms | 10479.243292 ms | 377.946875 ms |
