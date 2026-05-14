@@ -191,8 +191,8 @@ val forySerializingBench = inputKey[Unit]("Run fory serialization benchmark")
 val foryDeserializingBench = inputKey[Unit]("Run fory deserialization benchmark")
 val foryBench = inputKey[Unit]("Run fory benchmark")
 
-forySerializingBench := (testOnly in Test).fullInput(" bench.fory.ForySerialization$").evaluated
-foryDeserializingBench := (testOnly in Test).fullInput(" bench.fory.ForyDeserialization$").evaluated
+forySerializingBench := (testOnly in Test).fullInput(" bench.fory.ForySerialization").evaluated
+foryDeserializingBench := (testOnly in Test).fullInput(" bench.fory.ForyDeserialization").evaluated
 foryBench := {
   val serialization = forySerializingBench
   val deserialization = foryDeserializingBench

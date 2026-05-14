@@ -2,8 +2,7 @@
 
 ## Results
 - [2019](./results/2019/index.md)
-- [2026.04](./results/2026/04/index.md)
-- [2026.05](./results/2026/05/index.md)
+- [2026](./results/2026/index.md)
 
 ## Commands
 - To customize benchmark directory use `env: BENCH_DATA_DIR`. Default: current directory
@@ -50,3 +49,7 @@
 `sbt thriftSerializingBench` - Run thrift serialization benchmark  
 `sbt thriftDeserializingBench` - Run thrift deserialization benchmark  
 `sbt thriftBench` - Run thrift benchmark  
+
+`sbt forySerializingBench` - Run fory serialization benchmark  
+`sbt foryDeserializingBench` - Run fory deserialization benchmark  
+`sbt foryBench` - Run fory benchmark  

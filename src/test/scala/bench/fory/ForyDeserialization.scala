@@ -61,7 +61,7 @@ object ForyDeserialization extends Bench.LocalTime {
         exec.independentSamples -> Settings.independentSamples
       ) in { compression =>
         // https://github.com/apache/fory/blob/57b0c9edde14eeb3557c1a015c48930d847cbc04/docs/guide/java/basic-serialization.md
-        val fory = Fory.builder().withXlang(false).withRefTracking(false).withCompatible(false).requireClassRegistration(true).withAsyncCompilation(true).build()
+        val fory = Fory.builder().withXlang(false).withRefTracking(false).withCompatible(false).requireClassRegistration(false).withAsyncCompilation(true).build()
         val in = streams(compression)("mixedData")
         fory.register(MixedData.getClass)
 
@@ -92,7 +92,7 @@ object ForyDeserialization extends Bench.LocalTime {
         exec.independentSamples -> Settings.independentSamples
       ) in { compression =>
         // https://github.com/apache/fory/blob/57b0c9edde14eeb3557c1a015c48930d847cbc04/docs/guide/java/basic-serialization.md
-        val fory = Fory.builder().withXlang(false).withRefTracking(false).withCompatible(false).requireClassRegistration(true).withAsyncCompilation(true).build()
+        val fory = Fory.builder().withXlang(false).withRefTracking(false).withCompatible(false).requireClassRegistration(false).withAsyncCompilation(true).build()
         val in = streams(compression)("onlyLongs")
         fory.register(OnlyLongs.getClass)
 
@@ -123,7 +123,7 @@ object ForyDeserialization extends Bench.LocalTime {
         exec.independentSamples -> Settings.independentSamples
       ) in { compression =>
         // https://github.com/apache/fory/blob/57b0c9edde14eeb3557c1a015c48930d847cbc04/docs/guide/java/basic-serialization.md
-        val fory = Fory.builder().withXlang(false).withRefTracking(false).withCompatible(false).requireClassRegistration(true).withAsyncCompilation(true).build()
+        val fory = Fory.builder().withXlang(false).withRefTracking(false).withCompatible(false).requireClassRegistration(false).withAsyncCompilation(true).build()
         val in = streams(compression)("onlyStrings")
         fory.register(OnlyStrings.getClass)
 
@@ -154,7 +154,7 @@ object ForyDeserialization extends Bench.LocalTime {
         exec.independentSamples -> Settings.independentSamples
       ) in { compression =>
         // https://github.com/apache/fory/blob/57b0c9edde14eeb3557c1a015c48930d847cbc04/docs/guide/java/basic-serialization.md
-        val fory = Fory.builder().withXlang(false).withRefTracking(false).withCompatible(false).requireClassRegistration(true).withAsyncCompilation(true).build()
+        val fory = Fory.builder().withXlang(false).withRefTracking(false).withCompatible(false).requireClassRegistration(false).withAsyncCompilation(true).build()
         val in = streams(compression)("narrowMixedData")
         fory.register(NarrowMixedData.getClass)
 
@@ -185,7 +185,7 @@ object ForyDeserialization extends Bench.LocalTime {
         exec.independentSamples -> Settings.independentSamples
       ) in { compression =>
         // https://github.com/apache/fory/blob/57b0c9edde14eeb3557c1a015c48930d847cbc04/docs/guide/java/basic-serialization.md
-        val fory = Fory.builder().withXlang(false).withRefTracking(false).withCompatible(false).requireClassRegistration(true).withAsyncCompilation(true).build()
+        val fory = Fory.builder().withXlang(false).withRefTracking(false).withCompatible(false).requireClassRegistration(false).withAsyncCompilation(true).build()
         val in = streams(compression)("narrowOnlyLongs")
         fory.register(NarrowOnlyLongs.getClass)
 
@@ -216,7 +216,7 @@ object ForyDeserialization extends Bench.LocalTime {
         exec.independentSamples -> Settings.independentSamples
       ) in { compression =>
         // https://github.com/apache/fory/blob/57b0c9edde14eeb3557c1a015c48930d847cbc04/docs/guide/java/basic-serialization.md
-        val fory = Fory.builder().withXlang(false).withRefTracking(false).withCompatible(false).requireClassRegistration(true).withAsyncCompilation(true).build()
+        val fory = Fory.builder().withXlang(false).withRefTracking(false).withCompatible(false).requireClassRegistration(false).withAsyncCompilation(true).build()
         val in = streams(compression)("narrowOnlyStrings")
         fory.register(NarrowOnlyStrings.getClass)
 

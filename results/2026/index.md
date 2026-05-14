@@ -1,4 +1,4 @@
-# 2026.05
+# 2026.04
 
 ## Library versions
 ```sbt
@@ -84,9 +84,6 @@ BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_C
 
 BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC thriftSerializingBench > thriftSerializingBenchResults.txt
 BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC thriftDeserializingBench > thriftDeserializingBenchResults.txt
-
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC forySerializingBench > forySerializingBenchResults.txt
-BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_COUNT=100000 sbt -J-Xmx16G -J-Xms16G -J-XX:+UseParallelGC foryDeserializingBench > foryDeserializingBenchResults.txt
 ```
 
 ## Results
@@ -200,13 +197,12 @@ BENCH_DATA_DIR=/Volumes/ADATA/bench BENCH_WARMUPS=1 BENCH_RUNS=1 BENCH_RECORDS_C
 | onlyStrings (Serialization)   | 303.179375 ms | 2508.323166 ms | 316.428 ms    | 405.535417 ms | 43045.379916 ms | 642.882666 ms |
 | onlyStrings (Deserialization) | 62.763583 ms  | 377.677834 ms  | 60.806709 ms  | 109.494458 ms | 2249.011917 ms  | 140.765959 ms |
 
-
 ### Fory
-|                               | none          | gzip           | snappy        | lz4           | xz              | zstd          |
-|-------------------------------|---------------|----------------|---------------|---------------|-----------------|---------------|
-| mixedData (Serialization)     | 253.764708 ms | 1090.88975 ms  | 253.440167 ms | 276.037709 ms | 10479.243292 ms | 377.946875 ms |
-| mixedData (Deserialization)   | 47.199458 ms  | 188.402375 ms  | 37.972458 ms  | 52.940042 ms  | 822.294833 ms   | 101.617125 ms |
-| onlyLongs (Serialization)     | 216.420291 ms | 626.440625 ms  | 216.285458 ms | 222.444916 ms | 2742.637209 ms  | 286.402916 ms |
-| onlyLongs (Deserialization)   | 32.55625 ms   | 106.012375 ms  | 32.858459 ms  | 36.672583 ms  | 508.383583 ms   | 73.885542 ms  |
-| onlyStrings (Serialization)   | 303.179375 ms | 2508.323166 ms | 316.428 ms    | 405.535417 ms | 43045.379916 ms | 642.882666 ms |
-| onlyStrings (Deserialization) | 62.763583 ms  | 377.677834 ms  | 60.806709 ms  | 109.494458 ms | 2249.011917 ms  | 140.765959 ms |
+|                               | none          | gzip          | snappy        | lz4           | xz              | zstd          |
+|-------------------------------|---------------|---------------|---------------|---------------|-----------------|---------------|
+| mixedData (Serialization)     | 305.119417 ms | 1279.39825 ms | 331.144541 ms | 334.167 ms    | 15792.013208 ms | 443.055375 ms |
+| mixedData (Deserialization)   | 83.906375 ms  | 243.502959 ms | 78.9145 ms    | 100.235083 ms | 983.471375 ms   | 128.499333 ms |
+| onlyLongs (Serialization)     | 289.364042 ms | 816.650667 ms | 287.597333 ms | 298.3065 ms   | 8884.403459 ms  | 368.031458 ms |
+| onlyLongs (Deserialization)   | 82.209542 ms  | 166.380083 ms | 80.893333 ms  | 93.744875 ms  | 620.427792 ms   | 127.530042 ms |
+| onlyStrings (Serialization)   | 337.15025 ms  | 2465.92025 ms | 405.329083 ms | 429.692125 ms | 52536.02075 ms  | 668.1895 ms   |
+| onlyStrings (Deserialization) | 68.858083 ms  | 402.698625 ms | 72.881625 ms  | 106.838708 ms | 2399.203959 ms  | 133.252292 ms |
